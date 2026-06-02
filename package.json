@@ -1,0 +1,13 @@
+{
+  "name": "v2ray-guide",
+  "version": "1.0.0",
+  "description": "V2Ray 配置指南 - 前端站点",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs",
+    "clean": "rm -rf docs/.vuepress/dist"
+  },
+  "devDependencies": {
+    "vuepress": "^1.9.10"
+  }
+}

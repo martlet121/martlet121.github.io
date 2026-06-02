@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# build output
+docs/.vuepress/dist/
+
+# VuePress temp
+docs/.vuepress/.temp/
+docs/.vuepress/.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/

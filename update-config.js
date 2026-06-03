@@ -75,7 +75,7 @@ v2rayFiles.forEach(file => {
       sidebarConfig[1].children.push(entry);
     } else if (num <= 27) {
       sidebarConfig[2].children.push(entry);
-    } else if (num <= 36) {
+    } else if (num <= 41) {
       sidebarConfig[3].children.push(entry);
     } else {
       sidebarConfig[4].children.push(entry);

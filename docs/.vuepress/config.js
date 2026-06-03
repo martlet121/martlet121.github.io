@@ -81,15 +81,15 @@ module.exports = {
             ["/guide/33-dynamic-port-mkcp.md", "33 动态端口 + mKCP"],
             ["/guide/34-quic.md", "34 QUIC"],
             ["/guide/35-tor.md", "35 TOR"],
-            ["/guide/36-traffic-stats.md", "36 流量统计"]
+            ["/guide/36-traffic-stats.md", "36 流量统计"],
+            ["/guide/40-http2.md", "40 HTTP2"],
+            ["/guide/41-forward-proxy.md", "41 前置代理"]
           ],
         },
         {
           title: "高级功能",
           collapsible: true,
           children: [
-            ["/guide/40-http2.md", "40 HTTP2"],
-            ["/guide/41-forward-proxy.md", "41 前置代理"],
             ["/guide/50-transparent-redirect.md", "50 透明代理（REDIRECT）"],
             ["/guide/51-transparent-tproxy.md", "51 透明代理（TPROXY）"],
             ["/guide/52-reverse-proxy-port-mapping.md", "52 反向代理（端口映射）"],

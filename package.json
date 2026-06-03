@@ -8,6 +8,8 @@
     "clean": "rm -rf docs/.vuepress/dist"
   },
   "devDependencies": {
-    "vuepress": "^1.9.10"
+    "vuepress": "^1.9.10",
+    "vue": "^2.7.16",
+    "vue-template-compiler": "^2.7.16"
   }
 }

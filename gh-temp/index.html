@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>V2Ray 配置指南</title>
+    <meta name="generator" content="VuePress 1.9.10">
+    
+    <meta name="description" content="V2Ray 配置指南 - 详细的配置教程和案例">
+    
+    <link rel="preload" href="/assets/css/0.styles.7af6f7e6.css" as="style"><link rel="preload" href="/assets/js/app.9a60e5ab.js" as="script"><link rel="preload" href="/assets/js/2.81c34002.js" as="script"><link rel="preload" href="/assets/js/1.4844e13f.js" as="script"><link rel="preload" href="/assets/js/22.8bf7823a.js" as="script"><link rel="prefetch" href="/assets/js/10.3855f2a7.js"><link rel="prefetch" href="/assets/js/11.532fb960.js"><link rel="prefetch" href="/assets/js/12.9b03ab98.js"><link rel="prefetch" href="/assets/js/13.d9bc12e0.js"><link rel="prefetch" href="/assets/js/14.4c9b8779.js"><link rel="prefetch" href="/assets/js/15.fbba562b.js"><link rel="prefetch" href="/assets/js/16.4574fd2a.js"><link rel="prefetch" href="/assets/js/17.9e69dfdb.js"><link rel="prefetch" href="/assets/js/18.99e6bfc2.js"><link rel="prefetch" href="/assets/js/19.58d0e401.js"><link rel="prefetch" href="/assets/js/20.0795a904.js"><link rel="prefetch" href="/assets/js/21.4d2eb33f.js"><link rel="prefetch" href="/assets/js/23.00dce373.js"><link rel="prefetch" href="/assets/js/24.15443f04.js"><link rel="prefetch" href="/assets/js/25.d6f278a3.js"><link rel="prefetch" href="/assets/js/26.50c2cba8.js"><link rel="prefetch" href="/assets/js/27.db790ad3.js"><link rel="prefetch" href="/assets/js/28.abc48ad8.js"><link rel="prefetch" href="/assets/js/29.e5fe3e62.js"><link rel="prefetch" href="/assets/js/3.244f0799.js"><link rel="prefetch" href="/assets/js/30.f5188ad6.js"><link rel="prefetch" href="/assets/js/31.767c11b0.js"><link rel="prefetch" href="/assets/js/32.d8284dba.js"><link rel="prefetch" href="/assets/js/33.385e52bd.js"><link rel="prefetch" href="/assets/js/34.76eb744f.js"><link rel="prefetch" href="/assets/js/35.bab2947d.js"><link rel="prefetch" href="/assets/js/36.3cee85be.js"><link rel="prefetch" href="/assets/js/37.679f231b.js"><link rel="prefetch" href="/assets/js/38.1d165b28.js"><link rel="prefetch" href="/assets/js/39.d1fd4796.js"><link rel="prefetch" href="/assets/js/4.db06a48d.js"><link rel="prefetch" href="/assets/js/40.c9aa63a2.js"><link rel="prefetch" href="/assets/js/41.b591a549.js"><link rel="prefetch" href="/assets/js/42.0b5e718a.js"><link rel="prefetch" href="/assets/js/43.f8ed3375.js"><link rel="prefetch" href="/assets/js/44.e20c45e8.js"><link rel="prefetch" href="/assets/js/45.3046f45a.js"><link rel="prefetch" href="/assets/js/46.373c0998.js"><link rel="prefetch" href="/assets/js/47.0e2dd56f.js"><link rel="prefetch" href="/assets/js/48.7891fa8c.js"><link rel="prefetch" href="/assets/js/49.ee3104d4.js"><link rel="prefetch" href="/assets/js/5.caca6451.js"><link rel="prefetch" href="/assets/js/50.a5dd0950.js"><link rel="prefetch" href="/assets/js/51.e38c90c4.js"><link rel="prefetch" href="/assets/js/52.c564c3f7.js"><link rel="prefetch" href="/assets/js/53.981db628.js"><link rel="prefetch" href="/assets/js/54.a0a2f59e.js"><link rel="prefetch" href="/assets/js/55.29012c09.js"><link rel="prefetch" href="/assets/js/56.307bc107.js"><link rel="prefetch" href="/assets/js/57.8e92732f.js"><link rel="prefetch" href="/assets/js/58.b13e418a.js"><link rel="prefetch" href="/assets/js/59.fb39ff8c.js"><link rel="prefetch" href="/assets/js/6.963cb6f5.js"><link rel="prefetch" href="/assets/js/60.d022f8d7.js"><link rel="prefetch" href="/assets/js/61.da6d61a1.js"><link rel="prefetch" href="/assets/js/62.f3f6c348.js"><link rel="prefetch" href="/assets/js/7.f5c742a4.js"><link rel="prefetch" href="/assets/js/vendors~docsearch.cc58001a.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.7af6f7e6.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" aria-current="page" class="home-link router-link-exact-active router-link-active"><img src="/logo.png" alt="V2Ray 配置指南" class="logo"> <span class="site-name can-hide">V2Ray 配置指南</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  首页
+</a></div><div class="nav-item"><a href="/guide/" class="nav-link">
+  配置指南
+</a></div><div class="nav-item"><a href="https://github.com/martlet121/martlet121.github.io" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <a href="https://github.com/martlet121/martlet121.github.io" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  首页
+</a></div><div class="nav-item"><a href="/guide/" class="nav-link">
+  配置指南
+</a></div><div class="nav-item"><a href="https://github.com/martlet121/martlet121.github.io" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <a href="https://github.com/martlet121/martlet121.github.io" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <!----> </aside> <main aria-labelledby="main-title" class="home"><header class="hero"><!----> <h1 id="main-title">
+      V2Ray 配置指南
+    </h1> <p class="description">
+      详细的配置教程和实用案例
+    </p> <p class="action"><a href="/guide/1-intro.html" class="nav-link action-button">
+  开始阅读 →
+</a></p></header> <div class="features"><div class="feature"><h2>📚 完整指南</h2> <p>从入门到精通，涵盖V2Ray所有主要功能和配置方法</p></div><div class="feature"><h2>🔧 实用案例</h2> <p>提供丰富的配置案例，包括各种协议和传输方式</p></div><div class="feature"><h2>🚀 高级功能</h2> <p>详解负载均衡、透明代理、反向代理等高级特性</p></div></div> <div class="theme-default-content custom content__default"><h2 id="📖-快速开始"><a href="#📖-快速开始" class="header-anchor">#</a> 📖 快速开始</h2> <h3 id="什么是-v2ray"><a href="#什么是-v2ray" class="header-anchor">#</a> 什么是 V2Ray？</h3> <p>V2Ray 是 Project V 下的一个工具，是一个与 Shadowsocks 类似的代理软件，但功能更加强大和灵活。</p> <p><strong>核心特点：</strong></p> <ul><li>🛡️ <strong>更完善的协议</strong> - 使用自研的 VMess 协议，更难被检测</li> <li>⚡ <strong>更强大的性能</strong> - 网络性能优异，具有更好的并发处理能力</li> <li>🎯 <strong>更丰富的功能</strong> - mKCP、动态端口、路由、WebSocket、Mux 等</li></ul> <h3 id="📚-指南结构"><a href="#📚-指南结构" class="header-anchor">#</a> 📚 指南结构</h3> <p>本指南分为以下几个部分：</p> <ol><li><strong>介绍和安装</strong> - 了解 V2Ray 的基础概念，学习在各种平台上安装</li> <li><strong>基础配置</strong> - 掌握配置格式和基本的协议（VMess、Shadowsocks、DNS）</li> <li><strong>TLS 和传输</strong> - 学习如何使用 TLS 加密和各种传输方式</li> <li><strong>高级协议</strong> - 深入了解 Mux、mKCP、QUIC、TOR 等高级协议</li> <li><strong>高级功能</strong> - 掌握负载均衡、透明代理、反向代理等企业级功能</li></ol> <h3 id="🚀-开始使用"><a href="#🚀-开始使用" class="header-anchor">#</a> 🚀 开始使用</h3> <ol><li>选择你的操作系统，阅读对应的安装指南</li> <li>了解配置文件的基本格式</li> <li>根据你的需求选择合适的协议和传输方式</li> <li>参考具体的配置案例进行配置</li> <li>逐步深入学习更高级的功能</li></ol> <h3 id="⚠️-前置要求"><a href="#⚠️-前置要求" class="header-anchor">#</a> ⚠️ 前置要求</h3> <p>本指南的目标用户需要具备：</p> <ul><li>Linux 基本操作知识（如果在服务器上使用）</li> <li>了解基本的网络概念</li> <li>能够使用文本编辑器编辑配置文件</li></ul> <h3 id="💡-提示"><a href="#💡-提示" class="header-anchor">#</a> 💡 提示</h3> <ul><li>使用左侧导航菜单快速定位你需要的内容</li> <li>使用顶部搜索框搜索特定的功能或协议</li> <li>配置前建议先理解基本概念和配置格式</li></ul> <hr> <h2 id="📖-推荐阅读顺序"><a href="#📖-推荐阅读顺序" class="header-anchor">#</a> 📖 推荐阅读顺序</h2> <h3 id="新手入门路线"><a href="#新手入门路线" class="header-anchor">#</a> 新手入门路线</h3> <div class="language- extra-class"><pre class="language-text"><code>1. 介绍V2Ray (了解基本概念)
+  ↓
+2. 选择你的系统进行安装 (2-5 选一)
+  ↓
+3. 配置格式 (理解配置文件结构)
+  ↓
+4. 基础协议 (VMess 或 Shadowsocks)
+  ↓
+5. 实践你的第一个配置！
+</code></pre></div><h3 id="进阶学习路线"><a href="#进阶学习路线" class="header-anchor">#</a> 进阶学习路线</h3> <div class="language- extra-class"><pre class="language-text"><code>基础配置完成后
+  ↓
+学习 TLS 加密传输
+  ↓
+尝试 WebSocket 等传输方式
+  ↓
+深入学习高级协议 (Mux、mKCP 等)
+  ↓
+学习路由和分流功能
+  ↓
+掌握负载均衡等企业级功能
+</code></pre></div><hr> <h2 id="🔗-相关资源"><a href="#🔗-相关资源" class="header-anchor">#</a> 🔗 相关资源</h2> <ul><li><strong>V2Ray 官方项目</strong>：https://github.com/v2ray/v2ray-core</li> <li><strong>V2Ray 用户手册</strong>：https://www.v2ray.com（已被墙）</li> <li><strong>V2Ray 官方博客</strong>：https://steemit.com/cn/@v2ray/3cjiux</li></ul> <hr> <p><strong>最后更新</strong>：2024年</p></div> <div class="footer">
+    Copyright © 2024 V2Ray Guide | Made with VuePress
+  </div></main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.9a60e5ab.js" defer></script><script src="/assets/js/2.81c34002.js" defer></script><script src="/assets/js/1.4844e13f.js" defer></script><script src="/assets/js/22.8bf7823a.js" defer></script>
+  </body>
+</html>

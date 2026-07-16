@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="相较于TCP方式，Domain Socket更高效，速度超过50M后会有比较明显的性能差距">
+        <meta name="description" content="在 TCP + TLS 分流基础上使用 Domain Socket 连接分流器与服务端，性能优于 TCP。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="23 TCP + TLS分流器（Socket） - V2Ray 帮助文档">
+    <meta property="og:description" content="在 TCP + TLS 分流基础上使用 Domain Socket 连接分流器与服务端，性能优于 TCP。">
+    <meta property="og:url" content="https://martlet121.github.io/23%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88Socket%EF%BC%89.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="23 TCP + TLS分流器（Socket） - V2Ray 帮助文档">
+    <meta name="twitter:description" content="在 TCP + TLS 分流基础上使用 Domain Socket 连接分流器与服务端，性能优于 TCP。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "23 TCP + TLS Splitter (Socket) - V2Ray Help Docs",
+        "23 TCP + TLS 분류기(Socket) - V2Ray 도움말 문서",
+        "23 TCP + TLS-разделитель (Socket) — Документация V2Ray",
+        "۲۳ تقسیم‌کننده TCP + TLS (Socket) — مستندات V2Ray",
+        "23 TCP + TLS paýlaýjy (Socket) — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/23%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88Socket%EF%BC%89.html#webpage"
+      },
+      "headline": "23 TCP + TLS分流器（Socket） - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "23 TCP + TLS Splitter (Socket) - V2Ray Help Docs",
+        "23 TCP + TLS 분류기(Socket) - V2Ray 도움말 문서",
+        "23 TCP + TLS-разделитель (Socket) — Документация V2Ray",
+        "۲۳ تقسیم‌کننده TCP + TLS (Socket) — مستندات V2Ray",
+        "23 TCP + TLS paýlaýjy (Socket) — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "23 TCP + TLS Splitter (Socket) - V2Ray Help Docs",
+        "23 TCP + TLS 분류기(Socket) - V2Ray 도움말 문서",
+        "23 TCP + TLS-разделитель (Socket) — Документация V2Ray",
+        "۲۳ تقسیم‌کننده TCP + TLS (Socket) — مستندات V2Ray",
+        "23 TCP + TLS paýlaýjy (Socket) — V2Ray gollanmasy"
+      ],
+      "description": "在 TCP + TLS 分流基础上使用 Domain Socket 连接分流器与服务端，性能优于 TCP。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/23%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88Socket%EF%BC%89.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

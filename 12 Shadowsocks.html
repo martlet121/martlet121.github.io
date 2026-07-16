@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="协议漏洞原因使Shadowsocks放弃OTA(一次认证)而使用AEAD，V2Ray的Shadowsocks已使用AEAD且兼容OTA，当method为aes-256-gcm、aes-128-gcm…">
+        <meta name="description" content="V2Ray 中的 Shadowsocks 协议：采用 AEAD 加密（aes-256-gcm 等），兼容 OTA，附配置方法。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="12 Shadowsocks - V2Ray 帮助文档">
+    <meta property="og:description" content="V2Ray 中的 Shadowsocks 协议：采用 AEAD 加密（aes-256-gcm 等），兼容 OTA，附配置方法。">
+    <meta property="og:url" content="https://martlet121.github.io/12%20Shadowsocks.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="12 Shadowsocks - V2Ray 帮助文档">
+    <meta name="twitter:description" content="V2Ray 中的 Shadowsocks 协议：采用 AEAD 加密（aes-256-gcm 等），兼容 OTA，附配置方法。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "12 Shadowsocks - V2Ray Help Docs",
+        "12 Shadowsocks - V2Ray 도움말 문서",
+        "12 Shadowsocks — Документация V2Ray",
+        "۱۲ Shadowsocks — مستندات V2Ray",
+        "12 Shadowsocks — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/12%20Shadowsocks.html#webpage"
+      },
+      "headline": "12 Shadowsocks - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "12 Shadowsocks - V2Ray Help Docs",
+        "12 Shadowsocks - V2Ray 도움말 문서",
+        "12 Shadowsocks — Документация V2Ray",
+        "۱۲ Shadowsocks — مستندات V2Ray",
+        "12 Shadowsocks — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "12 Shadowsocks - V2Ray Help Docs",
+        "12 Shadowsocks - V2Ray 도움말 문서",
+        "12 Shadowsocks — Документация V2Ray",
+        "۱۲ Shadowsocks — مستندات V2Ray",
+        "12 Shadowsocks — V2Ray gollanmasy"
+      ],
+      "description": "V2Ray 中的 Shadowsocks 协议：采用 AEAD 加密（aes-256-gcm 等），兼容 OTA，附配置方法。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/12%20Shadowsocks.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

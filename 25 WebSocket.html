@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="不推荐，比tcp性能较差；和其他协议组合除外">
+        <meta name="description" content="V2Ray 的 WebSocket 传输协议：与 TLS、Web 服务器（nginx）配合隐藏流量，适合 CDN/反向代理场景；单独使用性能较差。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="25 WebSocket - V2Ray 帮助文档">
+    <meta property="og:description" content="V2Ray 的 WebSocket 传输协议：与 TLS、Web 服务器（nginx）配合隐藏流量，适合 CDN/反向代理场景；单独使用性能较差。">
+    <meta property="og:url" content="https://martlet121.github.io/25%20WebSocket.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="25 WebSocket - V2Ray 帮助文档">
+    <meta name="twitter:description" content="V2Ray 的 WebSocket 传输协议：与 TLS、Web 服务器（nginx）配合隐藏流量，适合 CDN/反向代理场景；单独使用性能较差。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "25 WebSocket - V2Ray Help Docs",
+        "25 WebSocket - V2Ray 도움말 문서",
+        "25 WebSocket — Документация V2Ray",
+        "۲۵ WebSocket — مستندات V2Ray",
+        "25 WebSocket — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/25%20WebSocket.html#webpage"
+      },
+      "headline": "25 WebSocket - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "25 WebSocket - V2Ray Help Docs",
+        "25 WebSocket - V2Ray 도움말 문서",
+        "25 WebSocket — Документация V2Ray",
+        "۲۵ WebSocket — مستندات V2Ray",
+        "25 WebSocket — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "25 WebSocket - V2Ray Help Docs",
+        "25 WebSocket - V2Ray 도움말 문서",
+        "25 WebSocket — Документация V2Ray",
+        "۲۵ WebSocket — مستندات V2Ray",
+        "25 WebSocket — V2Ray gollanmasy"
+      ],
+      "description": "V2Ray 的 WebSocket 传输协议：与 TLS、Web 服务器（nginx）配合隐藏流量，适合 CDN/反向代理场景；单独使用性能较差。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/25%20WebSocket.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

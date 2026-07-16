@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="可在一个vnext下写2个出口服务器地址，这种方式默认轮询；也不用定义负载均衡组">
+        <meta name="description" content="在单个 vnext 下配置多个出站服务器地址实现轮询负载均衡，无需单独定义负载均衡组。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -58,7 +58,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="56 负载均衡（vnext） - V2Ray 帮助文档">
+    <meta property="og:description" content="在单个 vnext 下配置多个出站服务器地址实现轮询负载均衡，无需单独定义负载均衡组。">
+    <meta property="og:url" content="https://martlet121.github.io/56%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88vnext%EF%BC%89.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="56 负载均衡（vnext） - V2Ray 帮助文档">
+    <meta name="twitter:description" content="在单个 vnext 下配置多个出站服务器地址实现轮询负载均衡，无需单独定义负载均衡组。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "56 Load Balancing (vnext) - V2Ray Help Docs",
+        "56 부하 분산(vnext) - V2Ray 도움말 문서",
+        "56 Балансировка нагрузки (vnext) — Документация V2Ray",
+        "۵۶ تعادل بار (vnext) — مستندات V2Ray",
+        "56 ýük deňagramlylygy (vnext) — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/56%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88vnext%EF%BC%89.html#webpage"
+      },
+      "headline": "56 负载均衡（vnext） - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "56 Load Balancing (vnext) - V2Ray Help Docs",
+        "56 부하 분산(vnext) - V2Ray 도움말 문서",
+        "56 Балансировка нагрузки (vnext) — Документация V2Ray",
+        "۵۶ تعادل بار (vnext) — مستندات V2Ray",
+        "56 ýük deňagramlylygy (vnext) — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "56 Load Balancing (vnext) - V2Ray Help Docs",
+        "56 부하 분산(vnext) - V2Ray 도움말 문서",
+        "56 Балансировка нагрузки (vnext) — Документация V2Ray",
+        "۵۶ تعادل بار (vnext) — مستندات V2Ray",
+        "56 ýük deňagramlylygy (vnext) — V2Ray gollanmasy"
+      ],
+      "description": "在单个 vnext 下配置多个出站服务器地址实现轮询负载均衡，无需单独定义负载均衡组。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/56%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88vnext%EF%BC%89.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

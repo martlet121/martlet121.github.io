@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="HaProxy监听443端口，处理TLS之后，将HTTP流量交由Web服务器处理，非HTTP流量交由V2Ray按Vmess处理">
+        <meta name="description" content="V2Ray 通过 HaProxy + Web 服务器实现 TCP + TLS + Web：HTTPS 流量伪装为正常网站，非 HTTP 流量按 VMess 处理。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="21 TCP + TLS + Web - V2Ray 帮助文档">
+    <meta property="og:description" content="V2Ray 通过 HaProxy + Web 服务器实现 TCP + TLS + Web：HTTPS 流量伪装为正常网站，非 HTTP 流量按 VMess 处理。">
+    <meta property="og:url" content="https://martlet121.github.io/21%20TCP%20%2B%20TLS%20%2B%20Web.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="21 TCP + TLS + Web - V2Ray 帮助文档">
+    <meta name="twitter:description" content="V2Ray 通过 HaProxy + Web 服务器实现 TCP + TLS + Web：HTTPS 流量伪装为正常网站，非 HTTP 流量按 VMess 处理。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "21 TCP + TLS + Web - V2Ray Help Docs",
+        "21 TCP + TLS + Web - V2Ray 도움말 문서",
+        "21 TCP + TLS + Web — Документация V2Ray",
+        "۲۱ TCP + TLS + Web — مستندات V2Ray",
+        "21 TCP + TLS + Web — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/21%20TCP%20%2B%20TLS%20%2B%20Web.html#webpage"
+      },
+      "headline": "21 TCP + TLS + Web - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "21 TCP + TLS + Web - V2Ray Help Docs",
+        "21 TCP + TLS + Web - V2Ray 도움말 문서",
+        "21 TCP + TLS + Web — Документация V2Ray",
+        "۲۱ TCP + TLS + Web — مستندات V2Ray",
+        "21 TCP + TLS + Web — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "21 TCP + TLS + Web - V2Ray Help Docs",
+        "21 TCP + TLS + Web - V2Ray 도움말 문서",
+        "21 TCP + TLS + Web — Документация V2Ray",
+        "۲۱ TCP + TLS + Web — مستندات V2Ray",
+        "21 TCP + TLS + Web — V2Ray gollanmasy"
+      ],
+      "description": "V2Ray 通过 HaProxy + Web 服务器实现 TCP + TLS + Web：HTTPS 流量伪装为正常网站，非 HTTP 流量按 VMess 处理。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/21%20TCP%20%2B%20TLS%20%2B%20Web.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

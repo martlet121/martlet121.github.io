@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="一、客户端配置">
+        <meta name="description" content="通过路由规则按域名、IP、地域（geoip:cn）等条件过滤网站流量，实现国内外分流与广告/特定站点屏蔽。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="16 网站过滤 - V2Ray 帮助文档">
+    <meta property="og:description" content="通过路由规则按域名、IP、地域（geoip:cn）等条件过滤网站流量，实现国内外分流与广告/特定站点屏蔽。">
+    <meta property="og:url" content="https://martlet121.github.io/16%20%E7%BD%91%E7%AB%99%E8%BF%87%E6%BB%A4.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="16 网站过滤 - V2Ray 帮助文档">
+    <meta name="twitter:description" content="通过路由规则按域名、IP、地域（geoip:cn）等条件过滤网站流量，实现国内外分流与广告/特定站点屏蔽。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "16 Website Filtering - V2Ray Help Docs",
+        "16 웹사이트 필터링 - V2Ray 도움말 문서",
+        "16 Фильтрация сайтов — Документация V2Ray",
+        "۱۶ فیلتر سایت‌ها — مستندات V2Ray",
+        "16 web sahypa filtrli — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/16%20%E7%BD%91%E7%AB%99%E8%BF%87%E6%BB%A4.html#webpage"
+      },
+      "headline": "16 网站过滤 - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "16 Website Filtering - V2Ray Help Docs",
+        "16 웹사이트 필터링 - V2Ray 도움말 문서",
+        "16 Фильтрация сайтов — Документация V2Ray",
+        "۱۶ فیلتر سایت‌ها — مستندات V2Ray",
+        "16 web sahypa filtrli — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "16 Website Filtering - V2Ray Help Docs",
+        "16 웹사이트 필터링 - V2Ray 도움말 문서",
+        "16 Фильтрация сайтов — Документация V2Ray",
+        "۱۶ فیلتر سایت‌ها — مستندات V2Ray",
+        "16 web sahypa filtrli — V2Ray gollanmasy"
+      ],
+      "description": "通过路由规则按域名、IP、地域（geoip:cn）等条件过滤网站流量，实现国内外分流与广告/特定站点屏蔽。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/16%20%E7%BD%91%E7%AB%99%E8%BF%87%E6%BB%A4.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

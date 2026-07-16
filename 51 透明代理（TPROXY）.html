@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="TPROXY可以透明代理IPV6">
+        <meta name="description" content="用 TPROXY 实现 V2Ray 透明代理，支持 IPv6 与 UDP（含 DNS），适合作为软路由网关。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="51 透明代理（TPROXY） - V2Ray 帮助文档">
+    <meta property="og:description" content="用 TPROXY 实现 V2Ray 透明代理，支持 IPv6 与 UDP（含 DNS），适合作为软路由网关。">
+    <meta property="og:url" content="https://martlet121.github.io/51%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88TPROXY%EF%BC%89.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="51 透明代理（TPROXY） - V2Ray 帮助文档">
+    <meta name="twitter:description" content="用 TPROXY 实现 V2Ray 透明代理，支持 IPv6 与 UDP（含 DNS），适合作为软路由网关。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "51 Transparent Proxy (TPROXY) - V2Ray Help Docs",
+        "51 투명 프록시(TPROXY) - V2Ray 도움말 문서",
+        "51 Прозрачное прокси (TPROXY) — Документация V2Ray",
+        "۵۱ پروکسی شفاف (TPROXY) — مستندات V2Ray",
+        "51 açyk proksi (TPROXY) — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/51%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88TPROXY%EF%BC%89.html#webpage"
+      },
+      "headline": "51 透明代理（TPROXY） - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "51 Transparent Proxy (TPROXY) - V2Ray Help Docs",
+        "51 투명 프록시(TPROXY) - V2Ray 도움말 문서",
+        "51 Прозрачное прокси (TPROXY) — Документация V2Ray",
+        "۵۱ پروکسی شفاف (TPROXY) — مستندات V2Ray",
+        "51 açyk proksi (TPROXY) — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "51 Transparent Proxy (TPROXY) - V2Ray Help Docs",
+        "51 투명 프록시(TPROXY) - V2Ray 도움말 문서",
+        "51 Прозрачное прокси (TPROXY) — Документация V2Ray",
+        "۵۱ پروکسی شفاف (TPROXY) — مستندات V2Ray",
+        "51 açyk proksi (TPROXY) — V2Ray gollanmasy"
+      ],
+      "description": "用 TPROXY 实现 V2Ray 透明代理，支持 IPv6 与 UDP（含 DNS），适合作为软路由网关。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/51%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88TPROXY%EF%BC%89.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

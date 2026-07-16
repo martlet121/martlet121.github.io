@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="TCP + TLS + Web的简易实现，不用关心HaProxy和OpenSSL的版本，不用自己申请证书，不用安装Web服务器">
+        <meta name="description" content="用 tls-shunt-proxy 简易实现 TCP + TLS + Web 分流，免去自签证书与单独 Web 服务器。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="22 TCP + TLS分流器（TCP） - V2Ray 帮助文档">
+    <meta property="og:description" content="用 tls-shunt-proxy 简易实现 TCP + TLS + Web 分流，免去自签证书与单独 Web 服务器。">
+    <meta property="og:url" content="https://martlet121.github.io/22%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88TCP%EF%BC%89.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="22 TCP + TLS分流器（TCP） - V2Ray 帮助文档">
+    <meta name="twitter:description" content="用 tls-shunt-proxy 简易实现 TCP + TLS + Web 分流，免去自签证书与单独 Web 服务器。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "22 TCP + TLS Splitter (TCP) - V2Ray Help Docs",
+        "22 TCP + TLS 분류기(TCP) - V2Ray 도움말 문서",
+        "22 TCP + TLS-разделитель (TCP) — Документация V2Ray",
+        "۲۲ تقسیم‌کننده TCP + TLS (TCP) — مستندات V2Ray",
+        "22 TCP + TLS paýlaýjy (TCP) — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/22%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88TCP%EF%BC%89.html#webpage"
+      },
+      "headline": "22 TCP + TLS分流器（TCP） - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "22 TCP + TLS Splitter (TCP) - V2Ray Help Docs",
+        "22 TCP + TLS 분류기(TCP) - V2Ray 도움말 문서",
+        "22 TCP + TLS-разделитель (TCP) — Документация V2Ray",
+        "۲۲ تقسیم‌کننده TCP + TLS (TCP) — مستندات V2Ray",
+        "22 TCP + TLS paýlaýjy (TCP) — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "22 TCP + TLS Splitter (TCP) - V2Ray Help Docs",
+        "22 TCP + TLS 분류기(TCP) - V2Ray 도움말 문서",
+        "22 TCP + TLS-разделитель (TCP) — Документация V2Ray",
+        "۲۲ تقسیم‌کننده TCP + TLS (TCP) — مستندات V2Ray",
+        "22 TCP + TLS paýlaýjy (TCP) — V2Ray gollanmasy"
+      ],
+      "description": "用 tls-shunt-proxy 简易实现 TCP + TLS + Web 分流，免去自签证书与单独 Web 服务器。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/22%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88TCP%EF%BC%89.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

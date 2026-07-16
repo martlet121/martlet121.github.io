@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="动态变化通信端口，应对电信服务运营商可能会对长时间大流量的单个端口进行限速">
+        <meta name="description" content="动态变化通信端口，应对运营商对长时间大流量单端口的限速；仅 vmess 协议支持，主要在服务端设置。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="32 动态端口 - V2Ray 帮助文档">
+    <meta property="og:description" content="动态变化通信端口，应对运营商对长时间大流量单端口的限速；仅 vmess 协议支持，主要在服务端设置。">
+    <meta property="og:url" content="https://martlet121.github.io/32%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="32 动态端口 - V2Ray 帮助文档">
+    <meta name="twitter:description" content="动态变化通信端口，应对运营商对长时间大流量单端口的限速；仅 vmess 协议支持，主要在服务端设置。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "32 Dynamic Ports - V2Ray Help Docs",
+        "32 동적 포트 - V2Ray 도움말 문서",
+        "32 Динамический порт — Документация V2Ray",
+        "۳۲ پورت پویا — مستندات V2Ray",
+        "32 dinamik port — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/32%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3.html#webpage"
+      },
+      "headline": "32 动态端口 - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "32 Dynamic Ports - V2Ray Help Docs",
+        "32 동적 포트 - V2Ray 도움말 문서",
+        "32 Динамический порт — Документация V2Ray",
+        "۳۲ پورت پویا — مستندات V2Ray",
+        "32 dinamik port — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "32 Dynamic Ports - V2Ray Help Docs",
+        "32 동적 포트 - V2Ray 도움말 문서",
+        "32 Динамический порт — Документация V2Ray",
+        "۳۲ پورت پویا — مستندات V2Ray",
+        "32 dinamik port — V2Ray gollanmasy"
+      ],
+      "description": "动态变化通信端口，应对运营商对长时间大流量单端口的限速；仅 vmess 协议支持，主要在服务端设置。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/32%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">

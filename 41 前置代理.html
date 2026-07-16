@@ -1,12 +1,12 @@
 
 <!doctype html>
-<html lang="zh" class="no-js">
+<html lang="zh-CN" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="若局域网内设备要通过http代理才能联网，可使用前置代理来先连接http代理联网后，再通过V2Ray访问外网">
+        <meta name="description" content="在仅能经 HTTP 代理联网的局域网中，用 V2Ray 前置代理先连 HTTP 代理再访问外网。">
       
       
         <meta name="author" content="V2Ray 帮助文档">
@@ -60,7 +60,96 @@
 
     
     
-  </head>
+    
+    <!-- SEO/GEO: Open Graph + Twitter Card + JSON-LD -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="V2Ray 帮助文档">
+    <meta property="og:title" content="41 前置代理 - V2Ray 帮助文档">
+    <meta property="og:description" content="在仅能经 HTTP 代理联网的局域网中，用 V2Ray 前置代理先连 HTTP 代理再访问外网。">
+    <meta property="og:url" content="https://martlet121.github.io/41%20%E5%89%8D%E7%BD%AE%E4%BB%A3%E7%90%86.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://martlet121.github.io/assets/images/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="41 前置代理 - V2Ray 帮助文档">
+    <meta name="twitter:description" content="在仅能经 HTTP 代理联网的局域网中，用 V2Ray 前置代理先连 HTTP 代理再访问外网。">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://martlet121.github.io/#organization",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://martlet121.github.io/assets/images/favicon.png"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://martlet121.github.io/#website",
+      "name": "V2Ray 帮助文档",
+      "url": "https://martlet121.github.io/",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "alternateName": [
+        "41 Front Proxy - V2Ray Help Docs",
+        "41 사전 프록시 - V2Ray 도움말 문서",
+        "41 Предшествующий прокси — Документация V2Ray",
+        "۴۱ پروکسی پیشین — مستندات V2Ray",
+        "41 öň proksi — V2Ray gollanmasy"
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://martlet121.github.io/41%20%E5%89%8D%E7%BD%AE%E4%BB%A3%E7%90%86.html#webpage"
+      },
+      "headline": "41 前置代理 - V2Ray 帮助文档",
+      "alternativeHeadline": [
+        "41 Front Proxy - V2Ray Help Docs",
+        "41 사전 프록시 - V2Ray 도움말 문서",
+        "41 Предшествующий прокси — Документация V2Ray",
+        "۴۱ پروکسی پیشین — مستندات V2Ray",
+        "41 öň proksi — V2Ray gollanmasy"
+      ],
+      "alternateName": [
+        "41 Front Proxy - V2Ray Help Docs",
+        "41 사전 프록시 - V2Ray 도움말 문서",
+        "41 Предшествующий прокси — Документация V2Ray",
+        "۴۱ پروکسی پیشین — مستندات V2Ray",
+        "41 öň proksi — V2Ray gollanmasy"
+      ],
+      "description": "在仅能经 HTTP 代理联网的局域网中，用 V2Ray 前置代理先连 HTTP 代理再访问外网。",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Organization",
+        "name": "V2Ray 帮助文档"
+      },
+      "publisher": {
+        "@id": "https://martlet121.github.io/#organization"
+      },
+      "dateModified": "2026-07-16",
+      "about": {
+        "@type": "Thing",
+        "name": "V2Ray"
+      },
+      "isPartOf": {
+        "@id": "https://martlet121.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://martlet121.github.io/41%20%E5%89%8D%E7%BD%AE%E4%BB%A3%E7%90%86.html#breadcrumb"
+      }
+    }
+  ]
+}
+    </script>
+    <script src="assets/i18n/i18n.js" defer></script>
+</head>
   
   
     <body dir="ltr">
@@ -1307,9 +1396,9 @@
 <p>[root@martlet121 ~]# <mark> route -n </mark>                         #软路由默认所有流量指向真实路由器</p>
 <p>Kernel IP routing table</p>
 <p>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</p>
-<p>0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 ens33                            #桥接网卡默认连外网路由</p>
+<p>0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 ens33                            <span>#桥接网卡默认连外网路由</span></p>
 <p>192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 ens33</p>
-<p>192.168.5.0     0.0.0.0         255.255.255.0   U     101    0        0 ens36                      #仅主机网络；客户端在此网络内，默认只能局域网通信，无法访问其他网络</p>
+<p>192.168.5.0     0.0.0.0         255.255.255.0   U     101    0        0 ens36                      <span>#仅主机网络；客户端在此网络内，默认只能局域网通信，无法访问其他网络</span></p>
 <p>192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0</p>
 <p>[root@martlet121 ~]#<br /><br /></p>
 <p>2、配置squid</p>

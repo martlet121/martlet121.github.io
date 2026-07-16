@@ -1,0 +1,109 @@
+# ============================================================
+# Material for MkDocs 站点配置
+# 目标：Markdown 内容一比一忠实还原，可直接双击 site/index.html 离线浏览
+# 文档：https://squidfunk.github.io/mkdocs-material/
+# ============================================================
+
+site_name: V2Ray 帮助文档
+site_description: V2Ray 代理软件完整中文帮助文档与配置教程：安装、传输协议、路由、TLS、WebSocket、透明代理等。
+site_url: https://martlet121.github.io/   # GitHub Pages 部署地址；用于 canonical / sitemap / OG
+site_author: V2Ray 帮助文档
+copyright: Copyright &copy; 2026 V2Ray 帮助文档
+docs_dir: docs
+# 关键：false -> 每个 .md 生成同名 .html（如 "1 介绍V2Ray.html"），
+# 这样正文中 "./files/xxx.png" 的相对引用在 file:// 下也能正确解析。
+use_directory_urls: false
+
+theme:
+  name: material
+  language: zh
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.top
+    - toc.follow
+
+markdown_extensions:
+  - markdown.extensions.nl2br
+  - hardbreak
+  - admonition
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 6
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# ------------------------------------------------------------
+# 导航：左侧目录名 = Markdown 文件名（去掉 .md 后缀，文件名其余部分不变）
+# 不含 index.md（介绍首页通过站点标题/首页按钮进入）
+# ------------------------------------------------------------
+nav:
+  - "1 介绍V2Ray": "1 介绍V2Ray.md"
+  - "2 安装V2Ray（Linux）": "2 安装V2Ray（Linux）.md"
+  - "3 安装V2Ray（Windows）": "3 安装V2Ray（Windows）.md"
+  - "4 安装V2Ray（安卓）": "4 安装V2Ray（安卓）.md"
+  - "5 安装V2Ray（Docker）": "5 安装V2Ray（Docker）.md"
+  - "6 v2ray命令": "6 v2ray命令.md"
+  - "7 v2ctl命令": "7 v2ctl命令.md"
+  - "10 配置格式": "10 配置格式.md"
+  - "11 VMess": "11 VMess.md"
+  - "12 Shadowsocks": "12 Shadowsocks.md"
+  - "13 DNS": "13 DNS.md"
+  - "14 日志": "14 日志.md"
+  - "15 国内路由直连": "15 国内路由直连.md"
+  - "16 网站过滤": "16 网站过滤.md"
+  - "17 域名文件": "17 域名文件.md"
+  - "18 禁用BT": "18 禁用BT.md"
+  - "20 TLS": "20 TLS.md"
+  - "21 TCP + TLS + Web": "21 TCP + TLS + Web.md"
+  - "22 TCP + TLS分流器（TCP）": "22 TCP + TLS分流器（TCP）.md"
+  - "23 TCP + TLS分流器（Socket）": "23 TCP + TLS分流器（Socket）.md"
+  - "25 WebSocket": "25 WebSocket.md"
+  - "26 WebSocket + TLS + Web": "26 WebSocket + TLS + Web.md"
+  - "27 WebSocket + BrowserForwarder": "27 WebSocket + BrowserForwarder.md"
+  - "30 Mux": "30 Mux.md"
+  - "31 mKCP": "31 mKCP.md"
+  - "32 动态端口": "32 动态端口.md"
+  - "33 动态端口 + mKCP": "33 动态端口 + mKCP.md"
+  - "34 QUIC": "34 QUIC.md"
+  - "35 TOR": "35 TOR.md"
+  - "36 流量统计": "36 流量统计.md"
+  - "40 HTTP2": "40 HTTP2.md"
+  - "41 前置代理": "41 前置代理.md"
+  - "50 透明代理（REDIRECT）": "50 透明代理（REDIRECT）.md"
+  - "51 透明代理（TPROXY）": "51 透明代理（TPROXY）.md"
+  - "52 反向代理（端口映射）": "52 反向代理（端口映射）.md"
+  - "53 反向代理（ip穿透）": "53 反向代理（ip穿透）.md"
+  - "54 运行多个服务端进程": "54 运行多个服务端进程.md"
+  - "55 负载均衡（balancers）": "55 负载均衡（balancers）.md"
+  - "56 负载均衡（vnext）": "56 负载均衡（vnext）.md"
+
+# ------------------------------------------------------------
+# SEO / GEO：Open Graph、Twitter Card、结构化数据（WebSite / Article）
+# 由 docs/javascripts/extra.js 在客户端注入。
+# 说明：当前 Material 9.7.6 的 base.html 不会自动渲染 config.extra_head，
+# 因此统一改用 extra.js 注入，确保 AI 搜索引擎（GEO 目标）与浏览器都能取到。
+# 已静态落地的 SEO 信号：<link rel=canonical>（site_url）、每页独立
+# meta description（front matter）、sitemap.xml、robots.txt、llms.txt /
+# llms-full.txt。
+# ------------------------------------------------------------
+
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  - javascripts/extra.js

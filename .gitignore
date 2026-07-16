@@ -1,0 +1,24 @@
+# Python 虚拟环境
+.venv/
+
+# 缓存
+*.pyc
+__pycache__/
+
+# pip 可编辑安装产生的元数据
+*.egg-info/
+dist/
+build/
+
+# 日志
+*.log
+
+# 编辑器 / IDE
+.idea/
+.vscode/
+.codebuddy/
+.trae/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db

@@ -1,0 +1,75 @@
+/* ============================================================
+   自定义样式
+   1) 原样保留 Markdown 源文件中的换行与空格（pre-wrap）
+   2) Vercel 风格介绍首页（.home）
+   ============================================================ */
+
+/* 1) 保留换行与空格：作用于正文文本元素，不影响代码块(pre) */
+.md-content__inner p,
+.md-content__inner li,
+.md-content__inner td,
+.md-content__inner th,
+.md-content__inner blockquote,
+.md-content__inner dd {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 2) Vercel 风格首页 */
+.home {
+  text-align: center;
+  padding-top: 2.5rem;
+}
+.home-badge {
+  display: inline-block;
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--md-primary-fg-color);
+  border: 1px solid var(--md-primary-fg-color);
+  border-radius: 999px;
+  padding: .25rem .9rem;
+  margin-bottom: 1.5rem;
+}
+.home h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0 0 1rem;
+}
+.home-lead {
+  font-size: 1.2rem;
+  color: var(--md-default-fg-color--muted);
+  max-width: 38rem;
+  margin: 0 auto 2rem !important;
+}
+.home-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.home-divider {
+  max-width: 60rem;
+  margin: 2rem auto 3rem;
+  opacity: .3;
+}
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+  max-width: 60rem;
+  margin: 0 auto;
+}
+.home-card {
+  border: 1px solid rgba(125, 125, 125, .3);
+  border-radius: .75rem;
+  padding: 1.5rem;
+  background: var(--md-default-bg-color);
+}
+.home-card h3 {
+  margin-top: 0;
+}

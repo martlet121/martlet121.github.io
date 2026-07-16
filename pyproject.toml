@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "v2ray-docs-extras"
+version = "0.1.0"
+description = "Custom Markdown extensions for the V2Ray docs static site"
+
+[tool.setuptools]
+py-modules = ["hardbreak"]

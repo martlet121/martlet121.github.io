@@ -1,0 +1,47 @@
+# V2Ray 帮助文档
+
+> V2Ray 代理软件完整中文帮助文档与配置教程，涵盖安装、传输协议、路由、TLS、WebSocket、透明代理等。
+> 本文件供 AI 搜索引擎（GEO / Generative Engine Optimization）检索使用，
+> 汇总全站文档链接与摘要。
+
+## 文档
+
+- [1 介绍V2Ray](https://martlet121.github.io/1%20%E4%BB%8B%E7%BB%8DV2Ray.html): 内核（V2Ray）用于实际的网络交互、路由等针对网络数据的处理，而外围的用户界面程序提供了方便直接的操作流程
+- [10 配置格式](https://martlet121.github.io/10%20%E9%85%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F.html): V2Ray和Shadowsocks一样，配置文件都用的JSON格式
+- [11 VMess](https://martlet121.github.io/11%20VMess.html): VMess协议基于时间认证，服务器和客户端的系统时间相差必须在90秒以内
+- [12 Shadowsocks](https://martlet121.github.io/12%20Shadowsocks.html): 协议漏洞原因使Shadowsocks放弃OTA(一次认证)而使用AEAD，V2Ray的Shadowsocks已使用AEAD且兼容OTA，当method为aes-256-gcm、aes-128-gcm…
+- [13 DNS](https://martlet121.github.io/13%20DNS.html): 文件末尾的逗号，是大模块之间的分隔
+- [14 日志](https://martlet121.github.io/14%20%E6%97%A5%E5%BF%97.html): 文件末尾的逗号，是大模块之间的分隔
+- [15 国内路由直连](https://martlet121.github.io/15%20%E5%9B%BD%E5%86%85%E8%B7%AF%E7%94%B1%E7%9B%B4%E8%BF%9E.html): 路由routing的domainStrategy几种模式
+- [16 网站过滤](https://martlet121.github.io/16%20%E7%BD%91%E7%AB%99%E8%BF%87%E6%BB%A4.html): 一、客户端配置
+- [17 域名文件](https://martlet121.github.io/17%20%E5%9F%9F%E5%90%8D%E6%96%87%E4%BB%B6.html): 一、内置的域名文件
+- [18 禁用BT](https://martlet121.github.io/18%20%E7%A6%81%E7%94%A8BT.html): 国外版权意识更强，下载盗版影音会导致vps被封，所有可直接禁用BT下载
+- [2 安装V2Ray（Linux）](https://martlet121.github.io/2%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88Linux%EF%BC%89.html): V2Ray的验证包含时间，服务端和客户端时间相差必须在90s内；时区会自动转换，时间必须一致
+- [20 TLS](https://martlet121.github.io/20%20TLS.html): v1.19版本开始支持TLS（传输层安全）
+- [21 TCP + TLS + Web](https://martlet121.github.io/21%20TCP%20%2B%20TLS%20%2B%20Web.html): HaProxy监听443端口，处理TLS之后，将HTTP流量交由Web服务器处理，非HTTP流量交由V2Ray按Vmess处理
+- [22 TCP + TLS分流器（TCP）](https://martlet121.github.io/22%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88TCP%EF%BC%89.html): TCP + TLS + Web的简易实现，不用关心HaProxy和OpenSSL的版本，不用自己申请证书，不用安装Web服务器
+- [23 TCP + TLS分流器（Socket）](https://martlet121.github.io/23%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88Socket%EF%BC%89.html): 相较于TCP方式，Domain Socket更高效，速度超过50M后会有比较明显的性能差距
+- [25 WebSocket](https://martlet121.github.io/25%20WebSocket.html): 不推荐，比tcp性能较差；和其他协议组合除外
+- [26 WebSocket + TLS + Web](https://martlet121.github.io/26%20WebSocket%20%2B%20TLS%20%2B%20Web.html): 通过nginx转发流量，由nginx作为前台隐藏v2ray；TLS可对流量进行加密；WebSocket连接nginx
+- [27 WebSocket + BrowserForwarder](https://martlet121.github.io/27%20WebSocket%20%2B%20BrowserForwarder.html): 在WebSocket + TLS + Web的基础上，V2Ray 4.37.0加入浏览器转发（BrowserForwarder）模块，BrowserForwarder可隐藏客户端；Nginx时隐藏服务…
+- [3 安装V2Ray（Windows）](https://martlet121.github.io/3%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88Windows%EF%BC%89.html): v2ray-windows-64.zip
+- [30 Mux](https://martlet121.github.io/30%20Mux.html): 多路复用（multiplexing），将多条TCP连接合并成一条，节省资源，提高并发能力
+- [31 mKCP](https://martlet121.github.io/31%20mKCP.html): 快速重传的机制在高丢包率的网络下会耗费更多流量，但能提高访问效率
+- [32 动态端口](https://martlet121.github.io/32%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3.html): 动态变化通信端口，应对电信服务运营商可能会对长时间大流量的单个端口进行限速
+- [33 动态端口 + mKCP](https://martlet121.github.io/33%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3%20%2B%20mKCP.html): 在对应的inbounds和outbounds加入streamSettings并将network设置为kcp即可
+- [34 QUIC](https://martlet121.github.io/34%20QUIC.html): 4.7版本开始支持QUIC（Quick UDP Internet Connection），Google提出的使用UDP进行多路并发传输的协议
+- [35 TOR](https://martlet121.github.io/35%20TOR.html): 匿名通信的自由软件，洋葱路由器（The Onion Router，TOR）
+- [36 流量统计](https://martlet121.github.io/36%20%E6%B5%81%E9%87%8F%E7%BB%9F%E8%AE%A1.html): 只能统计当前进程实例的数据，在服务器上统计就只统计服务器v2ray进程记录的数据，不涉及客户端；客户端上统计也识别不了服务器侧的设置
+- [4 安装V2Ray（安卓）](https://martlet121.github.io/4%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88%E5%AE%89%E5%8D%93%EF%BC%89.html): vmess、mkcp协议在这个客户端没尝试成功
+- [40 HTTP2](https://martlet121.github.io/40%20HTTP2.html): 目前大多数网页是HTTP/1.1，HTTP/2是HTTP/1.1的升级版，简称h2
+- [41 前置代理](https://martlet121.github.io/41%20%E5%89%8D%E7%BD%AE%E4%BB%A3%E7%90%86.html): 若局域网内设备要通过http代理才能联网，可使用前置代理来先连接http代理联网后，再通过V2Ray访问外网
+- [5 安装V2Ray（Docker）](https://martlet121.github.io/5%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88Docker%EF%BC%89.html): Docker只能部署在KVM或XEN架构的云服务器中
+- [50 透明代理（REDIRECT）](https://martlet121.github.io/50%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88REDIRECT%EF%BC%89.html): 当前配置DNS查询是使用的系统dns，国内dns可能解析不到部分域名
+- [51 透明代理（TPROXY）](https://martlet121.github.io/51%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88TPROXY%EF%BC%89.html): TPROXY可以透明代理IPV6
+- [52 反向代理（端口映射）](https://martlet121.github.io/52%20%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%EF%BC%89.html): 可用于内网穿透，达到在外网利用VPS访问不具有公网IP的内网服务器
+- [53 反向代理（ip穿透）](https://martlet121.github.io/53%20%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88ip%E7%A9%BF%E9%80%8F%EF%BC%89.html): 内网穿透，达到在外网利用VPS访问内网中所有地址
+- [54 运行多个服务端进程](https://martlet121.github.io/54%20%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9B%E7%A8%8B.html): 启用多个v2ray进程，提供不同协议的客户端入口
+- [55 负载均衡（balancers）](https://martlet121.github.io/55%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88balancers%EF%BC%89.html): v4.3版本开始支持均衡负载，客户端进行随机选择不同服务端
+- [56 负载均衡（vnext）](https://martlet121.github.io/56%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88vnext%EF%BC%89.html): 可在一个vnext下写2个出口服务器地址，这种方式默认轮询；也不用定义负载均衡组
+- [6 v2ray命令](https://martlet121.github.io/6%20v2ray%E5%91%BD%E4%BB%A4.html): 主程序命令；语法格式： v2ray [参数]
+- [7 v2ctl命令](https://martlet121.github.io/7%20v2ctl%E5%91%BD%E4%BB%A4.html): 命令工具集合；语法格式： v2ctl [子命令] [参数]

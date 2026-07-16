@@ -1,0 +1,7144 @@
+# V2Ray 帮助文档
+
+> V2Ray 代理软件完整中文帮助文档与配置教程，涵盖安装、传输协议、路由、TLS、WebSocket、透明代理等。
+
+# 1 介绍V2Ray
+
+---
+description: "内核（V2Ray）用于实际的网络交互、路由等针对网络数据的处理，而外围的用户界面程序提供了方便直接的操作流程"
+---
+
+   内核（V2Ray）用于实际的网络交互、路由等针对网络数据的处理，而外围的用户界面程序提供了方便直接的操作流程
+
+​    V2Ray是与Shadowsocks类似的代理软件，配置比Shadowsocks复杂，功能也更多
+
+​    V2Ray不区分服务器版和客户端版，运行的是同一个软件，区别只是配置文件的不同
+
+
+
+
+
+[v2ray-step-by-step-transifex.zip](<./files/1 介绍V2Ray/v2ray-step-by-step-transifex.zip>)
+
+​    V2Ray 用户手册：https://www.v2ray.com（已被墙） https://v2ray.cool（已被墙）https://guide.v2fly.org/（已被墙）
+
+​    V2Ray 项目地址：https://github.com/v2ray/v2ray-core
+
+​    用户手册项目地址：https://github.com/v2fly/v2ray-step-by-step/tree/transifex
+
+​    软件下载：https://github.com/v2ray/v2ray-core/releases
+
+​    性能测试：https://steemit.com/cn/@v2ray/3cjiux
+
+
+
+
+
+V2Ray的更新策略是快速迭代，每周更新
+
+​    1、更新会停止V2Ray进程、升级V2Ray、再自动运行；但首次安装要手动拉起
+
+​    2、版本号的格式是 vX.Y.Z，例：v2.44.0
+
+​        v是固定的字母v，version的首字母
+
+​        X、Y、Z都是数字
+
+​            X是大版本号，每年更新一个大版本(例：v4.Y.Z，表示V2Ray已经是第四年发布)
+
+​            Y是小版本，每周五更新一个小版本
+
+​            Z是区分正式版和测试版，Z是0代表着是正式版，不是0说明是测试版。例：v4.7.0 是正式版，v4.7.1是测试版，建议只使用正式版
+
+
+
+
+
+​    V2Ray可以想象为盒子，盒子有入口和出口（inbound和outbound），到盒子内后，会用自身机制（路由）决定从哪个口传出包来；这样的架构可以清晰体现数据包流向，方便确认配置位置
+
+​    inbounds和outbounds是inbound和outbound的集合，表示每一个V2Ray节点都可以有多个入口和出口
+
+​    V2Ray为客户端时，inbound接收来自浏览器数据，由outbound发到V2Ray服务器)；V2Ray为服务器时，inbound接收来自V2Ray客户端数据，由outbound发到Google等要访问的目标网站
+
+
+
+数据包流向：
+
+​    {浏览器} <--(socks)--> {V2Ray 客户端 inbound <-> V2Ray 客户端 outbound} <--(VMess)-->  {V2Ray 服务器 inbound <-> V2Ray 服务器 outbound} <--(Freedom)--> {目标网站}
+
+# 10 配置格式
+
+---
+description: "V2Ray和Shadowsocks一样，配置文件都用的JSON格式"
+---
+
+   V2Ray和Shadowsocks一样，配置文件都用的JSON格式
+
+
+
+​    JSON所有标点符号都要用半角符号（英文符号）
+
+​    所有字符串都要加双引号 " "，键是字符串，所以键也要加双引号，数字不用加双引号
+
+​    布尔类型也不用加双引号，布尔值只有两个就是 true 和 false，意思就是真（是）和假（否）
+
+​    对象没有顺序，即大括号 { } 括起来的内容顺序是怎么样都没关系
+
+​    v2.11开始，配置文件允许//和/* */注释，标准的JSON格式中没有
+
+# 11 VMess
+
+---
+description: "VMess协议基于时间认证，服务器和客户端的系统时间相差必须在90秒以内"
+---
+
+   VMess协议基于时间认证，服务器和客户端的系统时间相差必须在90秒以内
+
+
+
+
+
+
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20000,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0,                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+                "method": "aes-128-gcm",                    //vmess配合此加密协议速度最快
+                "password": "martlet121"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> uuidgen </mark>               #随机一个uuid，客户端要通过uuid来连接服务器
+
+6603eb89-d26e-46b2-a626-49e18e074a6e
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                 #修改配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20000,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0,                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+            "method": "aes-128-gcm",                     //vmess配合此加密协议速度最快
+            "password": "martlet121"
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                #修改配置后要重启生效
+
+[root@martlet121 ~]# <mark> netstat -an | grep 20000 </mark>                #查看端口监听
+
+tcp6       0      0 :::20000                :::*                    LISTEN
+
+[root@martlet121 ~]#
+
+
+
+# 12 Shadowsocks
+
+---
+description: "协议漏洞原因使Shadowsocks放弃OTA(一次认证)而使用AEAD，V2Ray的Shadowsocks已使用AEAD且兼容OTA，当method为aes-256-gcm、aes-128-gcm…"
+---
+
+   协议漏洞原因使Shadowsocks放弃OTA(一次认证)而使用AEAD，V2Ray的Shadowsocks已使用AEAD且兼容OTA，当method为aes-256-gcm、aes-128-gcm、chacha20-poly1305时就是使用的AEAD，使用AEAD时OTA失效
+
+​    Shadowsocks已经弃用simple-obfs，可使用基于V2Ray的新版混淆插件，也可使用V2Ray的Websocket/http2+TLS
+
+
+
+
+
+
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置代理使用的端口
+      "protocol": "socks",            //入口协议为SOCKS 5
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                 //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "45.76.177.113",                 //Shadowsocks服务器地址
+            "method": "aes-128-gcm",                 //Shadowsocks服务器加密方式
+            "ota": true,                //是否开启OTA，true为开启
+            "password": "martlet121",                  //Shadowsocks服务器密码
+            "port": 20000                      //Shadowsocks服务器监听端口号
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                 #修改配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20000,                 //服务端监听端口
+      "protocol": "shadowsocks",
+      "settings": {
+        "method": "aes-128-gcm",
+        "ota": true,                //是否开启OTA
+        "password": "martlet121"                    //连接服务端时认证密码
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                    #重启服务
+
+[root@martlet121 ~]# <mark> netstat -an | grep 20000 </mark>                  #查看端口监听
+
+tcp6       0      0 :::20000                :::*                    LISTEN
+
+[root@martlet121 ~]#
+
+# 13 DNS
+
+---
+description: "文件末尾的逗号，是大模块之间的分隔"
+---
+
+   文件末尾的逗号，是大模块之间的分隔
+
+
+
+![文章配图](<./files/13 DNS/1.png>)
+
+
+
+
+
+
+
+一、基础配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+ "dns": {
+   "servers": [
+     "https://223.5.5.5/dns-query",
+     "localhost"                       //使用系统的DNS配置解析ip，而不是V2ray直接跟DNS服务器通信，这个通信不受Routing等模块控制；默认不写DNS配置时，也是用的localhost，用系统本身DNS来解析
+   ]
+ },
+}
+```
+
+
+
+
+
+二、DNS分流
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+ "dns": {
+   "servers": [
+     {
+       "address": "114.114.114.114",
+       "port": 53,
+       "domains": [
+         "geosite:cn"                  //cn域名使用114查询
+       ],
+       "expectIPs": [
+         "geoip:cn"                   //查询的结果应该是国内地址，如果不是国内地址则进行下一个dns的查询
+       ]
+     },
+     {
+       "address": "8.8.8.8",
+       "port": 53,
+       "domains": [
+         "geosite:geolocation-!cn",                   //查询非cn域名，也就是国外域名，直接返回查询的IP结果
+         "geosite:speedtest",
+         "ext:h2y.dat:gfw"
+       ]
+     },
+     "1.1.1.1",
+     "localhost"                   //都未匹配时使用本地dns配置查询
+   ]
+ },
+}
+```
+
+
+
+
+
+三、服务端配置
+
+​    无需复杂配置，freedom的outbound在配置"domainStrategy"为"UseIP" | "UseIPv4" | "UseIPv6"的时候才会使用内置DNS，默认AsIs使用操作系统的DNS去解析和连接
+
+​    只有在客户端、服务端都使用DOH 协议（客户端使用https模式，服务端使用https+local模式）时，VPS出口上才不会出现传统的UDP DNS请求；可隐藏查询内容且防止DNS污染
+
+
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                   #修改配置文件
+
+```json
+{
+ "dns": {
+   "servers": [
+     "https+local://1.1.1.1/dns-query",                          //只在服务端使用DOHL服务地址（DNS over HTTPS），稳定的DOH提供商只有CloudFlare的1.1.1.1；客户端要使用的话只有阿里的https://223.5.5.5/dns-query，此时客户端会根据路由规则走
+     "localhost"
+   ]
+ },
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务
+
+# 14 日志
+
+---
+description: "文件末尾的逗号，是大模块之间的分隔"
+---
+
+   文件末尾的逗号，是大模块之间的分隔
+
+
+
+| 配置项   | 作用                                                         |
+| -------- | ------------------------------------------------------------ |
+| loglevel | 日志级别；debug：最详细的日志信息；用于软件调试；info：比较详细的日志信息，可看到V2Ray详细的连接信息；warning：警告信息，轻微的问题，大多是网络错误，推荐此级别；error：错误信息，比较严重的错误信息，会影响V2Ray正常运行；none：空，不记录任何信息 |
+| access   | 访问记录输出路径；""：输出至控制台即stdout；"none"：不输出任何信息；"/path/access.log"：输出到指定文件/path/access.log |
+| error    | 错误记录输出路径；""：输出至控制台即stdout；"none"：不输出任何信息；"/path/error.log"：输出到指定文件/path/error.log |
+
+
+
+
+
+
+
+一、客户端
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+"log": {
+    "loglevel": "info",                  //日志级别
+    "access": "C:\\v2ray\\access.log",               //Windows系统路径
+    "error": "C:\\v2ray\\error.log"
+  },
+```
+
+
+
+
+
+二、服务端
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                  #修改配置文件
+
+```json
+"log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access.log",               //Linux路径
+    "error": "/var/log/v2ray/error.log"
+  },
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                    #重启服务
+
+[root@martlet121 ~]# <mark> cat /var/log/v2ray/access.log </mark>                 #验证结果
+
+2024/08/16 10:54:57 175.152.31.167:50695 accepted tcp:www.google.com:443
+
+[root@martlet121 ~]# 
+
+
+
+# 15 国内路由直连
+
+---
+description: "路由routing的domainStrategy几种模式"
+---
+
+路由routing的domainStrategy几种模式
+
+​    AsIs：当终端请求一个域名时，进行路由里面的domain进行匹配，不管是否能匹配，直接按路由规则走；速度最快，但不精准
+
+​    IPIfNonMatch：当终端请求一个域名时，进行路由里面的domain进行匹配，若无法匹配到结果，则对这个域名进行DNS查询，用结果的IP地址再重新进行IP路由匹配
+
+​    IPOnDemand：当匹配时碰到任何基于IP的规则，将域名立即解析为IP进行匹配；速度最慢，但精准
+
+
+
+| 配置项            | 作用                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| protocol          | freedom：直连，配置此项的出口直接访问目标网站；blackhole：黑洞，拒绝所有连接；vmess：v2ray代理协议；shadowsocks：代理协议 |
+| domain:taobao.com | domain:表示所有子域名；*不是通配符的意思                     |
+| geosite:cn        | geosite:表示geosite.dat文件，cn表示里面的cn规则              |
+
+
+
+
+
+
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+"log": {
+    "loglevel": "warning",                  //日志级别
+    "access": "C:\\v2ray\\access.log",               //Windows系统路径
+    "error": "C:\\v2ray\\error.log"
+  },
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议,多出口场景，没有匹配到路由规则的项，默认都会走第一个出口
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 16823,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"             //如果要使用路由，一定要有tag，相当于出口别名，路由规则中通过tag调用
+    }    
+  ],
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "type": "field",                      //type格式是固定的
+        "outboundTag": "direct",                //匹配下面规则后，流量转发到tag为direct的出口
+        "domain": ["geosite:cn"]                //中国大陆主流网站域名；domain和ip的匹配不能出现在一个规则子项里，要像本例中分开匹配才行，本例是or的关系，否则他们就是and的关系，and的场景不符合实际场景
+      },
+      {
+        "type": "field",                    //type格式是固定的
+        "outboundTag": "direct",                //匹配下面规则后，流量转发到tag为direct的出口
+        "ip": [
+          "geoip:cn",            //中国大陆IP
+          "geoip:private"               //私有IP地址，路由器等
+        ]
+      }
+    ]
+  }
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> cat /usr/local/etc/v2ray/config.json </mark>                     #服务器端配置没有改变
+
+```json
+{
+
+"log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access.log",               //Linux路径
+    "error": "/var/log/v2ray/error.log"
+  },
+
+  "inbounds": [
+    {
+      "port": 16823,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]#
+
+# 16 网站过滤
+
+---
+description: "一、客户端配置"
+---
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "log": {
+    "loglevel": "warning",                  //日志级别
+    "access": "C:\\v2ray\\access.log",               //Windows系统路径
+    "error": "C:\\v2ray\\error.log"
+  },
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议,多出口场景，没有匹配到路由规则的项，默认都会走第一个出口
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 16823,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"             //如果要使用路由，一定要有tag，相当于出口别名，路由规则中通过tag调用
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "adblock"             //通过tag：adblock表示黑洞blackhole
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "domain": [
+          "tanx.com",
+          "googeadsserving.cn",
+          "baidu.com"              //需要拒绝的域名往里加就行，若一个域名同时出现在不同规则内，按从上往下顺序，第一个匹配的规则生效
+        ],
+        "type": "field",
+        "outboundTag": "adblock"           //使用黑洞出口
+      },
+      {
+        "domain": [
+          "amazon.com",
+          "microsoft.com",
+          "jd.com",
+          "youku.com",
+          "baidu.com"               //允许的域名加入到这里，但前面匹配过baidu了，所以这里加baidu没用
+        ],
+        "type": "field",
+        "outboundTag": "direct"              //使用直连出口
+      },
+      {
+        "type": "field",                    //type格式是固定的
+        "outboundTag": "direct",                  //匹配下面规则后，流量转发到tag为direct的出口
+        "domain": ["geosite:cn"]                    //中国大陆主流网站域名
+      },
+      {
+        "type": "field",                    //type格式是固定的
+        "outboundTag": "direct",                //匹配下面规则后，流量转发到tag为direct的出口
+        "ip": [
+          "geoip:cn",                //中国大陆IP
+          "geoip:private"             //私有IP地址，路由器等
+        ]
+      }
+    ]
+  }
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> cat /usr/local/etc/v2ray/config.json </mark>                     #服务器端配置没有改变
+
+```json
+{
+
+"log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access.log",               //Linux路径
+    "error": "/var/log/v2ray/error.log"
+  },
+
+  "inbounds": [
+    {
+      "port": 16823,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]#
+
+
+
+# 17 域名文件
+
+---
+description: "一、内置的域名文件"
+---
+
+一、内置的域名文件
+
+​    geosite.dat和geoip.dat文件内置了很多常见的网站，是官方自带的，在压缩包目录中
+
+```json
+      {
+        "type": "field",                    //type格式是固定的
+        "outboundTag": "direct",                  //匹配下面规则后，流量转发到tag为direct的出口
+        "domain": ["geosite:cn"]                    //中国大陆主流网站域名，geosite:表示geosite.dat文件，cn表示里面的cn规则
+      },
+```
+
+
+
+
+
+二、外置的域名文件
+
+​    第三方GUI客户端不支持自定义外置的域名文件
+
+​    官方外置文件：https://github.com/ToutyRater/V2Ray-SiteDAT/tree/master/geofiles 下载h2y.dat文件
+
+```json
+"rules":[
+    {
+        "type": "field",
+        "outboundTag": "block",           //拦截广告相关域名
+        "domain": [
+            "ext:h2y.dat:ad"               //ext表示使用外部文件；h2y.dat是具体的文件名；tag泛指标签，ad是常见的广告域名
+        ]
+    },
+    {
+        "type": "field",
+        "outboundTag": "proxy",            //被gfw屏蔽的域名走代理
+        "domain": [
+            "ext:h2y.dat:gfw"               //ext表示使用外部文件；h2y.dat是具体的文件名；tag泛指标签，gfw是常见的被gfw屏蔽的域名
+        ]
+    },
+    {
+        "type": "field",
+        "network":"tcp,udp",                //匹配剩余所有未匹配流量
+        "outboundTag": "direct"             //让剩余流量走直连；如果不想默认流量走第一个出口代理的话，就在这里设置让走直连，也就是未匹配gfw规则的流量都走直连
+    }
+]
+```
+
+
+
+# 18 禁用BT
+
+---
+description: "国外版权意识更强，下载盗版影音会导致vps被封，所有可直接禁用BT下载"
+---
+
+   国外版权意识更强，下载盗版影音会导致vps被封，所有可直接禁用BT下载
+
+
+
+
+
+
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "log": {
+    "loglevel": "warning",                  //日志级别
+    "access": "C:\\v2ray\\access.log",               //Windows系统路径
+    "error": "C:\\v2ray\\error.log"
+  },
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别BT协议再处理时必须开启
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",                  //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+        "udp": true
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议,多出口场景，没有匹配到路由规则的项，默认都会走第一个出口
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 16823,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"             //如果要使用路由，一定要有tag，相当于出口别名，路由规则中通过tag调用
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",                    //type格式是固定的
+        "outboundTag": "direct",                //匹配下面规则后，流量转发到tag为direct的出口
+        "protocol": [
+          "bittorrent"          //BT流量本地直接走直连
+        ]
+      }
+    ]
+  }
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                 #修改配置文件
+
+```json
+{
+
+"log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access.log",               //Linux路径
+    "error": "/var/log/v2ray/error.log"
+  },
+
+  "inbounds": [
+    {
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别BT协议再处理时必须开启
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "port": 16823,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",            //拒绝流量的出口
+      "settings": {},
+      "tag": "block"
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "block",              //转发到拒绝流量的出口，黑洞
+        "protocol": [
+          "bittorrent"                //识别bt流量
+        ]
+      }
+    ]
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                #重启服务生效
+
+# 2 安装V2Ray（Linux）
+
+---
+description: "V2Ray的验证包含时间，服务端和客户端时间相差必须在90s内；时区会自动转换，时间必须一致"
+---
+
+   V2Ray的验证包含时间，服务端和客户端时间相差必须在90s内；时区会自动转换，时间必须一致
+
+
+
+Linux64位安装包：
+
+   [v2ray-linux-64.zip](<./files/2 安装V2Ray（Linux）/v2ray-linux-64.zip>)
+
+   [v2ray-linux-64.zip.dgst](<./files/2 安装V2Ray（Linux）/v2ray-linux-64.zip.dgst>)
+
+安装脚本：
+
+   [install-release.sh](<./files/2 安装V2Ray（Linux）/install-release.sh>)
+
+源码：
+
+​    [v2ray-core-4.45.2.tar.gz](<./files/2 安装V2Ray（Linux）/v2ray-core-4.45.2.tar.gz>)
+
+
+
+
+
+
+
+一、基本配置
+
+​    要关闭防火墙，iptables有规则的话也要清空
+
+[root@martlet121 ~]# <mark> systemctl stop firewalld.service </mark>               #关闭防火墙
+
+[root@martlet121 ~]# <mark> systemctl disable firewalld.service </mark>                #禁止开机启动
+
+Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
+
+Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+
+[root@martlet121 ~]# <mark> setenforce 0 </mark>                    #关闭SELinux
+
+[root@martlet121 ~]# <mark> sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux </mark>                 #直接替换原文件内容中模式为关闭
+
+
+
+
+
+二、脚本安装
+
+[root@martlet121 ~]# <mark> date </mark>                 #查看时间；因为客户端是UTC+8的时区，显示时间是22点，所以是匹配的
+
+Sat May 18 14:11:19 UTC 2024
+
+[root@martlet121 ~]# <mark> bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh) </mark>                  #安装或更新V2Ray；对脚本使用-h参数可查看帮助
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100 22454  100 22454    0     0  52828      0 --:--:-- --:--:-- --:--:-- 52957
+
+info: Installing V2Ray v5.16.1 for x86_64
+
+Downloading V2Ray archive: https://github.com/v2fly/v2ray-core/releases/download/v5.16.1/v2ray-linux-64.zip
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100 14.2M  100 14.2M    0     0  5408k      0  0:00:02  0:00:02 --:--:-- 12.0M
+
+Downloading verification file for V2Ray archive: https://github.com/v2fly/v2ray-core/releases/download/v5.16.1/v2ray-linux-64.zip.dgst
+
+info: Extract the V2Ray package to /tmp/tmp.IPeVLxcRwQ and prepare it for installation.
+
+info: Systemd service files have been installed successfully!
+
+warning: The following are the actual parameters for the v2ray service startup.
+
+warning: Please make sure the configuration file path is correctly set.
+
+\~~~~~~~~~~~~~~~~
+
+[Unit]
+
+Description=V2Ray Service
+
+Documentation=https://www.v2fly.org/
+
+After=network.target nss-lookup.target
+
+[Service]
+
+User=nobody
+
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+
+NoNewPrivileges=true
+
+ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config.json
+
+Restart=on-failure
+
+RestartPreventExitStatus=23
+
+[Install]
+
+WantedBy=multi-user.target
+
+\# In case you have a good reason to do so, duplicate this file in the same directory and make your customizes there.
+
+\# Or all changes you made will be lost!  # Refer: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
+
+[Service]
+
+ExecStart=
+
+ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config.json
+
+\~~~~~~~~~~~~~~~~
+
+warning: The systemd version on the current operating system is too low.
+
+warning: Please consider to upgrade the systemd or the operating system.
+
+installed: /usr/local/bin/v2ray
+
+installed: /usr/local/share/v2ray/geoip.dat
+
+installed: /usr/local/share/v2ray/geosite.dat
+
+installed: /usr/local/etc/v2ray/config.json
+
+installed: /var/log/v2ray/
+
+installed: /var/log/v2ray/access.log
+
+installed: /var/log/v2ray/error.log
+
+installed: /etc/systemd/system/v2ray.service
+
+installed: /etc/systemd/system/v2ray@.service
+
+removed: /tmp/tmp.IPeVLxcRwQ
+
+info: V2Ray v5.16.1 is installed.
+
+You may need to execute a command to remove dependent software: yum remove curl unzip
+
+Please execute the command: systemctl enable v2ray; systemctl start v2ray
+
+[root@martlet121 ~]# <mark> systemctl start v2ray </mark>              #启动v2ray
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray </mark>              #加入开机自启动
+
+Created symlink from /etc/systemd/system/multi-user.target.wants/v2ray.service to /etc/systemd/system/v2ray.service.
+
+[root@martlet121 ~]# <mark> systemctl status v2ray </mark>                   #查看运行状态
+
+● v2ray.service - V2Ray Service
+
+   Loaded: loaded (/etc/systemd/system/v2ray.service; enabled; vendor preset: disabled)
+
+  Drop-In: /etc/systemd/system/v2ray.service.d
+
+​           └─10-donot_touch_single_conf.conf
+
+   Active: active (running) since Sat 2024-05-18 14:23:28 UTC; 13min ago
+
+​     Docs: https://www.v2fly.org/
+
+ Main PID: 1806 (v2ray)
+
+   CGroup: /system.slice/v2ray.service
+
+​           └─1806 /usr/local/bin/v2ray run -config /usr/local/etc/v2ray/confi...
+
+May 18 14:23:28 martlet121 systemd[1]: Started V2Ray Service.
+
+May 18 14:23:29 martlet121 v2ray[1806]: V2Ray 5.16.1 (V2Fly, a community-driv...4)
+
+May 18 14:23:29 martlet121 v2ray[1806]: A unified platform for anti-censorship.
+
+May 18 14:23:29 martlet121 v2ray[1806]: 2024/05/18 14:23:29 [Warning] V2Ray 5...ed
+
+Hint: Some lines were ellipsized, use -l to show in full.
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、脚本+本地文件安装，适合无法访问外网下载安装包的方式
+
+[root@martlet121 ~]# <mark> ll </mark>              #将从仓库下载的安装包及脚本上传到本地
+
+-rw-r--r--. 1 root root    22454  8月 22 22:43 install-release.sh
+
+-rw-r--r--. 1 root root 12486240  8月 22 22:43 v2ray-linux-64.zip
+
+[root@martlet121 ~]# <mark> bash install-release.sh --local v2ray-linux-64.zip </mark>                   #指定本地文件进行安装
+
+warn: Install V2Ray from a local file, but still need to make sure the network is available.
+
+warn: Please make sure the file is valid because we cannot confirm it. (Press any key) ...
+
+info: Extract the V2Ray package to /tmp/tmp.z3A9iDkE42 and prepare it for installation.
+
+info: Systemd service files have been installed successfully!
+
+warning: The following are the actual parameters for the v2ray service startup.
+
+warning: Please make sure the configuration file path is correctly set.
+
+\~~~~~~~~~~~~~~~~
+
+[Unit]
+
+Description=V2Ray Service
+
+Documentation=https://www.v2fly.org/
+
+After=network.target nss-lookup.target
+
+[Service]
+
+User=nobody
+
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+
+NoNewPrivileges=true
+
+ExecStart=/usr/local/bin/v2ray -config /usr/local/etc/v2ray/config.json
+
+Restart=on-failure
+
+RestartPreventExitStatus=23
+
+[Install]
+
+WantedBy=multi-user.target
+
+\# In case you have a good reason to do so, duplicate this file in the same directory and make your customizes there.
+
+\# Or all changes you made will be lost!  # Refer: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
+
+[Service]
+
+ExecStart=
+
+ExecStart=/usr/local/bin/v2ray -config /usr/local/etc/v2ray/config.json
+
+\~~~~~~~~~~~~~~~~
+
+warning: The systemd version on the current operating system is too low.
+
+warning: Please consider to upgrade the systemd or the operating system.
+
+installed: /usr/local/bin/v2ray
+
+installed: /usr/local/bin/v2ctl
+
+installed: /usr/local/share/v2ray/geoip.dat
+
+installed: /usr/local/share/v2ray/geosite.dat
+
+installed: /etc/systemd/system/v2ray.service
+
+installed: /etc/systemd/system/v2ray@.service
+
+removed: /tmp/tmp.z3A9iDkE42
+
+info: V2Ray v4.45.2 is installed.
+
+You may need to execute a command to remove dependent software: yum remove curl unzip
+
+Please execute the command: systemctl enable v2ray; systemctl start v2ray
+
+[root@martlet121 ~]# <mark> systemctl start v2ray </mark>               #启动v2ray
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray </mark>              #加入开机自启动
+
+Created symlink from /etc/systemd/system/multi-user.target.wants/v2ray.service to /etc/systemd/system/v2ray.service.
+
+[root@martlet121 ~]#
+
+# 20 TLS
+
+---
+description: "v1.19版本开始支持TLS（传输层安全）"
+---
+
+   v1.19版本开始支持TLS（传输层安全）
+
+
+
+​    生成证书需要有个域名，使用证书认证机构Let's Encrypt可生成3个月的免费证书
+
+​    生成证书项目地址：https://github.com/Neilpang/acme.sh
+
+​    帮助文档：https://github.com/Neilpang/acme.sh/wiki/Options-and-Params
+
+[acme.sh-master.zip](<./files/20 TLS/acme.sh-master.zip>)
+
+
+
+​    ECC 证书（内置公钥是 ECDSA 公钥）：同等长度ECC比RSA更安全，但Android 4.x以下和Windows XP不支持，建议使用此种方式
+
+​    RSA 证书（内置 RSA 公钥）：在安全性上256位的ECC证书等同于3072位的RSA证书
+
+
+
+
+
+
+
+一、申请证书
+
+​    前提是有自己的证书，并添加解析到服务器，已提前设置好
+
+[root@martlet121 ~]# <mark> dnf -y install openssl cron curl </mark>                 #安装依赖包
+
+[root@martlet121 ~]# <mark> dnf -y install socat </mark>                #安装依赖包
+
+[root@martlet121 ~]# <mark> curl https://get.acme.sh | sh </mark>                #安装生成证书的脚本命令
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  1032    0  1032    0     0  21500      0 --:--:-- --:--:-- --:--:-- 21500
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  219k  100  219k    0     0   567k      0 --:--:-- --:--:-- --:--:--  566k
+
+[Sat Aug 17 10:45:47 AM UTC 2024] Installing from online archive.
+
+[Sat Aug 17 10:45:47 AM UTC 2024] Downloading https://github.com/acmesh-official/acme.sh/archive/master.tar.gz
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Extracting master.tar.gz
+
+[Sat Aug 17 10:45:48 AM UTC 2024] It is recommended to install socat first.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] We use socat for the standalone server, which is used for standalone mode.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] If you don't want to use standalone mode, you may ignore this warning.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing to /root/.acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installed to /root/.acme.sh/acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.bashrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Close and reopen your terminal to start using acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.cshrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.tcshrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing cron job
+
+no crontab for root
+
+no crontab for root
+
+[Sat Aug 17 10:45:48 AM UTC 2024] bash has been found. Changing the shebang to use bash as preferred.
+
+[Sat Aug 17 10:45:54 AM UTC 2024] OK
+
+[Sat Aug 17 10:45:54 AM UTC 2024] Install success!
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --register-account -m hhh@martlet121.cn </mark>                     #注册账号
+
+[Sat Aug 17 10:53:42 AM UTC 2024] No EAB credentials found for ZeroSSL, let's obtain them
+
+[Sat Aug 17 10:53:44 AM UTC 2024] Registering account: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 10:53:46 AM UTC 2024] Registered
+
+[Sat Aug 17 10:53:46 AM UTC 2024] ACCOUNT_THUMBPRINT='oYiQiff5rI-SDI6sG_sMEWUot9oKdhIHKds3XAwzg70'
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --issue -d vpn.martlet121.cn --standalone --keylength ec-256 --force </mark>                   #申请证书，默认有效期只有3个月
+
+| 参数        | 作用                                                         |
+| ----------- | ------------------------------------------------------------ |
+| --keylength | 密钥长度；字段中有ec表示生成ECC证书，否则就是RSA证书可取值ec-256、ec-384、2048、3072、4096、8192 |
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Standalone mode.
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Creating domain key
+
+[Sat Aug 17 10:55:05 AM UTC 2024] The domain key is here: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Single domain='vpn.martlet121.cn'
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Verifying: vpn.martlet121.cn
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Standalone mode server
+
+[Sat Aug 17 10:55:11 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Success
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Verification finished, beginning signing.
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Let's finalize the order.
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A/finalize'
+
+[Sat Aug 17 10:55:27 AM UTC 2024] Order status is 'processing', let's sleep and retry.
+
+[Sat Aug 17 10:55:27 AM UTC 2024] Sleeping for 15 seconds then retrying
+
+[Sat Aug 17 10:55:43 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A
+
+[Sat Aug 17 10:55:45 AM UTC 2024] Downloading cert.
+
+[Sat Aug 17 10:55:45 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/bDv0dVhKrnmpWcJ7bqP1Wg'
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Cert success.
+
+-----BEGIN CERTIFICATE-----
+
+MIIEATCCA4agAwIBAgIQDfumEqwE3hfIco3VZpbboTAKBggqhkjOPQQDAzBLMQsw
+
+CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF
+
+Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx
+
+NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C
+
+AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj
+
+TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnswggJ3MB8GA1UdIwQY
+
+MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq
+
+ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU
+
+BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl
+
+MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw
+
+gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0
+
+LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG
+
+CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBAYK
+
+KwYBBAHWeQIEAgSB9QSB8gDwAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m
+
+Z0xaOnQAAAGRX/pd5wAABAMARzBFAiEA8bbdYTbhTPvEX4fzLnBUA/W+NpVQh8Ft
+
+gik6Xbc1lEkCIDshfpAdGOSiNFcZXemNfC22N0bhzsGM4ifclJy+C3daAHYAPxdL
+
+T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRX/pdxgAABAMARzBFAiEA
+
+uVU3KVM6c89ONS4l39jFjoMSj8R1qIRBeH7rLCstcfsCIHi38lIkzVsZvm2DYye/
+
+2JA5npZgHGPBp/uRSSe8d6PYMBoGA1UdEQQTMBGCD3Zwbi53dXp1bmlhby5jbjAK
+
+BggqhkjOPQQDAwNpADBmAjEAt0irr5o8AGd2+DfxyrEmtN38Ycfv+THN2Pt9ttDb
+
+w50zUql4zzs1K7Tw0OmndQZaAjEA/KbWRLlw7uWTjJjsOez0zZrG+kAljjHSBLYe
+
+E6Vn6MgiflwBqts2WV4G4ou/qm9t
+
+-----END CERTIFICATE-----
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 10:55:47 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer
+
+[Sat Aug 17 10:55:47 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --renew -d vpn.martlet121.cn --force --ecc </mark>                     #acme.sh脚本会每60天自动更新证书，也可以通过当前命令在90天内进行更新
+
+[Sat Aug 17 11:01:28 AM UTC 2024] Renewing: 'vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:28 AM UTC 2024] Renewing using Le_API=https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Standalone mode.
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Single domain='vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Verifying: vpn.martlet121.cn
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Standalone mode server
+
+[Sat Aug 17 11:01:41 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Success
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Verification finished, beginning signing.
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Let's finalize the order.
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg/finalize'
+
+[Sat Aug 17 11:01:47 AM UTC 2024] Order status is 'processing', let's sleep and retry.
+
+[Sat Aug 17 11:01:47 AM UTC 2024] Sleeping for 15 seconds then retrying
+
+[Sat Aug 17 11:02:03 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg
+
+[Sat Aug 17 11:02:04 AM UTC 2024] Downloading cert.
+
+[Sat Aug 17 11:02:04 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/9q6qQObIwz4RVA_t1MDVnw'
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Cert success.
+
+-----BEGIN CERTIFICATE-----
+
+MIIEAjCCA4egAwIBAgIQG8PeoUgSD2/zAsjnlF7alDAKBggqhkjOPQQDAzBLMQsw
+
+CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF
+
+Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx
+
+NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C
+
+AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj
+
+TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnwwggJ4MB8GA1UdIwQY
+
+MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq
+
+ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU
+
+BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl
+
+MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw
+
+gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0
+
+LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG
+
+CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBQYK
+
+KwYBBAHWeQIEAgSB9gSB8wDxAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m
+
+Z0xaOnQAAAGRYAAm7gAABAMARzBFAiEA9CDmTq8zc4Hu0sbuWWfCgBKPC80OeH9p
+
+mNvfvlTNjE0CIEqb+nc4Vz3Ij2eFtRCE/2EGHhcX1irxCZ/xzNM0aWGvAHcAPxdL
+
+T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRYAAmmAAABAMASDBGAiEA
+
+6635N34kA10nuxn9QRi0lLRTl2CkTHel77IV9QwmXQ4CIQDpARU+kesr3OFVOr2N
+
+Drex8pzqzzZpiA6zWVIy2v54rjAaBgNVHREEEzARgg92cG4ud3V6dW5pYW8uY24w
+
+CgYIKoZIzj0EAwMDaQAwZgIxALxJ/kPXTGb1lw92i9iDp//lsV0uDiABJGftP8VI
+
+k6We+ofZq940oSlFmQRxdsRvCgIxAMd+tHZ1/bFcJitLT2pWDeM/f+W9pHq6vvLz
+
+wnrVy4efeHfAfbCUDFV5kyjDvbRmYg==
+
+-----END CERTIFICATE-----
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 11:02:06 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer
+
+[Sat Aug 17 11:02:06 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --installcert -d vpn.martlet121.cn --ecc --fullchain-file /usr/local/etc/v2ray/v2ray.crt --key-file /usr/local/etc/v2ray/v2ray.key </mark>                      #安装证书和密钥到v2ray的配置文件同级目录，v2ray.key是私钥文件，不能泄露
+
+[Sat Aug 17 11:05:57 AM UTC 2024] Installing key to: /usr/local/etc/v2ray/v2ray.key
+
+[Sat Aug 17 11:05:57 AM UTC 2024] Installing full chain to: /usr/local/etc/v2ray/v2ray.crt
+
+[root@martlet121 ~]# <mark> chmod 777 /usr/local/etc/v2ray/v2ray.* </mark>                       #修改证书文件权限
+
+
+
+
+
+二、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                      #修改服务器侧配置文件
+
+```json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access.log",               //Linux路径
+    "error": "/var/log/v2ray/error.log"
+  },
+  "inbounds": [
+    {
+      "port": 443,             //建议使用443端口
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",             //security要设置为tls才会启用TLS
+        "tlsSettings": {
+          "certificates": [
+            {
+              "certificateFile": "/usr/local/etc/v2ray/v2ray.crt",                //证书文件
+              "keyFile": "/usr/local/etc/v2ray/v2ray.key"                   //密钥文件
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ps -ef | grep v2ray </mark>                    #默认是nobody账号运行进程，不给证书文件加其他人允许访问的权限就启动不了程序
+
+nobody     65537       1  0 11:25 ?        00:00:00 /usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config.json
+
+root       65553    4838  0 11:26 pts/0    00:00:00 grep --color=auto v2ray
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",                //tls需要域名，所以这里应该填自己的域名
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls"            //客户端的security也要设置为tls
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+四、验证SSL是否生效
+
+​    在线网站：https://www.ssllabs.com/ssltest/index.html
+
+​    只有在使用443端口时才能用上面网站验证，网站没有提供自定义端口的选项
+
+​    Trusted为Yes表示证书可信
+
+
+
+# 21 TCP + TLS + Web
+
+---
+description: "HaProxy监听443端口，处理TLS之后，将HTTP流量交由Web服务器处理，非HTTP流量交由V2Ray按Vmess处理"
+---
+
+   HaProxy监听443端口，处理TLS之后，将HTTP流量交由Web服务器处理，非HTTP流量交由V2Ray按Vmess处理
+
+​    主动侦测会得到正常HTTP网站响应，方便伪装，被广泛用于反审查
+
+​    Vmess + TCP + TLS（当前方法）延迟低于Vmess + WSS
+
+
+
+该方法的隐蔽性是否比wss低？
+
+​    中间人看来，该方法在建立 TLS 连接后，比 wss 少一次握手，即 TLS 建立后直接发送请求并获得响应，该行为是符合正常的 HTTPS 请求的。
+
+​    主动探测时，如 TLS 建立后发送 HTTP 请求，则被发给 Web 服务器按正常 HTTP 请求处理。如发送非 HTTP 请求，会被发给 V2Ray 处理，如 Vmess 认证失败，连接将被关闭，向 HTTPS 服务器发送非 HTTPS 请求，连接被关闭是正常的行为。
+
+
+
+
+
+
+
+一、配置haproxy
+
+[root@martlet121 ~]# <mark> dnf -y install haproxy </mark>                        #hapoxy要大于1.8.15，openssl版本大于1.1.1，才能支持TLS1.3
+
+[root@martlet121 ~]# <mark> cd /usr/local/etc/v2ray/ </mark>                    #进入保存了证书的目录，证书的生成参考TLS章节
+
+[root@martlet121 v2ray]# <mark> cat v2ray.crt v2ray.key > vpn.martlet121.cn.pem </mark>                          #HaProxy的证书和密钥可以放在同一个文件
+
+[root@martlet121 v2ray]# <mark> chmod 777 vpn.martlet121.cn.pem </mark>                       #给新的证书文件加权限
+
+[root@martlet121 v2ray]# <mark> cd </mark>                        #回家目录
+
+[root@martlet121 ~]# <mark> vim /etc/haproxy/haproxy.cfg </mark>                          #修改主配置文件
+
+```
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    #stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+    ca-base /etc/ssl/certs
+    crt-base /etc/ssl/private
+    #仅使用支持FS和AEAD的加密套件
+    ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+    ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+    ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11                        #禁用TLS 1.2之前的TLS
+    tune.ssl.default-dh-param 2048
+defaults
+    log global
+    mode tcp                        #使用tcp模式
+    option dontlognull
+    timeout connect 5s
+    timeout client  300s                       #空闲连接等待时间，这里使用与V2Ray默认connIdle一致的300s
+    timeout server  300s
+frontend tls-in
+    bind *:443 tfo ssl crt /usr/local/etc/v2ray/vpn.martlet121.cn.pem                            #监听443 tls，tfo根据自身情况决定是否开启，修改证书目录
+    tcp-request inspect-delay 5s
+    tcp-request content accept if HTTP
+    use_backend web if HTTP                       #将HTTP流量发给web后端
+    default_backend vmess                          #将其他流量发给vmess后端
+backend web
+    server server1 127.0.0.1:8080
+backend vmess
+    server server1 127.0.0.1:20001
+```
+
+[root@martlet121 ~]# <mark> systemctl restart haproxy </mark>                          #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 443 </mark>                      #查看端口监听
+
+tcp   LISTEN 0      4096                                      0.0.0.0:443                           0.0.0.0:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、配置nginx
+
+[root@martlet121 ~]# <mark> dnf -y install nginx </mark>                         #安装nginx
+
+[root@martlet121 ~]# <mark> vim /etc/nginx/nginx.conf </mark>                          #修改主配置文件
+
+```
+ 38     server {
+ 39         listen       8080;                     #修改监听端口
+ 40         listen       [::]:8080;
+ 41         server_name  vpn.martlet121.cn;                   #修改域名
+ 42         root         /usr/share/nginx/html;
+ 54     }
+```
+
+[root@martlet121 ~]# <mark> systemctl restart nginx </mark>                          #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 8080 </mark>                     #查看端口监听
+
+tcp   LISTEN   0      511                                       0.0.0.0:8080                0.0.0.0:*
+
+tcp   LISTEN   0      511                                          [::]:8080                   [::]:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、配置v2ray服务端
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                          #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20001,   
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                          #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                     #查看端口监听
+
+tcp   LISTEN    0      4096                                            *:20001                     *:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+四、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",                //tls需要域名，所以这里应该填自己的域名
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls"            //客户端的security也要设置为tls
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+五、验证
+
+​    此时客户端代理正常，未通过代理的流量测试（直接访问域名），能看到正常的网站页面
+
+
+
+# 22 TCP + TLS分流器（TCP）
+
+---
+description: "TCP + TLS + Web的简易实现，不用关心HaProxy和OpenSSL的版本，不用自己申请证书，不用安装Web服务器"
+---
+
+   TCP + TLS + Web的简易实现，不用关心HaProxy和OpenSSL的版本，不用自己申请证书，不用安装Web服务器
+
+​    TLS 分流器项目：https://github.com/liberal-boy/tls-shunt-proxy#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85
+
+
+
+
+
+
+
+一、安装配置TLS 分流器
+
+[root@martlet121 ~]# <mark> bash <(curl -L -s https://raw.githubusercontent.com/liberal-boy/tls-shunt-proxy/master/dist/install.sh) </mark>                 #下载并安装分流器
+
+https://github.com/liberal-boy/tls-shunt-proxy/releases/download/0.8.1/tls-shunt-proxy.zip
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100 4871k  100 4871k    0     0  5758k      0 --:--:-- --:--:-- --:--:-- 15.7M
+
+Archive:  /tmp/tls-shunt-proxy/tls-shunt-proxy.zip
+
+  inflating: /usr/local/bin/tls-shunt-proxy
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100   494  100   494    0     0   1159      0 --:--:-- --:--:-- --:--:--  1156
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  3965  100  3965    0     0  12125      0 --:--:-- --:--:-- --:--:-- 12162
+
+[root@martlet121 ~]# <mark> mkdir -p /var/www/html </mark>                #创建网站根目录
+
+[root@martlet121 ~]# <mark> echo "test" > /var/www/html/index.html </mark>             #创建测试文件
+
+[root@martlet121 ~]# <mark> vim /etc/tls-shunt-proxy/config.yaml </mark>                          #修改主配置文件
+
+```
+listen: 0.0.0.0:443
+vhosts:
+  - name: vpn.martlet121.cn                  #网站域名
+    tlsoffloading: true
+    managedcert: true                 #自动申请证书
+    alpn: h2,http/1.1
+    protocols: tls12,tls13                  #如果不需要兼容tls12, 可改为tls13
+    http:
+      handler: fileServer
+      args: /var/www/html                  #静态网站目录
+    default:
+      handler: proxyPass
+      args: 127.0.0.1:20001                 #其他流量转发给V2Ray
+```
+
+[root@martlet121 ~]# <mark> systemctl restart tls-shunt-proxy </mark>              #重启服务生效
+
+[root@martlet121 ~]# <mark> ss -an |grep 443 </mark>                        #查看端口监听
+
+tcp   LISTEN   0      4096                                            *:443                               *:*
+
+[root@martlet121 ~]# 
+
+
+
+
+
+二、配置v2ray服务端
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                          #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20001,   
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                          #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                     #查看端口监听
+
+tcp   LISTEN    0      4096                                            *:20001                     *:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",                //tls需要域名，所以这里应该填自己的域名
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls"            //客户端的security也要设置为tls
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+四、验证
+
+​    此时客户端代理正常，未通过代理的流量测试（直接访问域名），能看到正常的网站页面
+
+
+
+# 23 TCP + TLS分流器（Socket）
+
+---
+description: "相较于TCP方式，Domain Socket更高效，速度超过50M后会有比较明显的性能差距"
+---
+
+   相较于TCP方式，Domain Socket更高效，速度超过50M后会有比较明显的性能差距
+
+​    客户端连服务器仍要使用TCP，分流器与服务端V2Ray连接才能用Domain Socket，下图示意
+
+​                        TLS over TCP                 DS
+
+客户端 V2Ray --------------- TLS 分流器 -------- 服务端 V2Ray
+
+
+
+<mark> 未配置成功 </mark> 
+
+
+
+
+
+
+
+一、安装配置TLS 分流器
+
+[root@martlet121 ~]# <mark> bash <(curl -L -s https://raw.githubusercontent.com/liberal-boy/tls-shunt-proxy/master/dist/install.sh) </mark>                 #下载并安装分流器
+
+https://github.com/liberal-boy/tls-shunt-proxy/releases/download/0.8.1/tls-shunt-proxy.zip
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+
+100 4871k  100 4871k    0     0  5758k      0 --:--:-- --:--:-- --:--:-- 15.7M
+
+Archive:  /tmp/tls-shunt-proxy/tls-shunt-proxy.zip
+
+  inflating: /usr/local/bin/tls-shunt-proxy
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100   494  100   494    0     0   1159      0 --:--:-- --:--:-- --:--:--  1156
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  3965  100  3965    0     0  12125      0 --:--:-- --:--:-- --:--:-- 12162
+
+[root@martlet121 ~]# <mark> mkdir -p /var/www/html </mark>                #创建网站根目录
+
+[root@martlet121 ~]# <mark> echo "test" > /var/www/html/index.html </mark>             #创建测试文件
+
+[root@martlet121 ~]# <mark> vim /etc/tls-shunt-proxy/config.yaml </mark>                           #修改主配置文件
+
+```
+listen: 0.0.0.0:443
+vhosts:
+  - name: vpn.martlet121.cn                  #网站域名
+    tlsoffloading: true
+    managedcert: true                 #自动申请证书
+    alpn: h2,http/1.1
+    protocols: tls12,tls13                  #如果不需要兼容tls12, 可改为tls13
+    http:
+      handler: fileServer
+      args: /var/www/html                  #静态网站目录
+    default:
+      handler: proxyPass
+      args: unix:@v2ray.sock                 #其他流量转发给V2Ray
+```
+
+[root@martlet121 ~]# <mark> systemctl restart tls-shunt-proxy </mark>              #重启服务生效
+
+[root@martlet121 ~]# <mark> ss -an |grep 443 </mark>                       #查看端口监听
+
+tcp   LISTEN   0      4096                                            *:443                               *:*
+
+[root@martlet121 ~]# 
+
+
+
+
+
+二、配置v2ray服务端
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                           #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20001,   
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ds",
+                "dsSettings": {
+                "path": "@v2ray.sock",                  //调用前面的v2ray.sock
+                "abstract": true
+        }
+
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                          #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                      #查看端口监听
+
+tcp   LISTEN    0      4096                                            *:20001                     *:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",                //tls需要域名，所以这里应该填自己的域名
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls"            //客户端的security也要设置为tls
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+四、验证
+
+​    未配置成功，访问失败
+
+# 25 WebSocket
+
+---
+description: "不推荐，比tcp性能较差；和其他协议组合除外"
+---
+
+   不推荐，比tcp性能较差；和其他协议组合除外
+
+
+
+
+
+
+
+一、配置v2ray服务端
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                          #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20001,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network":"ws"                   //修改这里即可
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务生效配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                   #查看端口监听
+
+tcp   LISTEN 0      4096                                            *:20001                     *:*
+
+[root@martlet121 ~]# 
+
+
+
+
+
+二、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",
+            "port": 20001,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings":{
+        "network":"ws"               //修改对接类型
+      }
+    }
+  ]
+}
+```
+
+
+
+# 26 WebSocket + TLS + Web
+
+---
+description: "通过nginx转发流量，由nginx作为前台隐藏v2ray；TLS可对流量进行加密；WebSocket连接nginx"
+---
+
+   通过nginx转发流量，由nginx作为前台隐藏v2ray；TLS可对流量进行加密；WebSocket连接nginx
+
+
+
+
+
+
+
+一、申请证书
+
+​    前提是有自己的证书，并添加解析到服务器，已提前设置好
+
+[root@martlet121 ~]# <mark> dnf -y install openssl cron curl </mark>                #安装依赖包
+
+[root@martlet121 ~]# <mark> dnf -y install socat </mark>                #安装依赖包
+
+[root@martlet121 ~]# <mark> curl https://get.acme.sh | sh </mark>               #安装生成证书的脚本命令
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  1032    0  1032    0     0  21500      0 --:--:-- --:--:-- --:--:-- 21500
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  219k  100  219k    0     0   567k      0 --:--:-- --:--:-- --:--:--  566k
+
+[Sat Aug 17 10:45:47 AM UTC 2024] Installing from online archive.
+
+[Sat Aug 17 10:45:47 AM UTC 2024] Downloading https://github.com/acmesh-official/acme.sh/archive/master.tar.gz
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Extracting master.tar.gz
+
+[Sat Aug 17 10:45:48 AM UTC 2024] It is recommended to install socat first.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] We use socat for the standalone server, which is used for standalone mode.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] If you don't want to use standalone mode, you may ignore this warning.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing to /root/.acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installed to /root/.acme.sh/acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.bashrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Close and reopen your terminal to start using acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.cshrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.tcshrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing cron job
+
+no crontab for root
+
+no crontab for root
+
+[Sat Aug 17 10:45:48 AM UTC 2024] bash has been found. Changing the shebang to use bash as preferred.
+
+[Sat Aug 17 10:45:54 AM UTC 2024] OK
+
+[Sat Aug 17 10:45:54 AM UTC 2024] Install success!
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --register-account -m hhh@martlet121.cn </mark>                     #注册账号
+
+[Sat Aug 17 10:53:42 AM UTC 2024] No EAB credentials found for ZeroSSL, let's obtain them
+
+[Sat Aug 17 10:53:44 AM UTC 2024] Registering account: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 10:53:46 AM UTC 2024] Registered
+
+[Sat Aug 17 10:53:46 AM UTC 2024] ACCOUNT_THUMBPRINT='oYiQiff5rI-SDI6sG_sMEWUot9oKdhIHKds3XAwzg70'
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --issue -d vpn.martlet121.cn --standalone --keylength ec-256 --force </mark>                  #申请证书，默认有效期只有3个月
+
+| 参数        | 作用                                                         |
+| ----------- | ------------------------------------------------------------ |
+| --keylength | 密钥长度；字段中有ec表示生成ECC证书，否则就是RSA证书可取值ec-256、ec-384、2048、3072、4096、8192 |
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Standalone mode.
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Creating domain key
+
+[Sat Aug 17 10:55:05 AM UTC 2024] The domain key is here: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Single domain='vpn.martlet121.cn'
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Verifying: vpn.martlet121.cn
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Standalone mode server
+
+[Sat Aug 17 10:55:11 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Success
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Verification finished, beginning signing.
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Let's finalize the order.
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A/finalize'
+
+[Sat Aug 17 10:55:27 AM UTC 2024] Order status is 'processing', let's sleep and retry.
+
+[Sat Aug 17 10:55:27 AM UTC 2024] Sleeping for 15 seconds then retrying
+
+[Sat Aug 17 10:55:43 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A
+
+[Sat Aug 17 10:55:45 AM UTC 2024] Downloading cert.
+
+[Sat Aug 17 10:55:45 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/bDv0dVhKrnmpWcJ7bqP1Wg'
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Cert success.
+
+-----BEGIN CERTIFICATE-----
+
+MIIEATCCA4agAwIBAgIQDfumEqwE3hfIco3VZpbboTAKBggqhkjOPQQDAzBLMQsw
+
+CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF
+
+Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx
+
+NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C
+
+AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj
+
+TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnswggJ3MB8GA1UdIwQY
+
+MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq
+
+ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU
+
+BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl
+
+MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw
+
+gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0
+
+LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG
+
+CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBAYK
+
+KwYBBAHWeQIEAgSB9QSB8gDwAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m
+
+Z0xaOnQAAAGRX/pd5wAABAMARzBFAiEA8bbdYTbhTPvEX4fzLnBUA/W+NpVQh8Ft
+
+gik6Xbc1lEkCIDshfpAdGOSiNFcZXemNfC22N0bhzsGM4ifclJy+C3daAHYAPxdL
+
+T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRX/pdxgAABAMARzBFAiEA
+
+uVU3KVM6c89ONS4l39jFjoMSj8R1qIRBeH7rLCstcfsCIHi38lIkzVsZvm2DYye/
+
+2JA5npZgHGPBp/uRSSe8d6PYMBoGA1UdEQQTMBGCD3Zwbi53dXp1bmlhby5jbjAK
+
+BggqhkjOPQQDAwNpADBmAjEAt0irr5o8AGd2+DfxyrEmtN38Ycfv+THN2Pt9ttDb
+
+w50zUql4zzs1K7Tw0OmndQZaAjEA/KbWRLlw7uWTjJjsOez0zZrG+kAljjHSBLYe
+
+E6Vn6MgiflwBqts2WV4G4ou/qm9t
+
+-----END CERTIFICATE-----
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 10:55:47 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer
+
+[Sat Aug 17 10:55:47 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --renew -d vpn.martlet121.cn --force --ecc </mark>                     #acme.sh脚本会每60天自动更新证书，也可以通过当前命令在90天内进行更新
+
+[Sat Aug 17 11:01:28 AM UTC 2024] Renewing: 'vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:28 AM UTC 2024] Renewing using Le_API=https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Standalone mode.
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Single domain='vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Verifying: vpn.martlet121.cn
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Standalone mode server
+
+[Sat Aug 17 11:01:41 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Success
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Verification finished, beginning signing.
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Let's finalize the order.
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg/finalize'
+
+[Sat Aug 17 11:01:47 AM UTC 2024] Order status is 'processing', let's sleep and retry.
+
+[Sat Aug 17 11:01:47 AM UTC 2024] Sleeping for 15 seconds then retrying
+
+[Sat Aug 17 11:02:03 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg
+
+[Sat Aug 17 11:02:04 AM UTC 2024] Downloading cert.
+
+[Sat Aug 17 11:02:04 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/9q6qQObIwz4RVA_t1MDVnw'
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Cert success.
+
+-----BEGIN CERTIFICATE-----
+
+MIIEAjCCA4egAwIBAgIQG8PeoUgSD2/zAsjnlF7alDAKBggqhkjOPQQDAzBLMQsw
+
+CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF
+
+Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx
+
+NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C
+
+AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj
+
+TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnwwggJ4MB8GA1UdIwQY
+
+MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq
+
+ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU
+
+BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl
+
+MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw
+
+gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0
+
+LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG
+
+CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBQYK
+
+KwYBBAHWeQIEAgSB9gSB8wDxAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m
+
+Z0xaOnQAAAGRYAAm7gAABAMARzBFAiEA9CDmTq8zc4Hu0sbuWWfCgBKPC80OeH9p
+
+mNvfvlTNjE0CIEqb+nc4Vz3Ij2eFtRCE/2EGHhcX1irxCZ/xzNM0aWGvAHcAPxdL
+
+T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRYAAmmAAABAMASDBGAiEA
+
+6635N34kA10nuxn9QRi0lLRTl2CkTHel77IV9QwmXQ4CIQDpARU+kesr3OFVOr2N
+
+Drex8pzqzzZpiA6zWVIy2v54rjAaBgNVHREEEzARgg92cG4ud3V6dW5pYW8uY24w
+
+CgYIKoZIzj0EAwMDaQAwZgIxALxJ/kPXTGb1lw92i9iDp//lsV0uDiABJGftP8VI
+
+k6We+ofZq940oSlFmQRxdsRvCgIxAMd+tHZ1/bFcJitLT2pWDeM/f+W9pHq6vvLz
+
+wnrVy4efeHfAfbCUDFV5kyjDvbRmYg==
+
+-----END CERTIFICATE-----
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 11:02:06 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer
+
+[Sat Aug 17 11:02:06 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --installcert -d vpn.martlet121.cn --ecc --fullchain-file /usr/local/etc/v2ray/v2ray.crt --key-file /usr/local/etc/v2ray/v2ray.key </mark>                     #安装证书和密钥到v2ray的配置文件同级目录，v2ray.key是私钥文件，不能泄露
+
+[Sat Aug 17 11:05:57 AM UTC 2024] Installing key to: /usr/local/etc/v2ray/v2ray.key
+
+[Sat Aug 17 11:05:57 AM UTC 2024] Installing full chain to: /usr/local/etc/v2ray/v2ray.crt
+
+[root@martlet121 ~]# <mark> chmod 777 /usr/local/etc/v2ray/v2ray.* </mark>                      #修改证书文件权限
+
+
+
+
+
+二、配置nginx
+
+[root@martlet121 ~]# <mark> dnf -y install nginx </mark>                         #安装nginx
+
+[root@martlet121 ~]# <mark> vim /etc/nginx/nginx.conf </mark>                          #修改主配置文件
+
+```
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    include /etc/nginx/conf.d/*.conf;
+
+        server {
+          listen 443 ssl;
+          listen [::]:443 ssl;
+
+          ssl_certificate       /usr/local/etc/v2ray/v2ray.crt;                             #修改证书路径
+          ssl_certificate_key   /usr/local/etc/v2ray/v2ray.key;                            #修改证书路径
+          ssl_session_timeout 1d;
+          ssl_session_cache shared:MozSSL:10m;
+          ssl_session_tickets off;
+
+          ssl_protocols         TLSv1.2 TLSv1.3;
+          ssl_ciphers           ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+          ssl_prefer_server_ciphers off;
+
+          server_name           vpn.martlet121.cn;                         #修改域名
+          location /ray {                #与V2Ray配置中的path保持一致
+                if ($http_upgrade != "websocket") {               #WebSocket协商失败时返回404
+                        return 404;
+                }
+                proxy_redirect off;
+                proxy_pass http://127.0.0.1:20001;               #转到v2ray的WebSocket监听端口
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $host;
+                # Show real IP in v2ray access.log
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+        }
+
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart nginx </mark>                           #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 443 </mark>                      #查看端口监听
+
+tcp   LISTEN   0      511                                       0.0.0.0:443                 0.0.0.0:*
+
+tcp   LISTEN   0      511                                          [::]:443                    [::]:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                         #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20001,
+      "listen":"127.0.0.1",            //只监听127.0.0.1，避免除本机外的机器探测到开放了20001端口；客户端直连的场景不适用，当前时有web转发流量来
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+        "path": "/ray"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务生效配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                  #查看端口监听
+
+tcp   LISTEN   0      4096                                    127.0.0.1:20001               0.0.0.0:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+四、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/ray"
+        }
+      }
+    }
+  ]
+}
+```
+
+
+
+# 27 WebSocket + BrowserForwarder
+
+---
+description: "在WebSocket + TLS + Web的基础上，V2Ray 4.37.0加入浏览器转发（BrowserForwarder）模块，BrowserForwarder可隐藏客户端；Nginx时隐藏服务…"
+---
+
+   在WebSocket + TLS + Web的基础上，V2Ray 4.37.0加入浏览器转发（BrowserForwarder）模块，BrowserForwarder可隐藏客户端；Nginx时隐藏服务端的
+
+​    流量路径：[V2Ray client] --> [Browser] --> {Internet} --> [HTTP server] --> [V2Ray server] --> [github.com]
+
+​    实际配置中，当前在WebSocket + TLS + Web的基础上，修改客户端配置即可
+
+
+
+<mark> 未配置成功 </mark> 
+
+
+
+
+
+
+
+一、申请证书
+
+​    前提是有自己的证书，并添加解析到服务器，已提前设置好
+
+[root@martlet121 ~]# <mark> dnf -y install openssl cron curl </mark>                #安装依赖包
+
+[root@martlet121 ~]# <mark> dnf -y install socat </mark>                 #安装依赖包
+
+[root@martlet121 ~]# <mark> curl https://get.acme.sh | sh </mark>               #安装生成证书的脚本命令
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  1032    0  1032    0     0  21500      0 --:--:-- --:--:-- --:--:-- 21500
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+​                                 Dload  Upload   Total   Spent    Left  Speed
+
+100  219k  100  219k    0     0   567k      0 --:--:-- --:--:-- --:--:--  566k
+
+[Sat Aug 17 10:45:47 AM UTC 2024] Installing from online archive.
+
+[Sat Aug 17 10:45:47 AM UTC 2024] Downloading https://github.com/acmesh-official/acme.sh/archive/master.tar.gz
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Extracting master.tar.gz
+
+[Sat Aug 17 10:45:48 AM UTC 2024] It is recommended to install socat first.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] We use socat for the standalone server, which is used for standalone mode.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] If you don't want to use standalone mode, you may ignore this warning.
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing to /root/.acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installed to /root/.acme.sh/acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.bashrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Close and reopen your terminal to start using acme.sh
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.cshrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.tcshrc'
+
+[Sat Aug 17 10:45:48 AM UTC 2024] Installing cron job
+
+no crontab for root
+
+no crontab for root
+
+[Sat Aug 17 10:45:48 AM UTC 2024] bash has been found. Changing the shebang to use bash as preferred.
+
+[Sat Aug 17 10:45:54 AM UTC 2024] OK
+
+[Sat Aug 17 10:45:54 AM UTC 2024] Install success!
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --register-account -m hhh@martlet121.cn </mark>                     #注册账号
+
+[Sat Aug 17 10:53:42 AM UTC 2024] No EAB credentials found for ZeroSSL, let's obtain them
+
+[Sat Aug 17 10:53:44 AM UTC 2024] Registering account: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 10:53:46 AM UTC 2024] Registered
+
+[Sat Aug 17 10:53:46 AM UTC 2024] ACCOUNT_THUMBPRINT='oYiQiff5rI-SDI6sG_sMEWUot9oKdhIHKds3XAwzg70'
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --issue -d vpn.martlet121.cn --standalone --keylength ec-256 --force </mark>                  #申请证书，默认有效期只有3个月
+
+| 参数        | 作用                                                         |
+| ----------- | ------------------------------------------------------------ |
+| --keylength | 密钥长度；字段中有ec表示生成ECC证书，否则就是RSA证书可取值ec-256、ec-384、2048、3072、4096、8192 |
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Standalone mode.
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Creating domain key
+
+[Sat Aug 17 10:55:05 AM UTC 2024] The domain key is here: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 10:55:05 AM UTC 2024] Single domain='vpn.martlet121.cn'
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Verifying: vpn.martlet121.cn
+
+[Sat Aug 17 10:55:09 AM UTC 2024] Standalone mode server
+
+[Sat Aug 17 10:55:11 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Success
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Verification finished, beginning signing.
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Let's finalize the order.
+
+[Sat Aug 17 10:55:21 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A/finalize'
+
+[Sat Aug 17 10:55:27 AM UTC 2024] Order status is 'processing', let's sleep and retry.
+
+[Sat Aug 17 10:55:27 AM UTC 2024] Sleeping for 15 seconds then retrying
+
+[Sat Aug 17 10:55:43 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A
+
+[Sat Aug 17 10:55:45 AM UTC 2024] Downloading cert.
+
+[Sat Aug 17 10:55:45 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/bDv0dVhKrnmpWcJ7bqP1Wg'
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Cert success.
+
+-----BEGIN CERTIFICATE-----
+
+MIIEATCCA4agAwIBAgIQDfumEqwE3hfIco3VZpbboTAKBggqhkjOPQQDAzBLMQsw
+
+CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF
+
+Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx
+
+NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C
+
+AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj
+
+TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnswggJ3MB8GA1UdIwQY
+
+MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq
+
+ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU
+
+BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl
+
+MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw
+
+gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0
+
+LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG
+
+CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBAYK
+
+KwYBBAHWeQIEAgSB9QSB8gDwAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m
+
+Z0xaOnQAAAGRX/pd5wAABAMARzBFAiEA8bbdYTbhTPvEX4fzLnBUA/W+NpVQh8Ft
+
+gik6Xbc1lEkCIDshfpAdGOSiNFcZXemNfC22N0bhzsGM4ifclJy+C3daAHYAPxdL
+
+T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRX/pdxgAABAMARzBFAiEA
+
+uVU3KVM6c89ONS4l39jFjoMSj8R1qIRBeH7rLCstcfsCIHi38lIkzVsZvm2DYye/
+
+2JA5npZgHGPBp/uRSSe8d6PYMBoGA1UdEQQTMBGCD3Zwbi53dXp1bmlhby5jbjAK
+
+BggqhkjOPQQDAwNpADBmAjEAt0irr5o8AGd2+DfxyrEmtN38Ycfv+THN2Pt9ttDb
+
+w50zUql4zzs1K7Tw0OmndQZaAjEA/KbWRLlw7uWTjJjsOez0zZrG+kAljjHSBLYe
+
+E6Vn6MgiflwBqts2WV4G4ou/qm9t
+
+-----END CERTIFICATE-----
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer
+
+[Sat Aug 17 10:55:47 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 10:55:47 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer
+
+[Sat Aug 17 10:55:47 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer
+
+[root@martlet121 ~]# ./.acme.sh/acme.sh --renew -d vpn.martlet121.cn --force --ecc                     #acme.sh脚本会每60天自动更新证书，也可以通过当前命令在90天内进行更新
+
+[Sat Aug 17 11:01:28 AM UTC 2024] Renewing: 'vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:28 AM UTC 2024] Renewing using Le_API=https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Standalone mode.
+
+[Sat Aug 17 11:01:29 AM UTC 2024] Single domain='vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Verifying: vpn.martlet121.cn
+
+[Sat Aug 17 11:01:38 AM UTC 2024] Standalone mode server
+
+[Sat Aug 17 11:01:41 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Success
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Verification finished, beginning signing.
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Let's finalize the order.
+
+[Sat Aug 17 11:01:45 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg/finalize'
+
+[Sat Aug 17 11:01:47 AM UTC 2024] Order status is 'processing', let's sleep and retry.
+
+[Sat Aug 17 11:01:47 AM UTC 2024] Sleeping for 15 seconds then retrying
+
+[Sat Aug 17 11:02:03 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg
+
+[Sat Aug 17 11:02:04 AM UTC 2024] Downloading cert.
+
+[Sat Aug 17 11:02:04 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/9q6qQObIwz4RVA_t1MDVnw'
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Cert success.
+
+-----BEGIN CERTIFICATE-----
+
+MIIEAjCCA4egAwIBAgIQG8PeoUgSD2/zAsjnlF7alDAKBggqhkjOPQQDAzBLMQsw
+
+CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF
+
+Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx
+
+NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C
+
+AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj
+
+TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnwwggJ4MB8GA1UdIwQY
+
+MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq
+
+ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU
+
+BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl
+
+MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw
+
+gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0
+
+LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG
+
+CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBQYK
+
+KwYBBAHWeQIEAgSB9gSB8wDxAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m
+
+Z0xaOnQAAAGRYAAm7gAABAMARzBFAiEA9CDmTq8zc4Hu0sbuWWfCgBKPC80OeH9p
+
+mNvfvlTNjE0CIEqb+nc4Vz3Ij2eFtRCE/2EGHhcX1irxCZ/xzNM0aWGvAHcAPxdL
+
+T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRYAAmmAAABAMASDBGAiEA
+
+6635N34kA10nuxn9QRi0lLRTl2CkTHel77IV9QwmXQ4CIQDpARU+kesr3OFVOr2N
+
+Drex8pzqzzZpiA6zWVIy2v54rjAaBgNVHREEEzARgg92cG4ud3V6dW5pYW8uY24w
+
+CgYIKoZIzj0EAwMDaQAwZgIxALxJ/kPXTGb1lw92i9iDp//lsV0uDiABJGftP8VI
+
+k6We+ofZq940oSlFmQRxdsRvCgIxAMd+tHZ1/bFcJitLT2pWDeM/f+W9pHq6vvLz
+
+wnrVy4efeHfAfbCUDFV5kyjDvbRmYg==
+
+-----END CERTIFICATE-----
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer
+
+[Sat Aug 17 11:02:05 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key
+
+[Sat Aug 17 11:02:06 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer
+
+[Sat Aug 17 11:02:06 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --installcert -d vpn.martlet121.cn --ecc --fullchain-file /usr/local/etc/v2ray/v2ray.crt --key-file /usr/local/etc/v2ray/v2ray.key </mark>                     #安装证书和密钥到v2ray的配置文件同级目录，v2ray.key是私钥文件，不能泄露
+
+[Sat Aug 17 11:05:57 AM UTC 2024] Installing key to: /usr/local/etc/v2ray/v2ray.key
+
+[Sat Aug 17 11:05:57 AM UTC 2024] Installing full chain to: /usr/local/etc/v2ray/v2ray.crt
+
+[root@martlet121 ~]# <mark> chmod 777 /usr/local/etc/v2ray/v2ray.* </mark>                       #修改证书文件权限
+
+
+
+
+
+二、配置nginx
+
+[root@martlet121 ~]# <mark> dnf -y install nginx </mark>                         #安装nginx
+
+[root@martlet121 ~]# <mark> vim /etc/nginx/nginx.conf </mark>                          #修改主配置文件
+
+```
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    include /etc/nginx/conf.d/*.conf;
+
+        server {
+          listen 443 ssl;
+          listen [::]:443 ssl;
+
+          ssl_certificate       /usr/local/etc/v2ray/v2ray.crt;                             #修改证书路径
+          ssl_certificate_key   /usr/local/etc/v2ray/v2ray.key;                            #修改证书路径
+          ssl_session_timeout 1d;
+          ssl_session_cache shared:MozSSL:10m;
+          ssl_session_tickets off;
+
+          ssl_protocols         TLSv1.2 TLSv1.3;
+          ssl_ciphers           ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+          ssl_prefer_server_ciphers off;
+
+          server_name           vpn.martlet121.cn;                         #修改域名
+          location /ray {                #与V2Ray配置中的path保持一致
+                if ($http_upgrade != "websocket") {               #WebSocket协商失败时返回404
+                        return 404;
+                }
+                proxy_redirect off;
+                proxy_pass http://127.0.0.1:20001;               #转到v2ray的WebSocket监听端口
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $host;
+                # Show real IP in v2ray access.log
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          }
+        }
+
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart nginx </mark>                          #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 443 </mark>                     #查看端口监听
+
+tcp   LISTEN   0      511                                       0.0.0.0:443                 0.0.0.0:*
+
+tcp   LISTEN   0      511                                          [::]:443                    [::]:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                          #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20001,
+      "listen":"127.0.0.1",            //只监听127.0.0.1，避免除本机外的机器探测到开放了20001端口；客户端直连的场景不适用，当前时有web转发流量来
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+        "path": "/ray"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务生效配置
+
+[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                   #查看端口监听
+
+tcp   LISTEN   0      4096                                    127.0.0.1:20001               0.0.0.0:*
+
+[root@martlet121 ~]#
+
+
+
+
+
+四、客户端配置
+
+1、打开客户端解压后路径config.json文件编辑
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vpn.martlet121.cn",
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "encryption": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings":{
+        "network": "ws",
+        "wsSettings": {
+          "path": "/ray",
+          "useBrowserForwarding": true                  //表示此WebSocket由浏览器转发
+        },
+        "security": "tls",
+        "tlsSettings": {
+            "serverName": "vpn.martlet121.cn",
+            "allowInsecure": false
+        }
+      }
+    },
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["127.0.0.1"],                 //放行127.0.0.1才能和本机浏览器连接
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": ["vpn.martlet121.cn"],              //放行代理服务器才能把流量转发出去
+        "outboundTag": "direct"
+      }
+    ]
+  },
+  "browserForwarder": {
+    "listenAddr": "127.0.0.1",
+    "listenPort": 8080                    //本地启8080端口
+  }
+}
+```
+
+2、下载与当前V2Ray相同版本的<mark> v2ray-extra.zip </mark> ，解压到v2ray所在目录
+
+.
+
+├── browserforwarder
+
+│  ├── index.html
+
+│  └── index.js
+
+├── v2ray.exe
+
+└── wv2ray.exe
+
+3、运行<mark> v2ray.exe </mark> 文件，开启1080和8080端口监听
+
+4、打开浏览器访问<mark> http://127.0.0.1:8080 </mark> ，出现日志reflective server connected即连接成功
+
+
+
+实际访问没有成功，失败
+
+# 3 安装V2Ray（Windows）
+
+---
+description: "v2ray-windows-64.zip"
+---
+
+| 文件名          | 作用                                                         |
+| --------------- | ------------------------------------------------------------ |
+| v2ray.exe       | 运行V2Ray的前台程序文件                                      |
+| wv2ray.exe      | 同v2ray.exe，但wv2ray.exe是后台程序，不会有前台窗口运行V2Ray时从v2ray.exe和wv2ray.exe中任选一个即可 |
+| config.json     | 配置文件                                                     |
+| v2ctl.exe       | V2Ray的工具，有多种功能，除特殊用途外，一般由v2ray.exe来调用，用户不用太关心 |
+| geosite.dat     | 用于路由的域名文件                                           |
+| geoip.dat       | 用于路由的IP文件                                             |
+| ./doc/readme.md | 软件详细说明                                                 |
+
+![v2ray-windows-64.zip](<./files/3 安装V2Ray（Windows）/1.png>)
+
+[v2ray-windows-64.zip](<./files/3 安装V2Ray（Windows）/v2ray-windows-64.zip>)
+
+[v2ray-extra.zip](<./files/3 安装V2Ray（Windows）/v2ray-extra.zip>)
+
+V2Ray v4.45.2，v5版本后会直接闪退
+
+
+
+
+
+
+
+一、参考5 VMess配置完<mark> config.json </mark> 文件
+
+
+
+二、双击运行v2ray.exe
+
+
+
+三、浏览器设置代理
+
+​    V2Ray不会自动设置系统代理，需要在浏览器里设置代理；以火狐（Firefox）为例
+
+​    点菜单 -> 设置
+
+![文章配图](<./files/3 安装V2Ray（Windows）/2.png>)
+
+​    常规 -> 网络设置 -> 设置
+
+![文章配图](<./files/3 安装V2Ray（Windows）/3.png>)
+
+​    手动配置代理，在SOCKS Host填上<mark> 127.0.0.1 </mark> ，后面的Port填<mark> 1080 </mark> ，再勾上 使用<mark> SOCKS v5时代理DNS查询</mark> 
+
+![文章配图](<./files/3 安装V2Ray（Windows）/4.png>)
+
+
+
+# 30 Mux
+
+---
+description: "多路复用（multiplexing），将多条TCP连接合并成一条，节省资源，提高并发能力"
+---
+
+   多路复用（multiplexing），将多条TCP连接合并成一条，节省资源，提高并发能力
+
+​    Mux只需在客户端开启，服务器会自动识别
+
+
+
+
+
+
+
+一、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务器侧配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 16823,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+
+
+
+
+二、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 16823,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      },
+      "mux": {"enabled": true}              //实际只是多加了这行参数
+    }
+  ]
+}
+```
+
+
+
+# 31 mKCP
+
+---
+description: "快速重传的机制在高丢包率的网络下会耗费更多流量，但能提高访问效率"
+---
+
+   快速重传的机制在高丢包率的网络下会耗费更多流量，但能提高访问效率
+
+​    mKCP与KCPTUN同样是KCP协议，但两者并不兼容；UDP协议
+
+​    只需在服务器的inbounds和客户端的outbounds添加一个streamSettings并设置成mkcp即可
+
+​    客户端的上行uplinkCapacity对于服务器来说是下行downlinkCapacity，同样地客户端的下行downlinkCapacity是服务器的上行uplinkCapacity；速率由双方设置的最小值决定
+
+
+
+| 数据包伪装类型 | 作用         |
+| -------------- | ------------ |
+| utp            | BT下载       |
+| srtp           | 视频通话     |
+| wechat-video   | 微信视频通话 |
+| dtls           | dtls         |
+| wireguard      | 新型VPN      |
+| none           | 不伪装       |
+
+
+
+
+
+
+
+一、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务器侧配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 16823,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",                //此处的mkcp也可写成kcp，两种写法是起同样的效果
+        "kcpSettings": {
+          "uplinkCapacity": 10000,
+          "downlinkCapacity": 10000,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -an | grep 16823 </mark>                  #mkcp监听的是udp端口
+
+udp6       0      0 :::16823                :::*
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+    },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",
+            "port": 16823,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",              //网络的选择，写成kcp或mkcp都能启用mKCP
+        "kcpSettings": {
+          "uplinkCapacity": 10000,                 //上行链路容量，V2Ray向外发送数据包的速率。单位MB
+          "downlinkCapacity": 10000,                //下行链路容量，V2Ray接收数据包的速率。单位 MB
+          "congestion": true,
+          "header": {                      //数据包的伪装
+            "type": "none"                      //要伪装成的数据包类型，客户端与服务器要一致
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+
+
+# 32 动态端口
+
+---
+description: "动态变化通信端口，应对电信服务运营商可能会对长时间大流量的单个端口进行限速"
+---
+
+   动态变化通信端口，应对电信服务运营商可能会对长时间大流量的单个端口进行限速
+
+​    vmess协议才支持动态端口特性；主要在服务端设置
+
+
+
+
+
+
+
+一、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务器侧配置文件
+
+```json
+{
+  "inbounds":[
+  {
+      "port": 10000,               //主端口配置
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ],
+        "detour": {
+          "to": "dynamicPort"                    //绕行配置，客户端使用dynamicPort的配置通信
+        }
+      }
+    },
+    {
+      "protocol": "vmess",
+      "port": "20000-30000",               //协商后动态分配的端口范围
+      "tag": "dynamicPort",                //与上面的detour to相同
+      "settings": {
+        "default": {
+          "alterId": 0
+        }
+      },
+      "allocate": {                     //分配模式
+        "strategy": "random",                     //随机开启
+        "concurrency": 3000,                     //同时开放的端口，最大不能超过端口范围的1/3，端口数量不能太少，要不无法并发
+        "refresh": 3                        //每三分钟刷新一次
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                    #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -an | grep 10000 </mark>                       #查看监听的端口
+
+tcp6       0      0 :::10000                :::*                    LISTEN
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",
+            "port": 10000,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+# 33 动态端口 + mKCP
+
+---
+description: "在对应的inbounds和outbounds加入streamSettings并将network设置为kcp即可"
+---
+
+   在对应的inbounds和outbounds加入streamSettings并将network设置为kcp即可
+
+
+
+
+
+
+
+一、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                      #修改服务器侧配置文件
+
+```json
+{
+  "inbounds":[
+  {
+      "port": 10000,               //主端口配置
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ],
+        "detour": {
+          "to": "dynamicPort"                    //绕行配置，客户端使用dynamicPort的配置通信
+        }
+      },
+      "streamSettings": {
+        "network": "kcp"
+      }
+    },
+    {
+      "protocol": "vmess",
+      "port": "20000-30000",               //协商后动态分配的端口范围
+      "tag": "dynamicPort",                //与上面的detour to相同
+      "settings": {
+        "default": {
+          "alterId": 0
+        }
+      },
+      "allocate": {                     //分配模式
+        "strategy": "random",                     //随机开启
+        "concurrency": 3000,                     //同时开放的端口，最大不能超过端口范围的1/3，端口数量不能太少，要不无法并发
+        "refresh": 3                        //每三分钟刷新一次      
+      },
+      "streamSettings": {
+        "network": "kcp"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -an | grep 10000 </mark>                #mkcp监听的是udp端口
+
+udp6       0      0 :::10000                :::*
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",
+            "port": 10000,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "kcp"
+      }
+    }
+  ]
+}
+```
+
+
+
+# 34 QUIC
+
+---
+description: "4.7版本开始支持QUIC（Quick UDP Internet Connection），Google提出的使用UDP进行多路并发传输的协议"
+---
+
+   4.7版本开始支持QUIC（Quick UDP Internet Connection），Google提出的使用UDP进行多路并发传输的协议
+
+
+
+主要优势
+
+​    1、减少握手的延迟（1-RTT或0-RTT）
+
+​    2、多路复用，并且没有TCP的阻塞问题
+
+​    3、连接迁移，客户端由Wifi转移到4G时，连接不会断开
+
+
+
+| 数据包伪装类型 | 作用         |
+| -------------- | ------------ |
+| utp            | BT下载       |
+| srtp           | 视频通话     |
+| wechat-video   | 微信视频通话 |
+| dtls           | dtls         |
+| wireguard      | 新型VPN      |
+| none           | 不伪装       |
+
+
+
+
+
+
+
+一、服务端
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务器侧配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 10000,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "quic",
+        "security": "none",
+        "quicSettings": {
+          "security": "aes-128-gcm",
+          "key": "martlet121",
+          "header": {
+            "type": "wechat-video"
+          }
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -an | grep 10000 </mark>                      #查看监听的端口
+
+udp6       0      0 :::10000                :::*
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、客户端
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",
+            "port": 10000,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "quic",               //网络的选择，quic表示启用QUIC
+        "security": "none",               //这里的Security是对vmess加密的，quic传输时会强制开启tls，设置中未开启tls时，v2ray会自签发证书进行tls加密；所以这里设置成none没有关系
+        "quicSettings": {               //quic相关参数；加密和伪装都不启用时，数据包为原始的QUIC数据包，可以和其它QUIC工具对接；为避免被探测必须至少开启一项
+          "security": "aes-128-gcm",               //数据包的加密方式；默认值none（不加密），可选值为aes-128-gcm和chacha20-poly1305
+          "key": "martlet121",               //加密时所用的密钥，只有security不为none时，key才生效
+          "header": {              //设置数据包的伪装
+            "type": "wechat-video"               //要伪装成的数据包类型
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+
+
+# 35 TOR
+
+---
+description: "匿名通信的自由软件，洋葱路由器（The Onion Router，TOR）"
+---
+
+   匿名通信的自由软件，洋葱路由器（The Onion Router，TOR）
+
+​    可通过Tor接入由全球志愿者免费提供，包含7000+个中继的覆盖网络，从而达至隐藏用户真实地址、避免网络监控及流量分析的目的；可保护个人隐私，不受监控地进行通信
+
+
+
+
+
+
+
+一、服务端安装tor
+
+[root@martlet121 ~]# <mark> yum -y install tor </mark>                       #安装tor路由
+
+[root@martlet121 ~]# <mark> vim /etc/tor/torrc </mark>                 #修改tor主配置文件，在文件最末尾添加
+
+```
+259 ExcludeNodes {cn},{hk},{mo},{kp},{ir},{sy},{pk},{cu},{vn}
+260 StrictNodes 1
+```
+
+[root@martlet121 ~]# <mark> systemctl enable tor --now </mark>               #启动tor服务并加入开机服务
+
+Created symlink /etc/systemd/system/multi-user.target.wants/tor.service → /usr/lib/systemd/system/tor.service.
+
+[root@martlet121 ~]# <mark> netstat -an | grep 9050 </mark>                    #默认监听127.0.0.1的9050端口
+
+tcp        0      0 127.0.0.1:9050          0.0.0.0:*               LISTEN
+
+[root@martlet121 ~]# 
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                      #修改服务器侧配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 10000,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "quic",
+        "security": "none",
+        "quicSettings": {
+          "security": "aes-128-gcm",
+          "key": "martlet121",
+          "header": {
+            "type": "wechat-video"
+          }
+        }
+      }
+    }
+  ],
+  "outbounds": [
+          {
+            "protocol": "socks",                 //只是出站改成了tor的配置；但不代表只有服务器能改，客户端也可以，其他方法较复杂，暂未研究
+            "settings": {
+                "servers": [
+                    {
+                        "address": "127.0.0.1",
+                        "port": 9050
+                    }
+                ]
+            }
+        }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -an | grep 10000 </mark>                      #查看监听的端口
+
+udp6       0      0 :::10000                :::*
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端没改
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",
+            "port": 10000,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "quic",               //网络的选择，quic表示启用QUIC
+        "security": "none",               //这里的Security是对vmess加密的，quic传输时会强制开启tls，设置中未开启tls时，v2ray会自签发证书进行tls加密；所以这里设置成none没有关系
+        "quicSettings": {               //quic相关参数；加密和伪装都不启用时，数据包为原始的QUIC数据包，可以和其它QUIC工具对接；为避免被探测必须至少开启一项
+          "security": "aes-128-gcm",               //数据包的加密方式；默认值none（不加密），可选值为aes-128-gcm和chacha20-poly1305
+          "key": "martlet121",               //加密时所用的密钥，只有security不为none时，key才生效
+          "header": {              //设置数据包的伪装
+            "type": "wechat-video"               //要伪装成的数据包类型
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+
+
+# 36 流量统计
+
+---
+description: "只能统计当前进程实例的数据，在服务器上统计就只统计服务器v2ray进程记录的数据，不涉及客户端；客户端上统计也识别不了服务器侧的设置"
+---
+
+   只能统计当前进程实例的数据，在服务器上统计就只统计服务器v2ray进程记录的数据，不涉及客户端；客户端上统计也识别不了服务器侧的设置
+
+​    "stats", "api", "policy", "routing"这几个对象必须存在
+
+
+
+​    流量统计分三类：inbound，user和outbound（4.26.0+）
+
+​        inbound：inbound入站统计，需设置tag记录入站流量
+
+​        user：vmess协议用户统计，用email进行统计和区分，其他协议内的用户不支持被统计
+
+​        outbound：outbound出站统计，4.26.0版本新增，需设置tag记录入站流量
+
+
+
+
+
+
+
+一、客户端配置（客户端没改）
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,          //本地监听端口
+      "protocol": "socks",            //入口协议为SOCKS 5
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",            //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",             //服务器地址
+            "port": 10000,                //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",             //用户ID，必须与服务器端配置相同
+                "alterId": 0                //此处的值也应当与服务器相同
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+二、服务器配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务器侧配置文件
+
+```json
+{
+  "stats": {},
+  "api": {
+    "tag": "api",
+    "services": [
+      "StatsService"              //通过api查询流量需开启
+    ]
+  },
+  "policy": {               //统计开关
+    "levels": {             //用户统计开关
+      "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+      }
+    },
+    "system": {               //全局统计开关，in和out方向
+      "statsInboundUplink": true,
+      "statsInboundDownlink": true,
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
+    }
+  },
+  "inbounds": [
+    {
+      "tag": "tcp",                //全局统计必须在入站和出站位置设置tag
+      "port": 10000,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "email": "userA",             //用户统计必须设置email来标识不同用户
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "level": 0,
+            "alterId": 0
+          },
+          {
+            "email": "userB",             //用户统计必须设置email来标识不同用户
+            "id": "e731f153-4f31-49d3-9e8f-ff8f396135ee",
+            "level": 0,
+            "alterId": 0
+          }
+        ]
+      }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10001,
+      "protocol": "dokodemo-door",               //必须为此协议
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "tag": "api"               //要通过api查询流量，额外的入站必须设置成当前配置这样
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",                 //要通过api查询流量，必须有inboundTag:api -> outboundTag:api规则
+        "type": "field"
+      }
+    ],
+    "domainStrategy": "AsIs"
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -an | grep 1000 </mark>                      #查看监听的端口
+
+tcp        0      0 127.0.0.1:10001         0.0.0.0:*               LISTEN
+
+tcp6       0      0 :::10000                :::*                    LISTEN
+
+[root@martlet121 ~]#
+
+
+
+1、命令查询
+
+[root@martlet121 ~]# <mark> wget https://github.com/v2fly/v2ray-core/releases/download/v4.31.0/v2ray-linux-64.zip </mark>                  #下载v2ray主程序
+
+[root@martlet121 ~]# <mark> unzip v2ray-linux-64.zip </mark>                  #解压软件包
+
+[root@martlet121 ~]# <mark> cp v2ctl /usr/local/bin/ </mark>                    #拷贝命令行工具到bin目录
+
+[root@martlet121 ~]# <mark> v2ctl api --server=127.0.0.1:10001 StatsService.QueryStats 'pattern: "" reset: false' </mark>                   #QueryStats表示查询匹配的记录； pattern留空表示匹配所有记录；reset可让匹配的单元数值置零，false表示不置零
+
+stat: <
+
+  name: "user>>>userA>>>traffic>>>uplink"
+
+  value: 630305                 #value的单位为字节
+
+\>
+
+stat: <
+
+  name: "user>>>userA>>>traffic>>>downlink"
+
+  value: 240735949
+
+\>
+
+stat: <
+
+  name: "inbound>>>tcp>>>traffic>>>uplink"
+
+  value: 810376
+
+\>
+
+stat: <
+
+  name: "inbound>>>tcp>>>traffic>>>downlink"
+
+  value: 249825740
+
+\>
+
+stat: <
+
+  name: "inbound>>>api>>>traffic>>>uplink"
+
+  value: 174
+
+\>
+
+stat: <
+
+  name: "inbound>>>api>>>traffic>>>downlink"
+
+  value: 24
+
+\>
+
+stat: <
+
+  name: "outbound>>>direct>>>traffic>>>uplink"
+
+  value: 626434
+
+\>
+
+stat: <
+
+  name: "outbound>>>direct>>>traffic>>>downlink"
+
+  value: 240735949
+
+\>
+
+[root@martlet121 ~]# <mark> v2ctl api --server=127.0.0.1:10001 StatsService.GetStats 'name: "user>>>userA>>>traffic>>>downlink" reset: false' </mark>                       #GetStats查询单个记录；name指定查询哪个记录；reset可让匹配的单元数值置零，false表示不置零
+
+stat: <
+
+  name: "user>>>userA>>>traffic>>>downlink"
+
+  value: 252285618
+
+\>
+
+[root@martlet121 ~]#
+
+
+
+2、脚本查询
+
+​    前提是v2ctl命令在系统中必须有
+
+[root@martlet121 ~]# <mark> vim traffic.sh </mark>                    #创建脚本文件
+
+```bash
+#!/bin/bash
+
+_APISERVER=127.0.0.1:10001                       #端口注意替换为自己设置的
+_V2CTL=/usr/local/bin/v2ctl
+
+apidata () {
+    local ARGS=
+    if [[ $1 == "reset" ]]; then
+      ARGS="reset: true"
+    fi
+    $_V2CTL api --server=$_APISERVER StatsService.QueryStats "${ARGS}" \
+    | awk '{
+        if (match($1, /name:/)) {
+            f=1; gsub(/^"|link"$/, "", $2);
+            split($2, p,  ">>>");
+            printf "%s:%s->%s\t", p[1],p[2],p[4];
+        }
+        else if (match($1, /value:/) && f){ f = 0; printf "%.0f\n", $2; }
+        else if (match($0, /^>$/) && f) { f = 0; print 0; }
+    }'
+}
+
+print_sum() {
+    local DATA="$1"
+    local PREFIX="$2"
+    local SORTED=$(echo "$DATA" | grep "^${PREFIX}" | sort -r)
+    local SUM=$(echo "$SORTED" | awk '
+        /->up/{us+=$2}
+        /->down/{ds+=$2}
+        END{
+            printf "SUM->up:\t%.0f\nSUM->down:\t%.0f\nSUM->TOTAL:\t%.0f\n", us, ds, us+ds;
+        }')
+    echo -e "${SORTED}\n${SUM}" \
+    | numfmt --field=2 --suffix=B --to=iec \
+    | column -t
+}
+
+DATA=$(apidata $1)
+echo "------------Inbound----------"
+print_sum "$DATA" "inbound"
+echo "-----------------------------"
+echo "------------Outbound----------"
+print_sum "$DATA" "outbound"
+echo "-----------------------------"
+echo
+echo "-------------User------------"
+print_sum "$DATA" "user"
+echo "-----------------------------"
+```
+
+[root@martlet121 ~]# <mark> bash traffic.sh </mark>                    #执行脚本查看输出结果
+
+------------Inbound----------
+
+inbound:tcp->up    834KB
+
+inbound:tcp->down  279MB
+
+inbound:api->up    649B
+
+inbound:api->down  665B
+
+SUM->up:           834KB
+
+SUM->down:         279MB
+
+SUM->TOTAL:        280MB
+
+\-----------------------------
+
+------------Outbound----------
+
+outbound:direct->up    645KB
+
+outbound:direct->down  269MB
+
+SUM->up:               645KB
+
+SUM->down:             269MB
+
+SUM->TOTAL:            270MB
+
+\-----------------------------
+
+-------------User------------
+
+user:userA->up    649KB
+
+user:userA->down  269MB
+
+SUM->up:          649KB
+
+SUM->down:        269MB
+
+SUM->TOTAL:       270MB
+
+\-----------------------------
+
+[root@martlet121 ~]#
+
+
+
+3、查看每秒的流量
+
+[root@martlet121 ~]# <mark> chmod 777 traffic.sh </mark>                  #授予执行权限
+
+[root@martlet121 ~]# <mark> watch -n 1 ./traffic.sh reset </mark>               # reset参数可置零统计信息；watch命令指定每秒运行脚本，不指定则默认为2s刷新
+
+Every 1.0s: ./traffic.sh reset                           martlet121: Mon Aug 19 15:45:37 2024
+
+------------Inbound----------
+
+inbound:tcp->up    257B
+
+inbound:tcp->down  394KB
+
+inbound:api->up    176B
+
+inbound:api->down  432B
+
+SUM->up:           433B
+
+SUM->down:         394KB
+
+SUM->TOTAL:        394KB
+
+\-----------------------------
+
+------------Outbound----------
+
+outbound:direct->up    215B
+
+outbound:direct->down  380KB
+
+SUM->up:               215B
+
+SUM->down:             380KB
+
+SUM->TOTAL:            380KB
+
+\-----------------------------
+
+-------------User------------
+
+user:userA->up    215B
+
+user:userA->down  380KB
+
+SUM->up:          215B
+
+SUM->down:        380KB
+
+SUM->TOTAL:       380KB
+
+\-----------------------------
+
+
+
+# 4 安装V2Ray（安卓）
+
+---
+description: "vmess、mkcp协议在这个客户端没尝试成功"
+---
+
+   <mark> vmess、mkcp协议在这个客户端没尝试成功 </mark> 
+
+[BifrostV_0.6.8_APKPure.apk](<./files/4 安装V2Ray（安卓）/BifrostV_0.6.8_APKPure.apk>)
+
+[v2ray-android-arm64-v8a.zip](<./files/4 安装V2Ray（安卓）/v2ray-android-arm64-v8a.zip>)
+
+
+
+
+
+
+
+一、服务端配置参考 12 Shadowsocks
+
+
+
+二、安卓客户端配置，以下方式三选一即可，手机全局生效
+
+1、
+
+[Shadowsocks.json](<./files/4 安装V2Ray（安卓）/Shadowsocks.json>)
+
+2、
+
+bfv://45.76.177.113:20002/shadowsocks/1?rtype=lanchina&dns=8.8.8.8&method=aes-128-gcm&pass=wuzuniao&ota=1&tcp=header%3Dnone%26req%3D#2
+
+3、
+
+![文章配图](<./files/4 安装V2Ray（安卓）/1.png>)
+
+
+
+
+
+# 40 HTTP2
+
+---
+description: "目前大多数网页是HTTP/1.1，HTTP/2是HTTP/1.1的升级版，简称h2"
+---
+
+   目前大多数网页是HTTP/1.1，HTTP/2是HTTP/1.1的升级版，简称h2
+
+​    使用HTTP/2要开启TLS
+
+
+
+<mark> 未成功 </mark> 
+
+
+
+
+
+
+
+一、申请证书
+
+​    前提是有自己的证书，并添加解析到服务器，已提前设置好
+
+[root@martlet121 ~]# <mark> dnf -y install openssl curl cron </mark>                 #安装依赖包
+
+[root@martlet121 ~]# <mark> dnf -y install socat </mark>                #安装依赖包
+
+[root@martlet121 ~]# <mark> curl https://get.acme.sh | sh </mark>               #安装生成证书的脚本命令
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --register-account -m hhh@martlet121.cn </mark>                     #注册账号
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --issue -d vps.martlet121.cn --standalone --keylength ec-256 --force </mark>                  #申请证书，默认有效期只有3个月
+
+| 参数        | 作用                                                         |
+| ----------- | ------------------------------------------------------------ |
+| --keylength | 密钥长度；字段中有ec表示生成ECC证书，否则就是RSA证书可取值ec-256、ec-384、2048、3072、4096、8192 |
+
+[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --installcert -d vps.martlet121.cn --ecc --fullchain-file /usr/local/etc/v2ray/v2ray.crt --key-file /usr/local/etc/v2ray/v2ray.key </mark>                     #安装证书和密钥到v2ray的配置文件同级目录，v2ray.key是私钥文件，不能泄露
+
+[root@martlet121 ~]# <mark> chmod 777 /usr/local/etc/v2ray/v2ray.* </mark>                      #修改证书文件权限
+
+
+
+
+
+二、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务器侧配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 443,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "h2",               //h2也可写成http，效果一样
+        "httpSettings": {              //HTTP2的设置
+          "path": "/ray"
+        },
+        "security": "tls",              //开启tls
+        "tlsSettings": {
+          "certificates": [
+            {
+              "certificateFile": "/usr/local/etc/v2ray/v2ray.crt",               //证书文件，详见tls小节
+              "keyFile": "/usr/local/etc/v2ray/v2ray.key"               //密钥文件
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -anpt | grep 443 </mark>                  #查看端口监听
+
+LISTEN 0      4096               *:443               **:**     users:(("v2ray",pid=64490,fd=3))
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "vps.martlet121.cn",
+            "port": 443,
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "h2",
+        "httpSettings": {             //HTTP2设置
+          "path": "/ray"
+        },
+        "security": "tls"
+      }
+    }
+  ]
+}
+```
+
+
+
+# 41 前置代理
+
+---
+description: "若局域网内设备要通过http代理才能联网，可使用前置代理来先连接http代理联网后，再通过V2Ray访问外网"
+---
+
+   若局域网内设备要通过http代理才能联网，可使用前置代理来先连接http代理联网后，再通过V2Ray访问外网
+
+​    V2ray 4.21.0+版本开始支持http前置代理；V2ray 4.21.1+版本开始支持https前置代理
+
+​    HTTP代理服务器只能看到加密的流量
+
+​    前置代理只需在客户端中设置
+
+
+
+<mark> 没配成功，国内也访问不了 </mark> 
+
+
+
+
+
+
+
+一、squid代理服务器设置
+
+1、系统配置
+
+[root@martlet121 ~]# <mark> systemctl stop firewalld.service </mark>                    #停止防火墙
+
+[root@martlet121 ~]# <mark> systemctl disable firewalld.service </mark>                    #关闭开机启动
+
+Removed "/etc/systemd/system/multi-user.target.wants/firewalld.service".
+
+Removed "/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service".
+
+[root@martlet121 ~]# <mark> setenforce 0 </mark>                     #临时关闭selinux
+
+[root@martlet121 ~]# <mark> sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux </mark>                  #永久关闭SELinux
+
+[root@martlet121 ~]# <mark> echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf </mark>                      #永久开启数据包转发功能
+
+[root@martlet121 ~]# <mark> sysctl -p </mark>                   #立即生效
+
+net.ipv4.ip_forward = 1
+
+[root@martlet121 ~]# <mark> route -n </mark>                         #软路由默认所有流量指向真实路由器
+
+Kernel IP routing table
+
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+
+0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 ens33                            #桥接网卡默认连外网路由
+
+192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 ens33
+
+192.168.5.0     0.0.0.0         255.255.255.0   U     101    0        0 ens36                      #仅主机网络；客户端在此网络内，默认只能局域网通信，无法访问其他网络
+
+192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
+
+[root@martlet121 ~]#
+
+
+
+2、配置squid
+
+[root@martlet121 ~]# <mark> yum -y install squid </mark>                      #安装代理软件
+
+[root@martlet121 ~]# <mark> systemctl enable squid </mark>                #加入开机启动
+
+Created symlink from /etc/systemd/system/multi-user.target.wants/squid.service to /usr/lib/systemd/system/squid.service.
+
+[root@martlet121 ~]# <mark> systemctl restart squid </mark>                 #安装后直接启动即可，默认监听tcp3128端口；客户端浏览器配置正向代理后即可通信，此时不用配置，v2ray客户端配置文件中会设置
+
+
+
+
+
+二、服务器侧配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                      #修改服务器侧配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20000,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -anpt | grep 20000 </mark>                  #查看端口监听
+
+LISTEN 0      4096               *:20000              **:**     users:(("v2ray",pid=5025,fd=3))
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端配置
+
+​    此时客户端在仅主机网络内，网络能连到squid服务器，但无法访问外网
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20000,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      },
+      "tag": "VMESS",
+      "proxySettings": {
+          "tag": "HTTP"  
+        }
+    },
+    {
+      "protocol": "http",
+      "settings": {
+        "servers": [
+          {
+            "address": "192.168.5.160",               //squid服务器IP
+            "port": 3128,              //服务器端口
+            "users": [
+              {
+                "user": "",           //认证用户名
+                "pass": ""            //认证密码
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false         //是否检测证书有效性,在自定义证书的情况开可以开启(false改为true)这个
+        }
+      },
+      "tag": "HTTP"
+    }
+  ]
+}
+```
+
+
+
+# 5 安装V2Ray（Docker）
+
+---
+description: "Docker只能部署在KVM或XEN架构的云服务器中"
+---
+
+   Docker只能部署在KVM或XEN架构的云服务器中
+
+​    官方镜像：https://hub.docker.com/r/v2fly/v2fly-core
+
+
+
+
+
+
+
+[root@martlet121 ~]# <mark> mkdir -p /etc/v2ray </mark>                    #创建放置配置文件的目录
+
+[root@martlet121 ~]# <mark> vim /etc/v2ray/config.json </mark>                      #创建主配置文件；此为服务端配置
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 10000,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> yum -y install docker </mark>                        #安装docker
+
+[root@martlet121 ~]# <mark> podman pull docker.io/v2fly/v2fly-core:latest </mark>                       #拉取v2fly镜像
+
+Trying to pull docker.io/v2fly/v2fly-core:latest...
+
+Getting image source signatures
+
+Copying blob cadf74b5ecfe done   |
+
+Copying blob d25f557d7f31 done   |
+
+Copying blob 4f4fb700ef54 done   |
+
+Copying blob 2820c8f15591 done   |
+
+Copying config d1c717b3cc done   |
+
+Writing manifest to image destination
+
+d1c717b3cc8c7602fdb89a886d0c7fc0cf8c1d973501101d5f5e86f1ec6dcccf
+
+[root@martlet121 ~]# <mark> docker run -d --name v2ray -e TZ=Asia/Shanghai -v /etc/v2ray:/etc/v2ray -p 10000:10000 --restart always v2fly/v2fly-core run -c /etc/v2ray/config.json </mark>                            #指定容器名v2ray进行部署，设置所在时区、容器内10000端口映射到物理主机上10000端口，指定配置文件路径
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+743a3f766c6af1eeb553ffbf6e402ddd2de3c7cba1080aba924b057e76ac24f1
+
+[root@martlet121 ~]# <mark> docker container ls </mark>                        #查看容器运行状态
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+CONTAINER ID  IMAGE                              COMMAND               CREATED         STATUS         PORTS                     NAMES
+
+743a3f766c6a  docker.io/v2fly/v2fly-core:latest  run -c /etc/v2ray...  23 seconds ago  Up 22 seconds  0.0.0.0:10000->10000/tcp  v2ray
+
+[root@martlet121 ~]# <mark> docker container start v2ray </mark>                     #启动容器
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+v2ray
+
+[root@martlet121 ~]# <mark> docker container restart v2ray </mark>                    #重启容器
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+v2ray
+
+[root@martlet121 ~]# <mark> docker container stop v2ray </mark>                     #停止容器
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+v2ray
+
+[root@martlet121 ~]# <mark> docker container rm v2ray </mark>                     #删除容器；运行状态的容器不能删除，必须先停止；配置有更新都是删了后重新部署
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+v2ray
+
+[root@martlet121 ~]# <mark> docker container logs v2ray </mark>                     #查看容器日志
+
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+
+V2Ray 5.16.1 (V2Fly, a community-driven edition of V2Ray.) Custom (go1.22.2 linux/amd64)
+
+A unified platform for anti-censorship.
+
+2024/08/24 06:56:16 [Warning] V2Ray 5.16.1 started
+
+V2Ray 5.16.1 (V2Fly, a community-driven edition of V2Ray.) Custom (go1.22.2 linux/amd64)
+
+A unified platform for anti-censorship.
+
+2024/08/24 06:57:24 [Warning] V2Ray 5.16.1 started
+
+V2Ray 5.16.1 (V2Fly, a community-driven edition of V2Ray.) Custom (go1.22.2 linux/amd64)
+
+A unified platform for anti-censorship.
+
+2024/08/24 06:57:37 [Warning] V2Ray 5.16.1 started
+
+[root@martlet121 ~]#
+
+# 50 透明代理（REDIRECT）
+
+---
+description: "当前配置DNS查询是使用的系统dns，国内dns可能解析不到部分域名"
+---
+
+   当前配置DNS查询是使用的系统dns，国内dns可能解析不到部分域名
+
+​    只能代理tcp和udp流量，不能ping
+
+​    每次重启iptables配置会掉
+
+​    不能实现局域网内流量走国内和国外流量分流（当前没设置路由）
+
+![文章配图](<./files/50 透明代理（REDIRECT）/1.png>)
+
+[透明代理.vsdx](<./files/50 透明代理（REDIRECT）/透明代理.vsdx>)
+
+
+
+
+
+
+
+一、v2ray服务端配置
+
+[root@martlet121 ~]# <mark> uuidgen </mark>               #随机一个uuid，客户端要通过uuid来连接服务器
+
+6603eb89-d26e-46b2-a626-49e18e074a6e
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                 #修改配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20000,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                #修改配置后要重启生效
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray </mark>                #加入开机启动
+
+[root@martlet121 ~]# <mark> netstat -an | grep 20000 </mark>                #查看端口监听
+
+tcp6       0      0 :::20000                :::*                    LISTEN
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、Linux软路由配置
+
+1、系统配置
+
+[root@martlet121 ~]# <mark> uname -a </mark>                     #查看系统内核版本
+
+Linux martlet121 5.14.0-480.el9.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Jul 12 20:45:27 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+[root@martlet121 ~]# <mark> cat /etc/redhat-release </mark>                   #查看操作系统版本
+
+CentOS Stream release 9
+
+[root@martlet121 ~]# <mark> systemctl stop firewalld.service </mark>                    #停止防火墙
+
+[root@martlet121 ~]# <mark> systemctl disable firewalld.service </mark>                    #关闭开机启动
+
+Removed "/etc/systemd/system/multi-user.target.wants/firewalld.service".
+
+Removed "/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service".
+
+[root@martlet121 ~]# <mark> setenforce 0 </mark>                    #临时关闭selinux
+
+[root@martlet121 ~]# <mark> sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux </mark>                 #永久关闭SELinux
+
+[root@martlet121 ~]# <mark> echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf </mark>                      #永久开启数据包转发功能
+
+[root@martlet121 ~]# <mark> sysctl -p </mark>                   #立即生效
+
+net.ipv4.ip_forward = 1
+
+[root@martlet121 ~]# <mark> route -n </mark>                        #软路由默认所有流量指向真实路由器
+
+Kernel IP routing table
+
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+
+0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 ens160
+
+192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 ens160
+
+[root@martlet121 ~]#
+
+
+
+2、v2ray客户端配置
+
+[root@martlet121 ~]# <mark> bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh) </mark>                      #安装软件包，当前是下载成功了，如果脚本安不了，直接去下载离线包，解压安装即可
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                        #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,                //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",                 //入口协议为SOCKS 5
+      "sniffing": {                     //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+        },
+    {
+      "port": 12345,                //接收局域网流量的端口号
+      "protocol": "dokodemo-door",                //此协议是接收iptables传入的局域网流量
+      "settings": {
+        "network": "tcp,udp",
+        "followRedirect": true               //这里要为true才能接受来自iptables的流量
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20000,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      },
+          "streamSettings": {
+        "sockopt": {
+          "mark": 255               //SO_MARK，用于iptables规则识别，每个outbound都要配置成一样的值，若不为255时，此处和iptables同步修改
+        }
+      }
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                    #重启服务应用配置
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray </mark>                #加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray.service → /etc/systemd/system/v2ray.service.
+
+[root@martlet121 ~]# <mark> netstat -anpt </mark>                    #查看端口监听
+
+Active Internet connections (servers and established)
+
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+
+tcp6       0      0 :::1080                 :::*                    LISTEN      3184/v2ray 
+
+tcp6       0      0 :::12345                :::*                    LISTEN      3184/v2ray 
+
+[root@martlet121 ~]# <mark> curl -x socks5://127.0.0.1:1080 google.com </mark>                     #测试网关访问外网是否正常，下面回显表示能正常通过代理访问
+
+```html
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+```
+
+[root@martlet121 ~]# 
+
+
+
+3、iptables配置，重启会失效
+
+[root@martlet121 ~]# #以下内容直接在Linux命令行中粘贴即可
+
+```bash
+iptables -t nat -N V2RAY                      #新建V2RAY规则链，对tcp流量进行透明代理
+iptables -t nat -A V2RAY -d 192.168.0.0/16 -j RETURN                      #直连192.168.0.0/16
+iptables -t nat -A V2RAY -p tcp -j RETURN -m mark --mark 0xff                         #直连SO_MARK为0xff的流量（0xff是255的16进制数），此规则目的是避免代理本机流量出现环路
+iptables -t nat -A V2RAY -p tcp -j REDIRECT --to-ports 12345                     #其余流量转发到V2Ray的12345端口
+iptables -t nat -A PREROUTING -p tcp -j V2RAY                        #对局域网应用透明代理规则
+iptables -t nat -A OUTPUT -p tcp -j V2RAY                        #对本机进行透明代理
+ip rule add fwmark 1 table 100                           #从这里开始对UDP流量进行透明代理
+ip route add local 0.0.0.0/0 dev lo table 100
+iptables -t mangle -N V2RAY_MASK
+iptables -t mangle -A V2RAY_MASK -d 192.168.0.0/16 -j RETURN
+iptables -t mangle -A V2RAY_MASK -p udp -j TPROXY --on-port 12345 --tproxy-mark 1
+iptables -t mangle -A PREROUTING -p udp -j V2RAY_MASK
+```
+
+[root@martlet121 ~]# 
+
+
+
+
+
+三、客户端
+
+​    设置客户端的网关为软路由的网关，这样默认所有流量会优先发给软路由；想自动生效的话，就要改dhcp服务器中关于此网段的配置，设置自动分配地址时分配的网关为软路由网关即可
+
+![文章配图](<./files/50 透明代理（REDIRECT）/2.png>)
+
+
+# 51 透明代理（TPROXY）
+
+---
+description: "TPROXY可以透明代理IPV6"
+---
+
+   TPROXY可以透明代理IPV6
+
+​    本章节解决了DNS分流和国内外访问分流的问题
+
+![文章配图](<./files/51 透明代理（TPROXY）/1.png>)
+
+[透明代理.vsdx](<./files/51 透明代理（TPROXY）/透明代理.vsdx>)
+
+
+
+
+
+
+
+一、v2ray服务端配置
+
+[root@martlet121 ~]# <mark> uuidgen </mark>               #随机一个uuid，客户端要通过uuid来连接服务器
+
+6603eb89-d26e-46b2-a626-49e18e074a6e
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                 #修改配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20000,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0,                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+            "method": "aes-128-gcm",                    //vmess配合此加密协议速度最快
+            "password": "martlet121"
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                 #修改配置后要重启生效
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray </mark>                #加入开机启动
+
+[root@martlet121 ~]# <mark> netstat -an | grep 20000 </mark>                #查看端口监听
+
+tcp6       0      0 :::20000                :::*                    LISTEN
+
+[root@martlet121 ~]#
+
+
+
+
+
+二、Linux软路由配置
+
+1、系统配置
+
+[root@martlet121 ~]# <mark> uname -a </mark>                     #查看系统内核版本
+
+Linux martlet121 5.14.0-480.el9.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Jul 12 20:45:27 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+[root@martlet121 ~]# <mark> cat /etc/redhat-release </mark>                   #查看操作系统版本
+
+CentOS Stream release 9
+
+[root@martlet121 ~]# <mark> systemctl stop firewalld.service </mark>                     #停止防火墙
+
+[root@martlet121 ~]# <mark>  systemctl disable firewalld.service </mark>                    #关闭开机启动
+
+Removed "/etc/systemd/system/multi-user.target.wants/firewalld.service".
+
+Removed "/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service".
+
+[root@martlet121 ~]# <mark> setenforce 0 </mark>                     #临时关闭selinux
+
+[root@martlet121 ~]# <mark> sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux </mark>                 #永久关闭SELinux
+
+[root@martlet121 ~]# <mark> echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf </mark>                      #永久开启数据包转发功能
+
+[root@martlet121 ~]# <mark> echo "net.ipv6.conf.all.forwarding = 1" >> /etc/sysctl.conf </mark>                      #永久开启数据包转发功能
+
+[root@martlet121 ~]# <mark> sysctl -p </mark>                   #立即生效
+
+net.ipv4.ip_forward = 1
+
+[root@martlet121 ~]# <mark> route -n </mark>                        #软路由默认所有流量指向真实路由器
+
+Kernel IP routing table
+
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+
+0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 ens160
+
+192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 ens160
+
+[root@martlet121 ~]#
+
+
+
+2、v2ray客户端配置
+
+[root@martlet121 ~]# <mark> ll </mark>                #将从仓库下载的安装包及脚本上传到本地
+
+-rw-r--r--. 1 root root    22454  8月 22 22:43 install-release.sh
+
+-rw-r--r--. 1 root root 12486240  8月 22 22:43 v2ray-linux-64.zip
+
+[root@martlet121 ~]# <mark> bash install-release.sh --local v2ray-linux-64.zip </mark>                   #指定本地文件进行安装
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                        #修改主配置文件
+
+```json
+{
+  "inbounds": [
+    {
+      "tag":"transparent",
+      "port": 12345,                //接收局域网流量的端口号
+      "protocol": "dokodemo-door",                //此协议是接收iptables传入的局域网流量
+      "settings": {
+        "network": "tcp,udp",
+        "followRedirect": true               //这里要为true才能接受来自iptables的流量
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tproxy": "tproxy",              //透明代理使用TPROXY方式
+          "mark":255
+        }
+      }
+    },
+    {
+      "port": 1080,                 //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //本地代理入口协议为SOCKS 5
+      "sniffing": {                     //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "proxy",
+      "protocol": "vmess",            //指定连代理服务器的出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，也可用ipv6地址，看哪个延时低用哪个
+            "port": 20000,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0,                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+                "method": "aes-128-gcm",                    //vmess配合此加密协议速度最快
+                "password": "martlet121"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255               //SO_MARK，用于iptables规则识别，每个outbound都要配置成一样的值，若不为255时，此处和iptables同步修改
+        }
+      },
+      "mux": {
+        "enabled": true
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIP"                //避免直连时使用本机dns出现解析问题
+      },
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255               //SO_MARK，用于iptables规则识别，每个outbound都要配置成一样的值，若不为255时，此处和iptables同步修改
+        }
+      }
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      }
+    },
+    {
+      "tag": "dns-out",
+      "protocol": "dns",
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255               //SO_MARK，用于iptables规则识别，每个outbound都要配置成一样的值，若不为255时，此处和iptables同步修改
+        }
+      }
+    }
+  ],
+  "dns": {
+    "servers": [
+      {
+        "address": "114.114.114.114",             //中国大陆域名使用阿里的DNS
+        "port": 53,
+        "domains": [
+          "geosite:cn",
+          "ntp.org",             //设置解析NTP服务器域名使用此dns
+          "vps.martlet121.cn"                //设为VPS域名；NTP和VPS用国内DNS解析，要是用国外DNS解析的话，连不上国外DNS则无法解析，无法解析则无法同步时间且连不上vps，死循环了
+        ]
+      },
+      {
+        "address": "223.5.5.5",               //中国大陆域名设阿里的DNS服务器备份
+        "port": 53,
+        "domains": [
+          "geosite:cn",
+          "ntp.org",             //设置解析NTP服务器域名使用此dns
+          "vps.martlet121.cn"               //设为VPS域名；NTP和VPS用国内DNS解析
+        ]
+      },
+      {
+        "address": "8.8.8.8",               //非中国大陆域名使用Google的DNS解析
+        "port": 53,
+        "domains": [
+          "geosite:geolocation-!cn"
+        ]
+      },
+      {
+        "address": "1.1.1.1",                //非中国大陆域名使用Cloudflare的DNS备份
+        "port": 53,
+        "domains": [
+          "geosite:geolocation-!cn"
+        ]
+      }
+    ]
+  },
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "transparent"
+        ],
+        "port": 53,
+        "network": "udp",
+        "outboundTag": "dns-out"                  //劫持53端口UDP流量，使用V2Ray的DNS
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "transparent"
+        ],
+        "port": 123,
+        "network": "udp",
+        "outboundTag": "direct"               //直连123端口UDP流量（NTP 协议）
+      },
+      {
+        "type": "field",
+        "ip": [
+          "223.5.5.5",
+          "114.114.114.114"
+        ],
+        "outboundTag": "direct"          //让国内DNS服务器地址直连出去，不经过代理可实现DNS分流
+      },
+      {
+        "type": "field",
+        "ip": [
+          "8.8.8.8",
+          "1.1.1.1"
+        ],
+        "outboundTag": "proxy"            //让国外DNS服务器地址走代理，可实现DNS分流
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-ads-all"
+        ],
+        "outboundTag": "block"              //广告拦截
+      },
+      {
+        "type": "field",
+        "protocol":["bittorrent"],
+        "outboundTag": "direct"             //BT流量直连
+      },
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private",
+          "geoip:cn"
+        ],
+        "outboundTag": "direct"                //直连中国大陆主流网站ip和保留ip
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:cn"
+        ],
+        "outboundTag": "direct"                 //直连中国大陆主流网站域名
+      }
+    ]
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                    #重启服务应用配置
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray </mark>                #加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray.service → /etc/systemd/system/v2ray.service.
+
+[root@martlet121 ~]# <mark> netstat -anpt </mark>                     #查看端口监听
+
+Active Internet connections (servers and established)
+
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+
+tcp6       0      0 :::1080                 :::*                    LISTEN      3184/v2ray 
+
+tcp6       0      0 :::12345                :::*                    LISTEN      3184/v2ray 
+
+[root@martlet121 ~]# <mark> curl -x socks5://127.0.0.1:1080 google.com </mark>                     #测试网关访问外网是否正常，下面回显表示能正常通过代理访问
+
+```html
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+```
+
+[root@martlet121 ~]# 
+
+
+
+3、iptables配置（ipv4规则）
+
+[root@martlet121 ~]#                  #下面命令直接贴到服务器中即可
+
+```bash
+#设置策略路由
+ip rule add fwmark 1 table 100 
+ip route add local 0.0.0.0/0 dev lo table 100
+
+#代理局域网设备
+iptables -t mangle -N V2RAY
+iptables -t mangle -A V2RAY -d 127.0.0.1/32 -j RETURN
+iptables -t mangle -A V2RAY -d 224.0.0.0/4 -j RETURN 
+iptables -t mangle -A V2RAY -d 255.255.255.255/32 -j RETURN 
+iptables -t mangle -A V2RAY -d 192.168.0.0/16 -p tcp -j RETURN                 #直连局域网，避免V2Ray无法启动时无法SSH连网关
+iptables -t mangle -A V2RAY -d 192.168.0.0/16 -p udp ! --dport 53 -j RETURN                #直连局域网，53端口除外（因为要使用V2Ray的DNS)
+iptables -t mangle -A V2RAY -j RETURN -m mark --mark 0xff                  #直连SO_MARK为0xff的流量（0xff是255的16进制数），此规则目的是避免代理本机流量出现环路（https://github.com/v2ray/v2ray-core/issues/2621）
+iptables -t mangle -A V2RAY -p udp -j TPROXY --on-ip 127.0.0.1 --on-port 12345 --tproxy-mark 1             #给UDP打标记1，转发至12345端口
+iptables -t mangle -A V2RAY -p tcp -j TPROXY --on-ip 127.0.0.1 --on-port 12345 --tproxy-mark 1              #给TCP打标记1，转发至12345端口
+iptables -t mangle -A PREROUTING -j V2RAY               #应用规则
+
+#代理网关本机
+iptables -t mangle -N V2RAY_MASK 
+iptables -t mangle -A V2RAY_MASK -d 224.0.0.0/4 -j RETURN 
+iptables -t mangle -A V2RAY_MASK -d 255.255.255.255/32 -j RETURN 
+iptables -t mangle -A V2RAY_MASK -d 192.168.0.0/16 -p tcp -j RETURN                 #直连局域网
+iptables -t mangle -A V2RAY_MASK -d 192.168.0.0/16 -p udp ! --dport 53 -j RETURN                  #直连局域网，53端口除外（因为要使用V2Ray的DNS）
+iptables -t mangle -A V2RAY_MASK -j RETURN -m mark --mark 0xff                 #直连SO_MARK为0xff的流量（0xff是255的16进制数），此规则目的是避免代理本机流量出现环路
+iptables -t mangle -A V2RAY_MASK -p udp -j MARK --set-mark 1              #给UDP打标记，重路由；在OUTPUT链打标记会使相应的包重路由到PREROUTING链上，以此实现UDP透明代理
+iptables -t mangle -A V2RAY_MASK -p tcp -j MARK --set-mark 1               #给TCP打标记，重路由
+iptables -t mangle -A OUTPUT -j V2RAY_MASK              #应用规则
+
+#新建DIVERT规则，避免已有连接的包二次通过TPROXY，理论上有一定的性能提升
+iptables -t mangle -N DIVERT
+iptables -t mangle -A DIVERT -j MARK --set-mark 1
+iptables -t mangle -A DIVERT -j ACCEPT
+iptables -t mangle -I PREROUTING -p tcp -m socket -j DIVERT
+```
+
+[root@martlet121 ~]#
+
+
+
+4、ip6tables配置（ipv6规则）
+
+[root@martlet121 ~]#                  #下面命令直接贴到服务器中即可
+
+```bash
+# 策略路由
+ip -6 rule add fwmark 1 table 106
+ip -6 route add local ::/0 dev lo table 106
+# 局域网设备代理
+ip6tables -t mangle -N V2RAY6
+ip6tables -t mangle -A V2RAY6 -d ::1/128 -j RETURN
+ip6tables -t mangle -A V2RAY6 -d fc00::/7 -j RETURN
+ip6tables -t mangle -A V2RAY6 -d fe80::/10 -j RETURN
+ip6tables -t mangle -A V2RAY6 -d ff00::/8 -j RETURN
+ip6tables -t mangle -A V2RAY6 -d ff00::/8 -p udp ! --dport 53 -j RETURN
+ip6tables -t mangle -A V2RAY6 -j RETURN -m mark --mark 0xff
+ip6tables -t mangle -A V2RAY6 -p udp -j TPROXY --on-ip ::1 --on-port 12345 --tproxy-mark 1
+ip6tables -t mangle -A V2RAY6 -p tcp -j TPROXY --on-ip ::1 --on-port 12345 --tproxy-mark 1
+ip6tables -t mangle -A PREROUTING -j V2RAY6
+# 网关本机代理
+ip6tables -t mangle -N V2RAY6_MASK
+ip6tables -t mangle -A V2RAY6_MASK -d ::1/128 -j RETURN
+ip6tables -t mangle -A V2RAY6_MASK -d fc00::/7 -j RETURN
+ip6tables -t mangle -A V2RAY6_MASK -d fe80::/10 -j RETURN
+ip6tables -t mangle -A V2RAY6_MASK -d ff00::/8 -j RETURN
+ip6tables -t mangle -A V2RAY6_MASK -d ff00::/8 -p udp ! --dport 53 -j RETURN
+ip6tables -t mangle -A V2RAY6_MASK -j RETURN -m mark --mark 0xff
+ip6tables -t mangle -A V2RAY6_MASK -p udp -j MARK --set-mark 1
+ip6tables -t mangle -A V2RAY6_MASK -p tcp -j MARK --set-mark 1
+ip6tables -t mangle -A OUTPUT -j V2RAY6_MASK
+# DIVERT规则
+ip6tables -t mangle -N DIVERT6
+ip6tables -t mangle -A DIVERT6 -j MARK --set-mark 1
+ip6tables -t mangle -A DIVERT6 -j ACCEPT
+ip6tables -t mangle -I PREROUTING -p tcp -m socket -j DIVERT6
+```
+
+[root@martlet121 ~]#
+
+
+
+5、开启自动加载iptables和ip6tables的透明代理规则
+
+[root@martlet121 ~]# <mark> mkdir -p /etc/iptables && iptables-save > /etc/iptables/v2ray.iptables && ip6tables-save > /etc/iptables/v2ray.ip6tables </mark>                  #创建目录并保存当前iptables配置到v2ray.iptables文件中
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/tproxyrule.service </mark>                    #创建服务启动文件
+
+```
+[Unit]
+Description=Tproxy rule
+After=network.target
+Wants=network.target
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+#注意分号前后要有空格
+ExecStart=/sbin/ip rule add fwmark 1 table 100 ; /sbin/ip route add local 0.0.0.0/0 dev lo table 100 ; /sbin/iptables-restore /etc/iptables/v2ray.iptables ; /sbin/ip -6 rule add fwmark 1 table 106 ; /sbin/ip -6 route add local ::/0 dev lo table 106 ; /sbin/ip6tables-restore /etc/iptables/v2ray.ip6tables
+ExecStop=/sbin/ip rule del fwmark 1 table 100 ; /sbin/ip route del local 0.0.0.0/0 dev lo table 100 ; /sbin/iptables -t mangle -F ; 
+/sbin/ip -6 rule del fwmark 1 table 106 ; /sbin/ip -6 route del local ::/0 dev lo table 106 ; /sbin/ip6tables -t mangle -F
+[Install]
+WantedBy=multi-user.target
+```
+
+[root@martlet121 ~]# <mark> systemctl enable tproxyrule </mark>                    #将新创建的服务启动文件，以服务形式加入到开机启动中；就是建了软链接
+
+Created symlink /etc/systemd/system/multi-user.target.wants/tproxyrule.service → /etc/systemd/system/tproxyrule.service.
+
+[root@martlet121 ~]#
+
+
+
+6、配置优化
+
+​    解决UDP透明代理时出现的too many open files报错，此为超过最大文件描述符限制，添加下面两个配置项即可
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray.service </mark>                         #修改v2ray服务启动文件
+
+```
+  6 [Service]
+ 14 LimitNPROC=500
+ 15 LimitNOFILE=1000000
+```
+
+ [root@martlet121 ~]# <mark> systemctl daemon-reload && systemctl restart v2ray </mark>                       #读取新文件并重启服务生效
+
+
+
+7、网关地址查看
+
+[root@martlet121 ~]# <mark> ip a </mark>               #就是软路由自己的ip地址
+
+2: ens160:  mtu 1500 qdisc fq_codel state UP group default qlen 1000
+
+​    link/ether 00:0c:29:36:1d:e2 brd ff:ff:ff:ff:ff:ff
+
+​    altname enp3s0
+
+​    inet 192.168.1.254/24 brd 192.168.1.255 scope global noprefixroute ens160
+
+​       valid_lft forever preferred_lft forever
+
+​    inet6 2409:8a62:f10:b240::ffff/64 scope global noprefixroute
+
+​       valid_lft forever preferred_lft forever
+
+​    inet6 fe80::20c:29ff:fe36:1de2/64 scope link noprefixroute
+
+​       valid_lft forever preferred_lft forever
+
+[root@martlet121 ~]# <mark> cat /etc/NetworkManager/system-connections/ens160.nmconnection </mark>                #软路由自己的ipv4和ipv6网关指向网络内正确网关
+
+[connection]
+
+id=ens160
+
+uuid=2ee1d081-64a1-316d-9865-97a96d65bb19
+
+type=ethernet
+
+autoconnect-priority=-999
+
+interface-name=ens160
+
+timestamp=1722186972
+
+[ethernet]
+
+[ipv4]
+
+address1=192.168.1.254/24,192.168.1.1
+
+dns=114.114.114.114;
+
+method=manual
+
+[ipv6]
+
+method=manual
+
+address1=2409:8a62:f10:b240::ffff/64
+
+gateway=fe80::f221:78ff:feda:e104
+
+dns=2001:4860:4860::8888;2001:4860:4860::8844;
+
+never-default=false
+
+ip6-privacy=0
+
+[proxy]
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、客户端
+
+1、Windows
+
+​    设置客户端的网关为软路由的网关，这样默认所有流量会优先发给软路由；想自动生效的话，就要改dhcp服务器中关于此网段的配置，设置自动分配地址时分配的网关为软路由网关即可
+
+![文章配图](<./files/51 透明代理（TPROXY）/2.png>)
+
+
+
+2、Linux
+
+[root@martlet121171 ~]# <mark> cat /etc/NetworkManager/system-connections/ens160.nmconnection </mark>                  #ipv4和ipv6的网关地址都指向软路由
+
+[connection]
+
+id=ens160
+
+uuid=77bd86c8-c18b-3e18-8811-a78d4c90e057
+
+type=ethernet
+
+autoconnect-priority=-999
+
+interface-name=ens160
+
+timestamp=1744218398
+
+[ethernet]
+
+[ipv4]
+
+address1=192.168.1.171/24
+
+dns=114.114.114.114;
+
+gateway=192.168.1.254
+
+method=manual
+
+[ipv6]
+
+method=manual
+
+address1=2409:8a62:f10:b240::ac/64
+
+gateway=2409:8a62:f10:b240::ffff
+
+dns=2001:4860:4860::8888;2001:4860:4860::8844;
+
+never-default=false
+
+ip6-privacy=0
+
+[proxy]
+
+[root@martlet121171 ~]#
+
+
+
+# 52 反向代理（端口映射）
+
+---
+description: "可用于内网穿透，达到在外网利用VPS访问不具有公网IP的内网服务器"
+---
+
+   可用于内网穿透，达到在外网利用VPS访问不具有公网IP的内网服务器
+
+​    客户端无需认证，任意人都可访问到
+
+
+
+角色定义
+
+​    A：没有公网IP的内网服务器
+
+​    B：有公网IP的云服务器
+
+​    C：可访问公网的客户端
+
+
+
+工作流程
+
+​    A主动向B发起请求，建立一个连接（支持的协议VMess、Shadowsocks、Socks）
+
+​    用户在C上向B发起请求，想访问A上的服务
+
+​    B接受C的请求（只支持dokodemo-door协议），通过A向B建立的连接转发给A（即B反向连接了A）
+
+![文章配图](<./files/52 反向代理（端口映射）/1.png>)
+
+
+
+
+
+
+
+一、配置A：没有公网IP的内网服务器
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务主配置文件
+
+```json
+{
+  "reverse":{                          //A的反向代理设置，必须bridges对象
+    "bridges":[
+      {
+        "tag":"bridge",                        //反向代理标签，在路由中会用到
+        "domain":"home.martlet121.cn"                         //必须和B中reverse配置里一样；用于标识反向代理的流量，不必真实存在
+      }
+    ]
+  },
+  "outbounds": [
+    {                      //A连接B的outbound
+      "tag":"tunnel",                         //标签，在路由中会用到
+      "protocol":"vmess",
+      "settings":{
+        "vnext":[
+          {
+            "address":"45.76.177.113",                      //B服务器地址
+            "port":15000,
+            "users":[
+              {
+                "id":"6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId":0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {                        //最终连接内网服务的outbound
+      "protocol":"freedom",
+      "settings":{
+      },
+      "tag":"out"                    //标签，在路由中会用到
+    }
+  ],
+  "routing":{
+    "rules":[
+      {                       //A主动连接B的路由规则
+        "type":"field",
+        "inboundTag":[
+          "bridge"
+        ],
+        "domain":[
+          "full:home.martlet121.cn"
+        ],
+        "outboundTag":"tunnel"
+      },
+      {                     //反向连接访问内网服务的规则
+        "type":"field",
+        "inboundTag":[
+          "bridge"
+        ],
+        "outboundTag":"out"
+      }
+    ]
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+
+
+
+
+二、配置B：有公网IP的云服务器
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                       #修改服务主配置文件
+
+```json
+{
+  "reverse":{                     //B的反向代理设置，必须portals对象
+    "portals":[
+      {
+        "tag":"portal",                      //反向代理标签，在路由中会用到
+        "domain":"home.martlet121.cn"                     //必须和A中reverse配置里一样；用于标识反向代理的流量，不必真实存在
+      }
+    ]
+  },
+  "inbounds": [
+    {                         //接受C请求的inbound
+      "tag":"external",                        //标签，在路由中会用到
+      "port":80,                        //公网对外开放的80端口，用于接收外部的HTTP访问
+      "protocol":"dokodemo-door",
+        "settings":{
+          "address":"127.0.0.1",
+          "port":80,                      //转到内网监听的80端口
+          "network":"tcp"
+        }
+    },
+    {                    //接受A主动发起的请求
+      "tag": "tunnel",                       //标签，在路由中会用到
+      "port":15000,
+      "protocol":"vmess",
+      "settings":{
+        "clients":[
+          {
+            "id":"6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId":0
+          }
+        ]
+      }
+    }
+  ],
+  "routing":{
+    "rules":[
+      {                          //路由规则，接收C请求后发给A
+        "type":"field",
+        "inboundTag":[
+          "external"
+        ],
+        "outboundTag":"portal"
+      },
+      {                          //路由规则，让B能够识别这是A主动发起的反向代理连接
+        "type":"field",
+        "inboundTag":[
+          "tunnel"
+        ],
+        "domain":[
+          "full:home.martlet121.cn"
+        ],
+        "outboundTag":"portal"
+      }
+    ]
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> ss -anpt </mark>                  #查看端口监听
+
+State      Recv-Q     Send-Q         Local Address:Port             Peer Address:Port      Process
+
+LISTEN     0          4096                       *:80                          *:*          users:(("v2ray",pid=5165,fd=3))
+
+LISTEN     0          4096                       *:15000                       *:*          users:(("v2ray",pid=5165,fd=7))
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、通过 C：可访问公网的客户端 进行测试
+
+​    需要输入B的地址或域名，外网客户端通过云服务器代理到内网
+
+
+
+# 53 反向代理（ip穿透）
+
+---
+description: "内网穿透，达到在外网利用VPS访问内网中所有地址"
+---
+
+   内网穿透，达到在外网利用VPS访问内网中所有地址
+
+​    客户端要认证才能访问到（B和C之间由dokodemo-door改为VMess，C通过V2Ray连接B，B反向代理给A，相当于C通过A代理上网）
+
+​    <mark> 后续研究下怎么结合透明代理，访问局域网内所有设备和端口 </mark> 
+
+
+
+角色定义
+
+​    A：没有公网IP的内网服务器
+
+​    B：有公网IP的云服务器
+
+​    C：可访问公网的客户端
+
+![文章配图](<./files/53 反向代理（ip穿透）/1.png>)
+
+
+
+
+
+
+
+一、配置A：没有公网IP的内网服务器
+
+​    这里和端口映射一样，没有改
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                     #修改服务主配置文件
+
+```json
+{
+  "reverse":{                          //A的反向代理设置，必须bridges对象
+    "bridges":[
+      {
+        "tag":"bridge",                        //反向代理标签，在路由中会用到
+        "domain":"home.martlet121.cn"                         //必须和B中reverse配置里一样；用于标识反向代理的流量，不必真实存在
+      }
+    ]
+  },
+  "outbounds": [
+    {                      //A连接B的outbound
+      "tag":"tunnel",                         //标签，在路由中会用到
+      "protocol":"vmess",
+      "settings":{
+        "vnext":[
+          {
+            "address":"45.76.177.113",                      //B服务器地址
+            "port":15000,
+            "users":[
+              {
+                "id":"6603eb89-d26e-46b2-a626-49e18e074a6e",
+                "alterId":0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {                        //最终连接内网服务的outbound
+      "protocol":"freedom",
+      "settings":{
+      },
+      "tag":"out"                    //标签，在路由中会用到
+    }
+  ],
+  "routing":{
+    "rules":[
+      {                       //A主动连接B的路由规则
+        "type":"field",
+        "inboundTag":[
+          "bridge"
+        ],
+        "domain":[
+          "full:home.martlet121.cn"
+        ],
+        "outboundTag":"tunnel"
+      },
+      {                     //反向连接访问内网服务的规则
+        "type":"field",
+        "inboundTag":[
+          "bridge"
+        ],
+        "outboundTag":"out"
+      }
+    ]
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                    #重启服务应用配置
+
+
+
+
+
+二、配置B：有公网IP的云服务器
+
+​    和端口映射相比，只修改了inbound部分；并且还可将接受A和C请求的inbound合并为一个来简化配置
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                       #修改服务主配置文件
+
+```json
+{
+  "reverse":{                    //B的反向代理设置，必须portals对象
+    "portals":[
+      {
+        "tag":"portal",                        //反向代理标签，在路由中会用到
+        "domain":"home.martlet121.cn"                     //必须和A中reverse配置里一样；用于标识反向代理的流量，不必真实存在
+      }
+    ]
+  },
+  "inbounds":[
+    {                     //接受C请求的inbound
+      "tag":"tunnel",                   //标签，在路由中会用到
+      "port":15001,
+      "protocol":"vmess",
+      "settings":{
+        "clients":[
+          {
+            "id":"a26efdb8-ef34-4278-a4e6-2af32cc010aa",
+            "alterId":0
+          }
+        ]
+      }
+    },
+    {                     //接受A主动发起的请求
+      "tag": "interconn",                      //标签，在路由中会用到
+      "port":15000,
+      "protocol":"vmess",
+      "settings":{
+        "clients":[
+          {
+            "id":"6603eb89-d26e-46b2-a626-49e18e074a6e",
+            "alterId":0
+          }
+        ]
+      }
+    }
+  ],
+  "routing":{
+    "rules":[
+      {                     //路由规则，接收C请求后发给A
+        "type":"field",
+        "inboundTag":[
+          "interconn"
+        ],
+        "outboundTag":"portal"
+      },
+      {                    //路由规则，让B能够识别这是A主动发起的反向代理连接
+        "type":"field",
+        "inboundTag":[
+          "tunnel"
+        ],
+        "domain":[
+          "full:home.martlet121.cn"                  //将指定域名的请求发给A，如果希望将全部流量发给A，这里可以不设置域名规则
+        ],
+        "outboundTag":"portal"
+      }
+    ]
+  }
+}
+```
+
+[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务应用配置
+
+[root@martlet121 ~]# <mark> netstat -anpt </mark>                  #查看端口监听
+
+Active Internet connections (servers and established)
+
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+
+tcp6       0      0 :::15000                :::*                    LISTEN      5534/v2ray 
+
+tcp6       0      0 :::15001                :::*                    LISTEN      5534/v2ray 
+
+[root@martlet121 ~]#
+
+
+
+
+
+三、配置C：可访问公网的客户端
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件（和普通客户端配置一样）
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 15001,                  //服务器端口
+            "users": [
+              {
+                "id": "a26efdb8-ef34-4278-a4e6-2af32cc010aa",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+四、测试
+
+​    此时要直接在浏览器中输入内网网段的web服务地址，因为已经通过隧道穿透到了内网中
+
+​    浏览器中配置1080入站就是浏览器中测试
+
+1、访问A的服务正常
+
+![文章配图](<./files/53 反向代理（ip穿透）/2.png>)
+
+2、验证通过A访问内网其他服务
+
+![文章配图](<./files/53 反向代理（ip穿透）/3.png>)
+
+# 54 运行多个服务端进程
+
+---
+description: "启用多个v2ray进程，提供不同协议的客户端入口"
+---
+
+   启用多个v2ray进程，提供不同协议的客户端入口
+
+
+
+
+
+
+
+一、服务端配置
+
+1、配置v2ray
+
+[root@martlet121 ~]# <mark> mv /usr/local/etc/v2ray/config.json /usr/local/etc/v2ray/config_01.json </mark>                   #修改配置文件名
+
+[root@martlet121 ~]# <mark> cp /usr/local/etc/v2ray/config_01.json /usr/local/etc/v2ray/config_02.json </mark>                  #多复制一个配置文件
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config_01.json </mark>                 #只需修改日志路径和进程监听端口即可，其他配置一样
+
+```json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access_01.log",               //修改日志路径
+    "error": "/var/log/v2ray/error_01.log"
+  },
+  "inbounds": [
+    {
+      "port": 20001,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config_02.json </mark>                #只需修改日志路径和进程监听端口即可，其他配置一样
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 20002,                 //服务端监听端口
+      "protocol": "shadowsocks",
+      "settings": {
+        "method": "aes-128-gcm",
+        "ota": true,                //是否开启OTA
+        "password": "martlet121"                    //连接服务端时认证密码
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> mv /etc/systemd/system/v2ray.service /etc/systemd/system/v2ray-01.service </mark>                  #修改服务启动文件名
+
+[root@martlet121 ~]# <mark> cp /etc/systemd/system/v2ray-01.service /etc/systemd/system/v2ray-02.service </mark>                 #创建新的启动文件
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray-01.service </mark>                  #修改启动文件加载的配置文件
+
+```
+ 11 ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config_01.json
+```
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray-02.service </mark>                   #修改启动文件加载的配置文件
+
+```
+ 11 ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config_02.json
+```
+
+[root@martlet121 ~]# <mark> systemctl daemon-reload </mark>                   #重启加载服务
+
+[root@martlet121 ~]# <mark> systemctl start v2ray-01.service </mark>                  #启动服务
+
+[root@martlet121 ~]# <mark> systemctl start v2ray-02.service </mark>                  #启动服务
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray-01.service </mark>                  #将服务加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray-01.service → /etc/systemd/system/v2ray-01.service.
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray-02.service </mark>                  #将服务加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray-02.service → /etc/systemd/system/v2ray-02.service.
+
+[root@martlet121 ~]# <mark> netstat -anpt | grep 20001 </mark>                  #查看端口监听
+
+tcp6       0      0 :::20001                :::*                    LISTEN      8053/v2ray
+
+[root@martlet121 ~]# <mark> netstat -anpt | grep 20002 </mark>                   #查看端口监听
+
+tcp6       0      0 :::20002                :::*                    LISTEN      8062/v2ray
+
+[root@martlet121 ~]# 
+
+
+
+
+
+二、vmess客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20001,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+三、shadowsocks客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置代理使用的端口
+      "protocol": "socks",            //入口协议为SOCKS 5
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                 //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "45.76.177.113",                 //Shadowsocks服务器地址
+            "method": "aes-128-gcm",                 //Shadowsocks服务器加密方式
+            "ota": true,                //是否开启OTA，true为开启
+            "password": "martlet121",                  //Shadowsocks服务器密码
+            "port": 20002                      //Shadowsocks服务器监听端口号
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+# 55 负载均衡（balancers）
+
+---
+description: "v4.3版本开始支持均衡负载，客户端进行随机选择不同服务端"
+---
+
+   v4.3版本开始支持均衡负载，客户端进行随机选择不同服务端
+
+​    也可在一个vnext下写2个出口服务器地址，这种方式默认轮询
+
+
+
+
+
+
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20001,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      },
+      "tag": "s20001"
+    },
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20002,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      },
+      "tag": "s20002"
+    },
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"             //如果要使用路由，一定要有tag，相当于出口别名，路由规则中通过tag调用
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "balancers": [
+      {
+        "tag": "b1",                //定义负载均衡组，设置组的tag并调用成员出口tag
+        "selector": [
+          "s20001",
+          "s20002"
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "direct",
+        "ip": [
+          "geoip:private",
+          "geoip:cn"
+        ]
+      },
+      {
+        "type": "field",
+        "outboundTag": "direct",
+        "domain": [
+          "geosite:cn"
+        ]
+      },
+      {
+        "type": "field",
+        "network": "tcp,udp",
+        "balancerTag": "b1"                   //所有剩余流量都走此负载均衡组
+      }
+    ]
+  }
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> mv /usr/local/etc/v2ray/config.json /usr/local/etc/v2ray/config_01.json </mark>                  #修改配置文件名
+
+[root@martlet121 ~]# <mark> cp /usr/local/etc/v2ray/config_01.json /usr/local/etc/v2ray/config_02.json </mark>                 #多复制一个配置文件
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config_01.json </mark>                #只需修改日志路径和进程监听端口即可，其他配置一样
+
+```json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access_01.log",               //修改日志路径
+    "error": "/var/log/v2ray/error_01.log"
+  },
+  "inbounds": [
+    {
+      "port": 20001,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config_02.json </mark>                #只需修改日志路径和进程监听端口即可，其他配置一样
+
+```json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access_02.log",                //修改日志路径
+    "error": "/var/log/v2ray/error_02.log"
+  },
+  "inbounds": [
+    {
+      "port": 20002,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> mv /etc/systemd/system/v2ray.service /etc/systemd/system/v2ray-01.service </mark>                  #修改服务启动文件名
+
+[root@martlet121 ~]# <mark> cp /etc/systemd/system/v2ray-01.service /etc/systemd/system/v2ray-02.service </mark>                  #创建新的启动文件
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray-01.service </mark>                  #修改启动文件加载的配置文件
+
+```
+ 11 ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config_01.json
+```
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray-02.service  </mark>                 #修改启动文件加载的配置文件
+
+```
+ 11 ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config_02.json
+```
+
+[root@martlet121 ~]# <mark> systemctl daemon-reload </mark>                  #重启加载服务
+
+[root@martlet121 ~]# <mark> systemctl start v2ray-01.service </mark>                  #启动服务
+
+[root@martlet121 ~]# <mark> systemctl start v2ray-02.service </mark>                  #启动服务
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray-01.service </mark>                  #将服务加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray-01.service → /etc/systemd/system/v2ray-01.service.
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray-02.service </mark>                   #将服务加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray-02.service → /etc/systemd/system/v2ray-02.service.
+
+[root@martlet121 ~]# <mark> netstat -anpt | grep 20001</mark>                   #查看端口监听
+
+tcp6       0      0 :::20001                :::*                    LISTEN      8053/v2ray
+
+[root@martlet121 ~]# <mark> netstat -anpt | grep 20002 </mark>                   #查看端口监听
+
+tcp6       0      0 :::20002                :::*                    LISTEN      8062/v2ray
+
+[root@martlet121 ~]# 
+
+# 56 负载均衡（vnext）
+
+---
+description: "可在一个vnext下写2个出口服务器地址，这种方式默认轮询；也不用定义负载均衡组"
+---
+
+   可在一个vnext下写2个出口服务器地址，这种方式默认轮询；也不用定义负载均衡组
+
+
+
+
+
+
+
+一、客户端配置
+
+​    打开客户端解压后路径config.json文件，编辑完成后运行v2ray.exe文件
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,               //本地监听端口，浏览器配置的代理端口
+      "protocol": "socks",               //入口协议为SOCKS 5
+      "sniffing": {                   //流量探测，根据指定的流量类型，重置所请求的目标；识别域名后应用域名路由规则、解决dns污染、可识别BT协议再处理
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth"                   //socks的认证设置，noauth代表不认证，由于socks通常在客户端使用，所以这里不认证
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",                  //出口协议
+      "settings": {
+        "vnext": [
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20001,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          },
+          {
+            "address": "45.76.177.113",                   //服务器地址，请修改为你自己的服务器 IP 或域名
+            "port": 20002,                  //服务器端口
+            "users": [
+              {
+                "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",                      //用户ID，必须与服务器端配置相同；客户端使用此ID加密后再传给服务端
+                "alterId": 0                  //此处的值也应当与服务器相同，v4.28.1版本之后必须设置为0以启用VMessAEAD
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
+
+
+
+二、服务端配置
+
+[root@martlet121 ~]# <mark> mv /usr/local/etc/v2ray/config.json /usr/local/etc/v2ray/config_01.json </mark>                  #修改配置文件名
+
+[root@martlet121 ~]# <mark> cp /usr/local/etc/v2ray/config_01.json /usr/local/etc/v2ray/config_02.json </mark>                 #多复制一个配置文件
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config_01.json </mark>                 #只需修改日志路径和进程监听端口即可，其他配置一样
+
+```json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access_01.log",               //修改日志路径
+    "error": "/var/log/v2ray/error_01.log"
+  },
+  "inbounds": [
+    {
+      "port": 20001,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config_02.json </mark>                #只需修改日志路径和进程监听端口即可，其他配置一样
+
+```json
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "/var/log/v2ray/access_02.log",                //修改日志路径
+    "error": "/var/log/v2ray/error_02.log"
+  },
+  "inbounds": [
+    {
+      "port": 20002,           //服务器监听端口
+      "protocol": "vmess",              //主传入协议
+      "settings": {
+        "clients": [
+          {
+            "id": "6603eb89-d26e-46b2-a626-49e18e074a6e",              //用户ID，客户端与服务器必须相同；服务端使用此ID解密客户端传来的包
+            "alterId": 0                //v4.28.1版本之后必须设置为0以启用VMessAEAD
+          }
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",                  //主传出协议，直连的意思
+      "settings": {}
+    }
+  ]
+}
+```
+
+[root@martlet121 ~]# <mark> mv /etc/systemd/system/v2ray.service /etc/systemd/system/v2ray-01.service </mark>                  #修改服务启动文件名
+
+[root@martlet121 ~]# <mark> cp /etc/systemd/system/v2ray-01.service /etc/systemd/system/v2ray-02.service </mark>                  #创建新的启动文件
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray-01.service </mark>                  #修改启动文件加载的配置文件
+
+```
+ 11 ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config_01.json
+```
+
+[root@martlet121 ~]# <mark> vim /etc/systemd/system/v2ray-02.service </mark>                  #修改启动文件加载的配置文件
+
+```
+ 11 ExecStart=/usr/local/bin/v2ray run -config /usr/local/etc/v2ray/config_02.json
+```
+
+[root@martlet121 ~]# <mark> systemctl daemon-reload </mark>                  #重启加载服务
+
+[root@martlet121 ~]# <mark> systemctl start v2ray-01.service </mark>                  #启动服务
+
+[root@martlet121 ~]# <mark> systemctl start v2ray-02.service </mark>                  #启动服务
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray-01.service </mark>                  #将服务加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray-01.service → /etc/systemd/system/v2ray-01.service.
+
+[root@martlet121 ~]# <mark> systemctl enable v2ray-02.service </mark>                  #将服务加入开机启动
+
+Created symlink /etc/systemd/system/multi-user.target.wants/v2ray-02.service → /etc/systemd/system/v2ray-02.service.
+
+[root@martlet121 ~]# <mark> netstat -anpt | grep 20001 </mark>                   #查看端口监听
+
+tcp6       0      0 :::20001                :::*                    LISTEN      8053/v2ray
+
+[root@martlet121 ~]# <mark> netstat -anpt | grep 20002 </mark>                  #查看端口监听
+
+tcp6       0      0 :::20002                :::*                    LISTEN      8062/v2ray
+
+[root@martlet121 ~]# 
+
+
+
+# 6 v2ray命令
+
+---
+description: "主程序命令；语法格式： v2ray [参数]"
+---
+
+   主程序命令；语法格式：<mark> v2ray [参数] </mark> 
+
+
+
+| 参数                 | 作用                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| -version             | 查看版本                                                     |
+| -test 配置文件路径   | 测试配置文件格式是否正确                                     |
+| -config 配置文件路径 | 指定配置文件启动；未指定时从工作目录或v2ray.location.asset环境变量中找 |
+| -format              | 指定配置文件格式，json、pb和protobuf                         |
+
+
+
+
+
+
+
+[root@martlet121 ~]# <mark>  /usr/local/bin/v2ray test -config /usr/local/etc/v2ray/config.json </mark>                   #检查配置文件是否有语法错误
+
+V2Ray 5.16.1 (V2Fly, a community-driven edition of V2Ray.) Custom (go1.22.2 linux/amd64)
+
+A unified platform for anti-censorship.
+
+Configuration OK.
+
+[root@martlet121 ~]#
+
+# 7 v2ctl命令
+
+---
+description: "命令工具集合；语法格式： v2ctl [子命令] [参数]"
+---
+
+   命令工具集合；语法格式：<mark> v2ctl [子命令] [参数] </mark>
+
+
+
+
+
+
+
+一、v2ctl api
+
+​    调用V2Ray进程的远程控制指令；语法格式：<mark>  v2ctl api [--server=127.0.0.1:8080]  <Service.Method> < Requert > </mark>
+
+
+
+[root@wuzuniao ~]# <mark> v2ctl api --server=127.0.0.1:8080 LoggerService.RestartLogger '' </mark>                       #远程执行指定命令
+
+
+
+
+
+二、v2ctl config
+
+​    从标准输入读取JSON格式的配置，然后从标准输出打印Protobuf格式的配置
+
+​    没有参数
+
+
+
+
+
+三、v2ctl cert
+
+​    生成TLS证书；语法格式：<mark> v2ctl cert [--ca] [--domain=v2ray.com] [--expire=240h] [--name="V2Ray Inc"] [--org="V2Ray Inc] [--json] [--file=v2ray] </mark> 
+
+
+
+| 参数     | 作用                                                         |
+| -------- | ------------------------------------------------------------ |
+| --ca     | 生成CA证书；默认生成TLS证书                                  |
+| --domain | 证书Alternative Name项；可多次使用来指定多个域名             |
+| --expire | 证书有效期                                                   |
+| --name   | 证书Command Name项                                           |
+| --org    | 证书Orgnization项                                            |
+| --json   | 将生成的证书以V2Ray支持的JSON格式输出到标准输出；默认开启    |
+| --file   | 将证书以PEM格式输出到文件；例：--file=a      表示生成a_cert.pem和a_key.pem两个文件 |
+
+
+
+
+
+四、v2ctl fetch
+
+​    抓取指定的URL内容并输出，只支持HTTP和HTTPS；语法格式：<mark> v2ctl fetch < url > </mark> 
+
+
+
+
+
+五、v2ctl tlsping
+
+​    向指定的域名发起TLS握手，V2Ray 4.17+开始支持；语法格式：<mark> v2ctl tlsping < domain >  --ip=[ip] </mark> 
+
+
+
+| 参数   | 作用                              |
+| ------ | --------------------------------- |
+| domain | 目标域名                          |
+| --ip   | 域名的IP，未指定时使用系统DNS解析 |
+
+
+
+
+
+六、v2ctl verify
+
+​    验证文件是否由Project V官方签名；语法格式：<mark> v2ctl verify [--sig=/path/to/sigfile] < filepath > </mark> 
+
+
+
+| 参数     | 作用                                       |
+| -------- | ------------------------------------------ |
+| --sig    | 签名文件路径；默认为待验证文件加入.sig后缀 |
+| filepath | 待验证文件路径                             |
+
+
+
+
+
+七、v2ctl uuid
+
+​    每次运行都会输出一个新的随机UUID
+
+​    没有参数

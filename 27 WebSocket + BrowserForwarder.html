@@ -1,0 +1,1702 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="在WebSocket + TLS + Web的基础上，V2Ray 4.37.0加入浏览器转发（BrowserForwarder）模块，BrowserForwarder可隐藏客户端；Nginx时隐藏服务…">
+      
+      
+        <meta name="author" content="V2Ray 帮助文档">
+      
+      
+        <link rel="canonical" href="https://martlet121.github.io/27%20WebSocket%20%2B%20BrowserForwarder.html">
+      
+      
+        <link rel="prev" href="26%20WebSocket%20%2B%20TLS%20%2B%20Web.html">
+      
+      
+        <link rel="next" href="30%20Mux.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>27 WebSocket + BrowserForwarder - V2Ray 帮助文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="." title="V2Ray 帮助文档" class="md-header__button md-logo" aria-label="V2Ray 帮助文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            V2Ray 帮助文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              27 WebSocket + BrowserForwarder
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="V2Ray 帮助文档" class="md-nav__button md-logo" aria-label="V2Ray 帮助文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    V2Ray 帮助文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="1%20%E4%BB%8B%E7%BB%8DV2Ray.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 介绍V2Ray
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="2%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88Linux%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 安装V2Ray（Linux）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="3%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88Windows%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 安装V2Ray（Windows）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="4%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88%E5%AE%89%E5%8D%93%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 安装V2Ray（安卓）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="5%20%E5%AE%89%E8%A3%85V2Ray%EF%BC%88Docker%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 安装V2Ray（Docker）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="6%20v2ray%E5%91%BD%E4%BB%A4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 v2ray命令
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="7%20v2ctl%E5%91%BD%E4%BB%A4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 v2ctl命令
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="10%20%E9%85%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 配置格式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="11%20VMess.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 VMess
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="12%20Shadowsocks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 Shadowsocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="13%20DNS.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 DNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="14%20%E6%97%A5%E5%BF%97.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 日志
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="15%20%E5%9B%BD%E5%86%85%E8%B7%AF%E7%94%B1%E7%9B%B4%E8%BF%9E.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 国内路由直连
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="16%20%E7%BD%91%E7%AB%99%E8%BF%87%E6%BB%A4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 网站过滤
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="17%20%E5%9F%9F%E5%90%8D%E6%96%87%E4%BB%B6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 域名文件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="18%20%E7%A6%81%E7%94%A8BT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 禁用BT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="20%20TLS.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 TLS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="21%20TCP%20%2B%20TLS%20%2B%20Web.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 TCP + TLS + Web
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="22%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88TCP%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    22 TCP + TLS分流器（TCP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="23%20TCP%20%2B%20TLS%E5%88%86%E6%B5%81%E5%99%A8%EF%BC%88Socket%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    23 TCP + TLS分流器（Socket）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="25%20WebSocket.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    25 WebSocket
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="26%20WebSocket%20%2B%20TLS%20%2B%20Web.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    26 WebSocket + TLS + Web
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="27%20WebSocket%20%2B%20BrowserForwarder.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    27 WebSocket + BrowserForwarder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="30%20Mux.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    30 Mux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="31%20mKCP.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    31 mKCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="32%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    32 动态端口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="33%20%E5%8A%A8%E6%80%81%E7%AB%AF%E5%8F%A3%20%2B%20mKCP.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    33 动态端口 + mKCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="34%20QUIC.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    34 QUIC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="35%20TOR.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    35 TOR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="36%20%E6%B5%81%E9%87%8F%E7%BB%9F%E8%AE%A1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    36 流量统计
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="40%20HTTP2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    40 HTTP2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="41%20%E5%89%8D%E7%BD%AE%E4%BB%A3%E7%90%86.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    41 前置代理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="50%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88REDIRECT%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    50 透明代理（REDIRECT）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="51%20%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%EF%BC%88TPROXY%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    51 透明代理（TPROXY）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="52%20%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    52 反向代理（端口映射）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="53%20%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88ip%E7%A9%BF%E9%80%8F%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    53 反向代理（ip穿透）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="54%20%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9B%E7%A8%8B.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    54 运行多个服务端进程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="55%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88balancers%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    55 负载均衡（balancers）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="56%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%88vnext%EF%BC%89.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    56 负载均衡（vnext）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>27 WebSocket + BrowserForwarder</h1>
+
+<p>在WebSocket + TLS + Web的基础上，V2Ray 4.37.0加入浏览器转发（BrowserForwarder）模块，BrowserForwarder可隐藏客户端；Nginx时隐藏服务端的</p>
+<p>​    流量路径：[V2Ray client] --&gt; [Browser] --&gt; {Internet} --&gt; [HTTP server] --&gt; [V2Ray server] --&gt; [github.com]</p>
+<p>​    实际配置中，当前在WebSocket + TLS + Web的基础上，修改客户端配置即可<br /><br /></p>
+<p><mark> 未配置成功 </mark> <br /><br /><br /><br /><br /><br /></p>
+<p>一、申请证书</p>
+<p>​    前提是有自己的证书，并添加解析到服务器，已提前设置好</p>
+<p>[root@martlet121 ~]# <mark> dnf -y install openssl cron curl </mark>                #安装依赖包</p>
+<p>[root@martlet121 ~]# <mark> dnf -y install socat </mark>                 #安装依赖包</p>
+<p>[root@martlet121 ~]# <mark> curl https://get.acme.sh | sh </mark>               #安装生成证书的脚本命令</p>
+<p>% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</p>
+<p>​                                 Dload  Upload   Total   Spent    Left  Speed</p>
+<p>100  1032    0  1032    0     0  21500      0 --:--:-- --:--:-- --:--:-- 21500</p>
+<p>% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</p>
+<p>​                                 Dload  Upload   Total   Spent    Left  Speed</p>
+<p>100  219k  100  219k    0     0   567k      0 --:--:-- --:--:-- --:--:--  566k</p>
+<p>[Sat Aug 17 10:45:47 AM UTC 2024] Installing from online archive.</p>
+<p>[Sat Aug 17 10:45:47 AM UTC 2024] Downloading https://github.com/acmesh-official/acme.sh/archive/master.tar.gz</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Extracting master.tar.gz</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] It is recommended to install socat first.</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] We use socat for the standalone server, which is used for standalone mode.</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] If you don't want to use standalone mode, you may ignore this warning.</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Installing to /root/.acme.sh</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Installed to /root/.acme.sh/acme.sh</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.bashrc'</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Close and reopen your terminal to start using acme.sh</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.cshrc'</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Installing alias to '/root/.tcshrc'</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] Installing cron job</p>
+<p>no crontab for root</p>
+<p>no crontab for root</p>
+<p>[Sat Aug 17 10:45:48 AM UTC 2024] bash has been found. Changing the shebang to use bash as preferred.</p>
+<p>[Sat Aug 17 10:45:54 AM UTC 2024] OK</p>
+<p>[Sat Aug 17 10:45:54 AM UTC 2024] Install success!</p>
+<p>[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --register-account -m hhh@martlet121.cn </mark>                     #注册账号</p>
+<p>[Sat Aug 17 10:53:42 AM UTC 2024] No EAB credentials found for ZeroSSL, let's obtain them</p>
+<p>[Sat Aug 17 10:53:44 AM UTC 2024] Registering account: https://acme.zerossl.com/v2/DV90</p>
+<p>[Sat Aug 17 10:53:46 AM UTC 2024] Registered</p>
+<p>[Sat Aug 17 10:53:46 AM UTC 2024] ACCOUNT_THUMBPRINT='oYiQiff5rI-SDI6sG_sMEWUot9oKdhIHKds3XAwzg70'</p>
+<p>[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --issue -d vpn.martlet121.cn --standalone --keylength ec-256 --force </mark>                  #申请证书，默认有效期只有3个月</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--keylength</td>
+<td>密钥长度；字段中有ec表示生成ECC证书，否则就是RSA证书可取值ec-256、ec-384、2048、3072、4096、8192</td>
+</tr>
+</tbody>
+</table>
+<p>[Sat Aug 17 10:55:05 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90</p>
+<p>[Sat Aug 17 10:55:05 AM UTC 2024] Standalone mode.</p>
+<p>[Sat Aug 17 10:55:05 AM UTC 2024] Creating domain key</p>
+<p>[Sat Aug 17 10:55:05 AM UTC 2024] The domain key is here: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key</p>
+<p>[Sat Aug 17 10:55:05 AM UTC 2024] Single domain='vpn.martlet121.cn'</p>
+<p>[Sat Aug 17 10:55:09 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'</p>
+<p>[Sat Aug 17 10:55:09 AM UTC 2024] Verifying: vpn.martlet121.cn</p>
+<p>[Sat Aug 17 10:55:09 AM UTC 2024] Standalone mode server</p>
+<p>[Sat Aug 17 10:55:11 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)</p>
+<p>[Sat Aug 17 10:55:21 AM UTC 2024] Success</p>
+<p>[Sat Aug 17 10:55:21 AM UTC 2024] Verification finished, beginning signing.</p>
+<p>[Sat Aug 17 10:55:21 AM UTC 2024] Let's finalize the order.</p>
+<p>[Sat Aug 17 10:55:21 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A/finalize'</p>
+<p>[Sat Aug 17 10:55:27 AM UTC 2024] Order status is 'processing', let's sleep and retry.</p>
+<p>[Sat Aug 17 10:55:27 AM UTC 2024] Sleeping for 15 seconds then retrying</p>
+<p>[Sat Aug 17 10:55:43 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/F-4vV-vtp2GGeEEMlLFO9A</p>
+<p>[Sat Aug 17 10:55:45 AM UTC 2024] Downloading cert.</p>
+<p>[Sat Aug 17 10:55:45 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/bDv0dVhKrnmpWcJ7bqP1Wg'</p>
+<p>[Sat Aug 17 10:55:47 AM UTC 2024] Cert success.</p>
+<p>-----BEGIN CERTIFICATE-----</p>
+<p>MIIEATCCA4agAwIBAgIQDfumEqwE3hfIco3VZpbboTAKBggqhkjOPQQDAzBLMQsw</p>
+<p>CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF</p>
+<p>Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx</p>
+<p>NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C</p>
+<p>AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj</p>
+<p>TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnswggJ3MB8GA1UdIwQY</p>
+<p>MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq</p>
+<p>ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU</p>
+<p>BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl</p>
+<p>MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw</p>
+<p>gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0</p>
+<p>LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG</p>
+<p>CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBAYK</p>
+<p>KwYBBAHWeQIEAgSB9QSB8gDwAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m</p>
+<p>Z0xaOnQAAAGRX/pd5wAABAMARzBFAiEA8bbdYTbhTPvEX4fzLnBUA/W+NpVQh8Ft</p>
+<p>gik6Xbc1lEkCIDshfpAdGOSiNFcZXemNfC22N0bhzsGM4ifclJy+C3daAHYAPxdL</p>
+<p>T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRX/pdxgAABAMARzBFAiEA</p>
+<p>uVU3KVM6c89ONS4l39jFjoMSj8R1qIRBeH7rLCstcfsCIHi38lIkzVsZvm2DYye/</p>
+<p>2JA5npZgHGPBp/uRSSe8d6PYMBoGA1UdEQQTMBGCD3Zwbi53dXp1bmlhby5jbjAK</p>
+<p>BggqhkjOPQQDAwNpADBmAjEAt0irr5o8AGd2+DfxyrEmtN38Ycfv+THN2Pt9ttDb</p>
+<p>w50zUql4zzs1K7Tw0OmndQZaAjEA/KbWRLlw7uWTjJjsOez0zZrG+kAljjHSBLYe</p>
+<p>E6Vn6MgiflwBqts2WV4G4ou/qm9t</p>
+<p>-----END CERTIFICATE-----</p>
+<p>[Sat Aug 17 10:55:47 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer</p>
+<p>[Sat Aug 17 10:55:47 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key</p>
+<p>[Sat Aug 17 10:55:47 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer</p>
+<p>[Sat Aug 17 10:55:47 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer</p>
+<p>[root@martlet121 ~]# ./.acme.sh/acme.sh --renew -d vpn.martlet121.cn --force --ecc                     #acme.sh脚本会每60天自动更新证书，也可以通过当前命令在90天内进行更新</p>
+<p>[Sat Aug 17 11:01:28 AM UTC 2024] Renewing: 'vpn.martlet121.cn'</p>
+<p>[Sat Aug 17 11:01:28 AM UTC 2024] Renewing using Le_API=https://acme.zerossl.com/v2/DV90</p>
+<p>[Sat Aug 17 11:01:29 AM UTC 2024] Using CA: https://acme.zerossl.com/v2/DV90</p>
+<p>[Sat Aug 17 11:01:29 AM UTC 2024] Standalone mode.</p>
+<p>[Sat Aug 17 11:01:29 AM UTC 2024] Single domain='vpn.martlet121.cn'</p>
+<p>[Sat Aug 17 11:01:38 AM UTC 2024] Getting webroot for domain='vpn.martlet121.cn'</p>
+<p>[Sat Aug 17 11:01:38 AM UTC 2024] Verifying: vpn.martlet121.cn</p>
+<p>[Sat Aug 17 11:01:38 AM UTC 2024] Standalone mode server</p>
+<p>[Sat Aug 17 11:01:41 AM UTC 2024] Processing. The CA is processing your order, please wait. (1/30)</p>
+<p>[Sat Aug 17 11:01:45 AM UTC 2024] Success</p>
+<p>[Sat Aug 17 11:01:45 AM UTC 2024] Verification finished, beginning signing.</p>
+<p>[Sat Aug 17 11:01:45 AM UTC 2024] Let's finalize the order.</p>
+<p>[Sat Aug 17 11:01:45 AM UTC 2024] Le_OrderFinalize='https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg/finalize'</p>
+<p>[Sat Aug 17 11:01:47 AM UTC 2024] Order status is 'processing', let's sleep and retry.</p>
+<p>[Sat Aug 17 11:01:47 AM UTC 2024] Sleeping for 15 seconds then retrying</p>
+<p>[Sat Aug 17 11:02:03 AM UTC 2024] Polling order status: https://acme.zerossl.com/v2/DV90/order/IS4wSHNIQeYp0tGcVDrwTg</p>
+<p>[Sat Aug 17 11:02:04 AM UTC 2024] Downloading cert.</p>
+<p>[Sat Aug 17 11:02:04 AM UTC 2024] Le_LinkCert='https://acme.zerossl.com/v2/DV90/cert/9q6qQObIwz4RVA_t1MDVnw'</p>
+<p>[Sat Aug 17 11:02:05 AM UTC 2024] Cert success.</p>
+<p>-----BEGIN CERTIFICATE-----</p>
+<p>MIIEAjCCA4egAwIBAgIQG8PeoUgSD2/zAsjnlF7alDAKBggqhkjOPQQDAzBLMQsw</p>
+<p>CQYDVQQGEwJBVDEQMA4GA1UEChMHWmVyb1NTTDEqMCgGA1UEAxMhWmVyb1NTTCBF</p>
+<p>Q0MgRG9tYWluIFNlY3VyZSBTaXRlIENBMB4XDTI0MDgxNzAwMDAwMFoXDTI0MTEx</p>
+<p>NTIzNTk1OVowGjEYMBYGA1UEAxMPdnBuLnd1enVuaWFvLmNuMFkwEwYHKoZIzj0C</p>
+<p>AQYIKoZIzj0DAQcDQgAE8pBRFuJodUbqzF19Bs2iP6/6BYw+Qbxl6080LEjaWPtj</p>
+<p>TkGOu9KwO2/ljNdrkan/W/uv+BSFuay0j0VxJDFRIaOCAnwwggJ4MB8GA1UdIwQY</p>
+<p>MBaAFA9r5kvOOUeu9n6QHnnwMJGSyF+jMB0GA1UdDgQWBBRtpeO8Kzop4tXRnliq</p>
+<p>ABKQaepYsDAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAU</p>
+<p>BggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICTjAl</p>
+<p>MCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEw</p>
+<p>gYgGCCsGAQUFBwEBBHwwejBLBggrBgEFBQcwAoY/aHR0cDovL3plcm9zc2wuY3J0</p>
+<p>LnNlY3RpZ28uY29tL1plcm9TU0xFQ0NEb21haW5TZWN1cmVTaXRlQ0EuY3J0MCsG</p>
+<p>CCsGAQUFBzABhh9odHRwOi8vemVyb3NzbC5vY3NwLnNlY3RpZ28uY29tMIIBBQYK</p>
+<p>KwYBBAHWeQIEAgSB9gSB8wDxAHYAdv+IPwq2+5VRwmHM9Ye6NLSkzbsp3GhCCp/m</p>
+<p>Z0xaOnQAAAGRYAAm7gAABAMARzBFAiEA9CDmTq8zc4Hu0sbuWWfCgBKPC80OeH9p</p>
+<p>mNvfvlTNjE0CIEqb+nc4Vz3Ij2eFtRCE/2EGHhcX1irxCZ/xzNM0aWGvAHcAPxdL</p>
+<p>T9ciR1iUHWUchL4NEu2QN38fhWrrwb8ohez4ZG4AAAGRYAAmmAAABAMASDBGAiEA</p>
+<p>6635N34kA10nuxn9QRi0lLRTl2CkTHel77IV9QwmXQ4CIQDpARU+kesr3OFVOr2N</p>
+<p>Drex8pzqzzZpiA6zWVIy2v54rjAaBgNVHREEEzARgg92cG4ud3V6dW5pYW8uY24w</p>
+<p>CgYIKoZIzj0EAwMDaQAwZgIxALxJ/kPXTGb1lw92i9iDp//lsV0uDiABJGftP8VI</p>
+<p>k6We+ofZq940oSlFmQRxdsRvCgIxAMd+tHZ1/bFcJitLT2pWDeM/f+W9pHq6vvLz</p>
+<p>wnrVy4efeHfAfbCUDFV5kyjDvbRmYg==</p>
+<p>-----END CERTIFICATE-----</p>
+<p>[Sat Aug 17 11:02:05 AM UTC 2024] Your cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.cer</p>
+<p>[Sat Aug 17 11:02:05 AM UTC 2024] Your cert key is in: /root/.acme.sh/vpn.martlet121.cn_ecc/vpn.martlet121.cn.key</p>
+<p>[Sat Aug 17 11:02:06 AM UTC 2024] The intermediate CA cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/ca.cer</p>
+<p>[Sat Aug 17 11:02:06 AM UTC 2024] And the full-chain cert is in: /root/.acme.sh/vpn.martlet121.cn_ecc/fullchain.cer</p>
+<p>[root@martlet121 ~]# <mark> ./.acme.sh/acme.sh --installcert -d vpn.martlet121.cn --ecc --fullchain-file /usr/local/etc/v2ray/v2ray.crt --key-file /usr/local/etc/v2ray/v2ray.key </mark>                     #安装证书和密钥到v2ray的配置文件同级目录，v2ray.key是私钥文件，不能泄露</p>
+<p>[Sat Aug 17 11:05:57 AM UTC 2024] Installing key to: /usr/local/etc/v2ray/v2ray.key</p>
+<p>[Sat Aug 17 11:05:57 AM UTC 2024] Installing full chain to: /usr/local/etc/v2ray/v2ray.crt</p>
+<p>[root@martlet121 ~]# <mark> chmod 777 /usr/local/etc/v2ray/v2ray.* </mark>                       #修改证书文件权限<br /><br /><br /><br /></p>
+<p>二、配置nginx</p>
+<p>[root@martlet121 ~]# <mark> dnf -y install nginx </mark>                         #安装nginx</p>
+<p>[root@martlet121 ~]# <mark> vim /etc/nginx/nginx.conf </mark>                          #修改主配置文件</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>user nginx;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>worker_processes auto;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>error_log /var/log/nginx/error.log;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>pid /run/nginx.pid;
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>include /usr/share/nginx/modules/*.conf;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>events {
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    worker_connections 1024;
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>}
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>http {
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    access_log  /var/log/nginx/access.log  main;
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    sendfile            on;
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    tcp_nopush          on;
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    tcp_nodelay         on;
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    keepalive_timeout   65;
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    types_hash_max_size 4096;
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    include             /etc/nginx/mime.types;
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    default_type        application/octet-stream;
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    include /etc/nginx/conf.d/*.conf;
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>        server {
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>          listen 443 ssl;
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>          listen [::]:443 ssl;
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>          ssl_certificate       /usr/local/etc/v2ray/v2ray.crt;                             #修改证书路径
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>          ssl_certificate_key   /usr/local/etc/v2ray/v2ray.key;                            #修改证书路径
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>          ssl_session_timeout 1d;
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>          ssl_session_cache shared:MozSSL:10m;
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>          ssl_session_tickets off;
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>          ssl_protocols         TLSv1.2 TLSv1.3;
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>          ssl_ciphers           ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>          ssl_prefer_server_ciphers off;
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>          server_name           vpn.martlet121.cn;                         #修改域名
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>          location /ray {                #与V2Ray配置中的path保持一致
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>                if ($http_upgrade != &quot;websocket&quot;) {               #WebSocket协商失败时返回404
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>                        return 404;
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>                }
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>                proxy_redirect off;
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>                proxy_pass http://127.0.0.1:20001;               #转到v2ray的WebSocket监听端口
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>                proxy_http_version 1.1;
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>                proxy_set_header Upgrade $http_upgrade;
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>                proxy_set_header Connection &quot;upgrade&quot;;
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>                proxy_set_header Host $host;
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>                # Show real IP in v2ray access.log
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>                proxy_set_header X-Real-IP $remote_addr;
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>          }
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>        }
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>}
+</span></code></pre></div>
+<p>[root@martlet121 ~]# <mark> systemctl restart nginx </mark>                          #重启服务应用配置</p>
+<p>[root@martlet121 ~]# <mark> ss -an |grep 443 </mark>                     #查看端口监听</p>
+<p>tcp   LISTEN   0      511                                       0.0.0.0:443                 0.0.0.0:*</p>
+<p>tcp   LISTEN   0      511                                          [::]:443                    [::]:*</p>
+<p>[root@martlet121 ~]#<br /><br /><br /><br /></p>
+<p>三、服务器侧配置</p>
+<p>[root@martlet121 ~]# <mark> vim /usr/local/etc/v2ray/config.json </mark>                          #修改主配置文件</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;inbounds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20001</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">&quot;listen&quot;</span><span class="p">:</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w">            </span><span class="c1">//只监听127.0.0.1，避免除本机外的机器探测到开放了20001端口；客户端直连的场景不适用，当前时有web转发流量来</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vmess&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="nt">&quot;clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">          </span><span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">            </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6603eb89-d26e-46b2-a626-49e18e074a6e&quot;</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">            </span><span class="nt">&quot;alterId&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">          </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="p">]</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="nt">&quot;streamSettings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">        </span><span class="nt">&quot;network&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ws&quot;</span><span class="p">,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">        </span><span class="nt">&quot;wsSettings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ray&quot;</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">  </span><span class="nt">&quot;outbounds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;freedom&quot;</span><span class="p">,</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>[root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务生效配置</p>
+<p>[root@martlet121 ~]# <mark> ss -an |grep 20001 </mark>                   #查看端口监听</p>
+<p>tcp   LISTEN   0      4096                                    127.0.0.1:20001               0.0.0.0:*</p>
+<p>[root@martlet121 ~]#<br /><br /><br /><br /></p>
+<p>四、客户端配置</p>
+<p>1、打开客户端解压后路径config.json文件编辑</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;inbounds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1080</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;socks&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;sniffing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="nt">&quot;destOverride&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;tls&quot;</span><span class="p">]</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">&quot;auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;noauth&quot;</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">  </span><span class="nt">&quot;outbounds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vless&quot;</span><span class="p">,</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="nt">&quot;vnext&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">          </span><span class="p">{</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">            </span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vpn.martlet121.cn&quot;</span><span class="p">,</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">            </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">443</span><span class="p">,</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">            </span><span class="nt">&quot;users&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">              </span><span class="p">{</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">                </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6603eb89-d26e-46b2-a626-49e18e074a6e&quot;</span><span class="p">,</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">                </span><span class="nt">&quot;encryption&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">              </span><span class="p">}</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">            </span><span class="p">]</span>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">          </span><span class="p">}</span>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">        </span><span class="p">]</span>
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="w">      </span><span class="nt">&quot;streamSettings&quot;</span><span class="p">:{</span>
+</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="w">        </span><span class="nt">&quot;network&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ws&quot;</span><span class="p">,</span>
+</span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="w">        </span><span class="nt">&quot;wsSettings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="w">          </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ray&quot;</span><span class="p">,</span>
+</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="w">          </span><span class="nt">&quot;useBrowserForwarding&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">                  </span><span class="c1">//表示此WebSocket由浏览器转发</span>
+</span><span id="__span-2-37"><a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-2-38"><a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a><span class="w">        </span><span class="nt">&quot;security&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tls&quot;</span><span class="p">,</span>
+</span><span id="__span-2-39"><a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a><span class="w">        </span><span class="nt">&quot;tlsSettings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-40"><a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a><span class="w">            </span><span class="nt">&quot;serverName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vpn.martlet121.cn&quot;</span><span class="p">,</span>
+</span><span id="__span-2-41"><a id="__codelineno-2-41" name="__codelineno-2-41" href="#__codelineno-2-41"></a><span class="w">            </span><span class="nt">&quot;allowInsecure&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-2-42"><a id="__codelineno-2-42" name="__codelineno-2-42" href="#__codelineno-2-42"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-43"><a id="__codelineno-2-43" name="__codelineno-2-43" href="#__codelineno-2-43"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-2-44"><a id="__codelineno-2-44" name="__codelineno-2-44" href="#__codelineno-2-44"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-2-45"><a id="__codelineno-2-45" name="__codelineno-2-45" href="#__codelineno-2-45"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-46"><a id="__codelineno-2-46" name="__codelineno-2-46" href="#__codelineno-2-46"></a><span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;freedom&quot;</span><span class="p">,</span>
+</span><span id="__span-2-47"><a id="__codelineno-2-47" name="__codelineno-2-47" href="#__codelineno-2-47"></a><span class="w">      </span><span class="nt">&quot;settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-2-48"><a id="__codelineno-2-48" name="__codelineno-2-48" href="#__codelineno-2-48"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;direct&quot;</span>
+</span><span id="__span-2-49"><a id="__codelineno-2-49" name="__codelineno-2-49" href="#__codelineno-2-49"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-50"><a id="__codelineno-2-50" name="__codelineno-2-50" href="#__codelineno-2-50"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-2-51"><a id="__codelineno-2-51" name="__codelineno-2-51" href="#__codelineno-2-51"></a><span class="w">  </span><span class="nt">&quot;routing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-52"><a id="__codelineno-2-52" name="__codelineno-2-52" href="#__codelineno-2-52"></a><span class="w">    </span><span class="nt">&quot;rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-53"><a id="__codelineno-2-53" name="__codelineno-2-53" href="#__codelineno-2-53"></a><span class="w">      </span><span class="p">{</span>
+</span><span id="__span-2-54"><a id="__codelineno-2-54" name="__codelineno-2-54" href="#__codelineno-2-54"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;field&quot;</span><span class="p">,</span>
+</span><span id="__span-2-55"><a id="__codelineno-2-55" name="__codelineno-2-55" href="#__codelineno-2-55"></a><span class="w">        </span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">],</span><span class="w">                 </span><span class="c1">//放行127.0.0.1才能和本机浏览器连接</span>
+</span><span id="__span-2-56"><a id="__codelineno-2-56" name="__codelineno-2-56" href="#__codelineno-2-56"></a><span class="w">        </span><span class="nt">&quot;outboundTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;direct&quot;</span>
+</span><span id="__span-2-57"><a id="__codelineno-2-57" name="__codelineno-2-57" href="#__codelineno-2-57"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-2-58"><a id="__codelineno-2-58" name="__codelineno-2-58" href="#__codelineno-2-58"></a><span class="w">      </span><span class="p">{</span>
+</span><span id="__span-2-59"><a id="__codelineno-2-59" name="__codelineno-2-59" href="#__codelineno-2-59"></a><span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;field&quot;</span><span class="p">,</span>
+</span><span id="__span-2-60"><a id="__codelineno-2-60" name="__codelineno-2-60" href="#__codelineno-2-60"></a><span class="w">        </span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vpn.martlet121.cn&quot;</span><span class="p">],</span><span class="w">              </span><span class="c1">//放行代理服务器才能把流量转发出去</span>
+</span><span id="__span-2-61"><a id="__codelineno-2-61" name="__codelineno-2-61" href="#__codelineno-2-61"></a><span class="w">        </span><span class="nt">&quot;outboundTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;direct&quot;</span>
+</span><span id="__span-2-62"><a id="__codelineno-2-62" name="__codelineno-2-62" href="#__codelineno-2-62"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-2-63"><a id="__codelineno-2-63" name="__codelineno-2-63" href="#__codelineno-2-63"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-2-64"><a id="__codelineno-2-64" name="__codelineno-2-64" href="#__codelineno-2-64"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-65"><a id="__codelineno-2-65" name="__codelineno-2-65" href="#__codelineno-2-65"></a><span class="w">  </span><span class="nt">&quot;browserForwarder&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-66"><a id="__codelineno-2-66" name="__codelineno-2-66" href="#__codelineno-2-66"></a><span class="w">    </span><span class="nt">&quot;listenAddr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-2-67"><a id="__codelineno-2-67" name="__codelineno-2-67" href="#__codelineno-2-67"></a><span class="w">    </span><span class="nt">&quot;listenPort&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span><span class="w">                    </span><span class="c1">//本地启8080端口</span>
+</span><span id="__span-2-68"><a id="__codelineno-2-68" name="__codelineno-2-68" href="#__codelineno-2-68"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-69"><a id="__codelineno-2-69" name="__codelineno-2-69" href="#__codelineno-2-69"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>2、下载与当前V2Ray相同版本的<mark> v2ray-extra.zip </mark> ，解压到v2ray所在目录</p>
+<p>.</p>
+<p>├── browserforwarder</p>
+<p>│  ├── index.html</p>
+<p>│  └── index.js</p>
+<p>├── v2ray.exe</p>
+<p>└── wv2ray.exe</p>
+<p>3、运行<mark> v2ray.exe </mark> 文件，开启1080和8080端口监听</p>
+<p>4、打开浏览器访问<mark> http://127.0.0.1:8080 </mark> ，出现日志reflective server connected即连接成功<br /><br /></p>
+<p>实际访问没有成功，失败<br /><br /></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 V2Ray 帮助文档
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["content.code.copy", "content.code.annotate", "navigation.top", "toc.follow"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="javascripts/extra.js"></script>
+      
+    
+  </body>
+</html>

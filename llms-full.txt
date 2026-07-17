@@ -1,8 +1,40 @@
 # V2Ray 帮助文档
+<!-- i18n-meta
+title:
+  zh: V2Ray 帮助文档
+  en: V2Ray Help Docs
+  ko: V2Ray 도움말 문서
+  ru: Документация V2Ray
+  fa: مستندات V2Ray
+  tk: V2Ray gollanmasy
+summary:
+  zh: V2Ray 代理软件完整中文帮助文档与配置教程：安装、传输协议、路由、TLS、WebSocket、透明代理等。
+  en: V2Ray Help Docs: complete Chinese guides for installing, configuring, and using the V2Ray proxy (protocols, routing, TLS, WebSocket, transparent proxy).
+  ko: V2Ray 도움말 문서: V2Ray 프록시 설치·구성·사용을 위한 완전한 중국어 가이드(프로토콜, 라우팅, TLS, WebSocket, 투명 프록시).
+  ru: Документация V2Ray: полные китайские руководства по установке, настройке и использованию прокси V2Ray (протоколы, маршрутизация, TLS, WebSocket, прозрачное прокси).
+  fa: مستندات V2Ray: راهنمای کامل چینی برای نصب، پیکربندی و استفاده از پروکسی V2Ray (پروتکل‌ها، مسیریابی، TLS، WebSocket، پروکسی شفاف).
+  tk: V2Ray gollanmasy: V2Ray proksisini ornatmak, sazlamak we ulanmak üçin doly hytaýça gollanma (protokollar, marşrutlaşdyryş, TLS, WebSocket, açyk proksi).
+-->
 
 > V2Ray 代理软件完整中文帮助文档与配置教程，涵盖安装、传输协议、路由、TLS、WebSocket、透明代理等。
 
 # 1 介绍V2Ray
+<!-- i18n-meta
+title:
+  zh: 1 介绍V2Ray - V2Ray 帮助文档
+  en: 1 Introducing V2Ray - V2Ray Help Docs
+  ko: 1 V2Ray 소개 - V2Ray 도움말 문서
+  ru: 1 Введение в V2Ray — Документация V2Ray
+  fa: ۱ معرفی V2Ray — مستندات V2Ray
+  tk: 1 V2Ray barada — V2Ray gollanmasy
+summary:
+  zh: 内核（V2Ray）用于实际的网络交互、路由等针对网络数据的处理，而外围的用户界面程序提供了方便直接的操作流程
+  en: Introduction to V2Ray: a proxy platform built from inbound/outbound "boxes" with routing and a clear data-flow model; more powerful than Shadowsocks.
+  ko: V2Ray 소개: inbound/outbound "박스"로 구성된 프록시 플랫폼으로, 라우팅과 명확한 데이터 흐름 모델을 갖추고 있으며 Shadowsocks보다 강력합니다.
+  ru: Введение в V2Ray: прокси-платформа, построенная из «ящиков» inbound/outbound, с маршрутизацией и наглядной моделью потока данных; мощнее Shadowsocks.
+  fa: معرفی V2Ray: پلتفرم پروکسی ساخته‌شده از «جعبه‌های» inbound/outbound با مسیریابی و مدل جریان داده‌ی واضح؛ قدرتمندتر از Shadowsocks.
+  tk: V2Ray barada: inbound/outbound «gutyjlary» esasly proksi platformasy bolup, marşrutlaşdyryş we anyk maglumat akymy modeli bilen üpjün edilýär; Shadowsocks-dan has güýçli.
+-->
 
 ---
 description: "内核（V2Ray）用于实际的网络交互、路由等针对网络数据的处理，而外围的用户界面程序提供了方便直接的操作流程"
@@ -67,6 +99,22 @@ V2Ray的更新策略是快速迭代，每周更新
 ​    {浏览器} <--(socks)--> {V2Ray 客户端 inbound <-> V2Ray 客户端 outbound} <--(VMess)-->  {V2Ray 服务器 inbound <-> V2Ray 服务器 outbound} <--(Freedom)--> {目标网站}
 
 # 10 配置格式
+<!-- i18n-meta
+title:
+  zh: 10 配置格式 - V2Ray 帮助文档
+  en: 10 Configuration Format - V2Ray Help Docs
+  ko: 10 구성 형식 - V2Ray 도움말 문서
+  ru: 10 Формат конфигурации — Документация V2Ray
+  fa: ۱۰ فرمت پیکربندی — مستندات V2Ray
+  tk: 10 sazlama formaty — V2Ray gollanmasy
+summary:
+  zh: V2Ray 配置文件使用 JSON 格式：符号须用半角、字符串加引号、布尔值、对象顺序无关等格式要点。
+  en: V2Ray config file format (JSON): use half-width punctuation, quote strings, booleans, order-independent objects.
+  ko: V2Ray 구성 파일 형식(JSON): 반각 문장 부호 사용, 문자열 따옴표 처리, 불리언, 순서에 관계없는 객체.
+  ru: Формат конфигурационного файла V2Ray (JSON): полуширинная пунктуация, строки в кавычках, логические значения, объекты без привязки к порядку.
+  fa: فرمت فایل پیکربندی V2Ray (JSON): استفاده از نشانه‌گذاری نیم‌عرض، رشته‌ها در گیومه، مقادیر بولی، اشیاء بدون وابستگی به ترتیب.
+  tk: V2Ray sazlama faýlynyň formaty (JSON): ýarym keşikli nyşanlar, ýazgylar göçürme belgilerinde, boolean mukdarlary, tertibe bagly däl obýektler.
+-->
 
 ---
 description: "V2Ray和Shadowsocks一样，配置文件都用的JSON格式"
@@ -87,6 +135,22 @@ description: "V2Ray和Shadowsocks一样，配置文件都用的JSON格式"
 ​    v2.11开始，配置文件允许//和/* */注释，标准的JSON格式中没有
 
 # 11 VMess
+<!-- i18n-meta
+title:
+  zh: 11 VMess - V2Ray 帮助文档
+  en: 11 VMess - V2Ray Help Docs
+  ko: 11 VMess - V2Ray 도움말 문서
+  ru: 11 VMess — Документация V2Ray
+  fa: ۱۱ VMess — مستندات V2Ray
+  tk: 11 VMess — V2Ray gollanmasy
+summary:
+  zh: V2Ray VMess 协议：基于时间认证（服务端/客户端时间差须 < 90s）、UUID 鉴权，核心代理协议。
+  en: VMess protocol: time-based authentication (server/client clock skew must be under 90s) with UUID auth; V2Ray's core proxy protocol.
+  ko: VMess 프로토콜: 시간 기반 인증(서버/클라이언트 시계 차이는 90초 미만)과 UUID 인증을 사용하는 V2Ray의 핵심 프록시 프로토콜.
+  ru: Протокол VMess: аутентификация по времени (расхождение часов сервера/клиента менее 90 с) с UUID-аутентификацией; основной прокси-протокол V2Ray.
+  fa: پروتکل VMess: احراز هویت مبتنی بر زمان (انحراف ساعت سرور/کلاینت باید کمتر از ۹۰ ثانیه باشد) با احراز هویت UUID؛ پروتکل پروکسی اصلی V2Ray.
+  tk: VMess protokoly: wagta esaslanýan tassyklama (serwer/müşderi sagady 90s-den az) we UUID tassyklamasy bilen; V2Ray-iň esasy proksi protokoly.
+-->
 
 ---
 description: "VMess协议基于时间认证，服务器和客户端的系统时间相差必须在90秒以内"
@@ -193,6 +257,22 @@ tcp6       0      0 :::20000                :::*                    LISTEN
 
 
 # 12 Shadowsocks
+<!-- i18n-meta
+title:
+  zh: 12 Shadowsocks - V2Ray 帮助文档
+  en: 12 Shadowsocks - V2Ray Help Docs
+  ko: 12 Shadowsocks - V2Ray 도움말 문서
+  ru: 12 Shadowsocks — Документация V2Ray
+  fa: ۱۲ Shadowsocks — مستندات V2Ray
+  tk: 12 Shadowsocks — V2Ray gollanmasy
+summary:
+  zh: V2Ray 中的 Shadowsocks 协议：采用 AEAD 加密（aes-256-gcm 等），兼容 OTA，附配置方法。
+  en: Shadowsocks in V2Ray: AEAD encryption (aes-256-gcm, etc.), OTA compatibility, and configuration.
+  ko: V2Ray의 Shadowsocks: AEAD 암호화(aes-256-gcm 등), OTA 호환 및 구성 방법.
+  ru: Shadowsocks в V2Ray: шифрование AEAD (aes-256-gcm и др.), совместимость с OTA и настройка.
+  fa: Shadowsocks در V2Ray: رمزنگاری AEAD (aes-256-gcm و غیره)، سازگاری با OTA و پیکربندی.
+  tk: V2Ray içindäki Shadowsocks: AEAD şifrleme (aes-256-gcm we ş.m.), OTA üýtgedijiligi we sazlama.
+-->
 
 ---
 description: "协议漏洞原因使Shadowsocks放弃OTA(一次认证)而使用AEAD，V2Ray的Shadowsocks已使用AEAD且兼容OTA，当method为aes-256-gcm、aes-128-gcm…"
@@ -285,6 +365,22 @@ tcp6       0      0 :::20000                :::*                    LISTEN
 [root@martlet121 ~]#
 
 # 13 DNS
+<!-- i18n-meta
+title:
+  zh: 13 DNS - V2Ray 帮助文档
+  en: 13 DNS - V2Ray Help Docs
+  ko: 13 DNS - V2Ray 도움말 문서
+  ru: 13 DNS — Документация V2Ray
+  fa: ۱۳ DNS — مستندات V2Ray
+  tk: 13 DNS — V2Ray gollanmasy
+summary:
+  zh: 讲解 V2Ray 的 DNS 配置：内置/外置域名文件（geosite.dat、geoip.dat）、domainStrategy 路由策略与防 DNS 污染。
+  en: V2Ray DNS settings: built-in/external domain files (geosite.dat, geoip.dat), domainStrategy routing, and DNS-pollution avoidance.
+  ko: V2Ray DNS 설정: 내장/외부 도메인 파일(geosite.dat, geoip.dat), domainStrategy 라우팅, DNS 오염 방지.
+  ru: Настройки DNS в V2Ray: встроенные/внешние файлы доменов (geosite.dat, geoip.dat), маршрутизация domainStrategy и защита от DNS-загрязнения.
+  fa: تنظیمات DNS در V2Ray: فایل‌های دامنه‌ی داخلی/خارجی (geosite.dat، geoip.dat)، مسیریابی domainStrategy و جلوگیری از آلودگی DNS.
+  tk: V2Ray DNS sazlamalary: içerki/daşarky domen faýlary (geosite.dat, geoip.dat), domainStrategy marşrutlaşdyryş we DNS hapalanmasynyň öňüni almak.
+-->
 
 ---
 description: "文件末尾的逗号，是大模块之间的分隔"
@@ -383,6 +479,22 @@ description: "文件末尾的逗号，是大模块之间的分隔"
 [root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                   #重启服务
 
 # 14 日志
+<!-- i18n-meta
+title:
+  zh: 14 日志 - V2Ray 帮助文档
+  en: 14 Logging - V2Ray Help Docs
+  ko: 14 로그 - V2Ray 도움말 문서
+  ru: 14 Журнал — Документация V2Ray
+  fa: ۱۴ ثبت (لاگ) — مستندات V2Ray
+  tk: 14 Ýazgy — V2Ray gollanmasy
+summary:
+  zh: V2Ray 日志配置：loglevel（debug/info/warning/error/none）、访问与错误日志输出路径，以及排查连接问题的方法。
+  en: V2Ray logging: loglevel (debug/info/warning/error/none), access/error log paths, and connection troubleshooting.
+  ko: V2Ray 로깅: loglevel(debug/info/warning/error/none), 접근/오류 로그 경로 및 연결 문제 해결.
+  ru: Журналирование V2Ray: loglevel (debug/info/warning/error/none), пути журналов доступа/ошибок и устранение неполадок соединения.
+  fa: ثبت رویدادهای V2Ray: loglevel (debug/info/warning/error/none)، مسیرهای لاگ دسترسی/خطا و عیب‌یابی اتصال.
+  tk: V2Ray loglamasy: loglevel (debug/info/warning/error/none), giriş/ýalňyşlyk log ýollary we birikme näsazlyklaryny düzetme.
+-->
 
 ---
 description: "文件末尾的逗号，是大模块之间的分隔"
@@ -443,6 +555,22 @@ description: "文件末尾的逗号，是大模块之间的分隔"
 
 
 # 15 国内路由直连
+<!-- i18n-meta
+title:
+  zh: 15 国内路由直连 - V2Ray 帮助文档
+  en: 15 Domestic Routing Direct - V2Ray Help Docs
+  ko: 15 국내 라우팅 직접 연결 - V2Ray 도움말 문서
+  ru: 15 Прямое соединение внутренней маршрутизации — Документация V2Ray
+  fa: ۱۵ اتصال مستقیم مسیریابی داخلی — مستندات V2Ray
+  tk: 15 ýurtiçi marşrut gönümeli birikme — V2Ray gollanmasy
+summary:
+  zh: V2Ray 路由 domainStrategy 的几种模式（AsIs/IPIfNonMatch/IPOnDemand）与国内流量直连策略。
+  en: Domestic direct routing: domainStrategy modes (AsIs/IPIfNonMatch/IPOnDemand) and routing domestic traffic directly.
+  ko: 국내 라우팅 직접 연결: domainStrategy 모드(AsIs/IPIfNonMatch/IPOnDemand)와 국내 트래픽 직접 라우팅.
+  ru: Прямое соединение внутренней маршрутизации: режимы domainStrategy (AsIs/IPIfNonMatch/IPOnDemand) и прямая маршрутизация внутреннего трафика.
+  fa: اتصال مستقیم مسیریابی داخلی: حالت‌های domainStrategy (AsIs/IPIfNonMatch/IPOnDemand) و مسیریابی مستقیم ترافیک داخلی.
+  tk: Ýurtiçi marşrut gönümeli birikme: domainStrategy režimleri (AsIs/IPIfNonMatch/IPOnDemand) we ýurtiçi akymy gönümeli marşrutlaşdyrmak.
+-->
 
 ---
 description: "路由routing的domainStrategy几种模式"
@@ -582,6 +710,22 @@ description: "路由routing的domainStrategy几种模式"
 [root@martlet121 ~]#
 
 # 16 网站过滤
+<!-- i18n-meta
+title:
+  zh: 16 网站过滤 - V2Ray 帮助文档
+  en: 16 Website Filtering - V2Ray Help Docs
+  ko: 16 웹사이트 필터링 - V2Ray 도움말 문서
+  ru: 16 Фильтрация сайтов — Документация V2Ray
+  fa: ۱۶ فیلتر سایت‌ها — مستندات V2Ray
+  tk: 16 web sahypa filtrli — V2Ray gollanmasy
+summary:
+  zh: 通过路由规则按域名、IP、地域（geoip:cn）等条件过滤网站流量，实现国内外分流与广告/特定站点屏蔽。
+  en: Website filtering: route traffic by domain, IP, or region (geoip:cn) for domestic/foreign splitting and blocking.
+  ko: 웹사이트 필터링: 도메인·IP·지역(geoip:cn)별로 트래픽을 라우팅하여 국내외 분리 및 차단.
+  ru: Фильтрация сайтов: маршрутизация трафика по домену, IP или региону (geoip:cn) для разделения внутреннего/внешнего и блокировки.
+  fa: فیلتر وب‌سایت‌ها: مسیریابی ترافیک بر اساس دامنه، IP یا منطقه (geoip:cn) برای تفکیک داخلی/خارجی و مسدودسازی.
+  tk: Web sahypalaryny süzme: domen, IP ýa-da sebit (geoip:cn) boýunça akymy marşrutlaşdyryp ýurtiçi/daşarky bölme we bloklap.
+-->
 
 ---
 description: "一、客户端配置"
@@ -726,6 +870,22 @@ description: "一、客户端配置"
 
 
 # 17 域名文件
+<!-- i18n-meta
+title:
+  zh: 17 域名文件 - V2Ray 帮助文档
+  en: 17 Domain Files - V2Ray Help Docs
+  ko: 17 도메인 파일 - V2Ray 도움말 문서
+  ru: 17 Файл доменов — Документация V2Ray
+  fa: ۱۷ فایل دامنه‌ها — مستندات V2Ray
+  tk: 17 domen faýly — V2Ray gollanmasy
+summary:
+  zh: V2Ray 路由使用的域名文件：内置 geosite.dat / geoip.dat 常见站点库，以及自定义外置域名文件的方法。
+  en: Domain files for V2Ray routing: built-in geosite.dat/geoip.dat and custom external domain files.
+  ko: V2Ray 라우팅용 도메인 파일: 내장 geosite.dat/geoip.dat 및 사용자 정의 외부 도메인 파일.
+  ru: Файлы доменов для маршрутизации V2Ray: встроенные geosite.dat/geoip.dat и пользовательские внешние файлы доменов.
+  fa: فایل‌های دامنه برای مسیریابی V2Ray: geosite.dat/geoip.dat داخلی و فایل‌های دامنه‌ی خارجی سفارشی.
+  tk: V2Ray marşrutlaşdyryşy üçin domen faýlary: içerki geosite.dat/geoip.dat we adatça daşarky domen faýlary.
+-->
 
 ---
 description: "一、内置的域名文件"
@@ -780,6 +940,22 @@ description: "一、内置的域名文件"
 
 
 # 18 禁用BT
+<!-- i18n-meta
+title:
+  zh: 18 禁用BT - V2Ray 帮助文档
+  en: 18 Disable BT - V2Ray Help Docs
+  ko: 18 BT 차단 - V2Ray 도움말 문서
+  ru: 18 Отключение BT — Документация V2Ray
+  fa: ۱۸ غیرفعال کردن BT — مستندات V2Ray
+  tk: 18 BT-i öçürmek — V2Ray gollanmasy
+summary:
+  zh: 在 VPS 上禁用 BT 下载，避免因版权方投诉导致服务器被封，附路由/协议层面的禁用方法。
+  en: Disable BT downloads on the VPS to avoid takedowns from copyright complaints, with routing/protocol methods.
+  ko: VPS에서 BT 다운로드를 비활성화하여 저작권 신고로 인한 폐쇄를 방지하며, 라우팅/프로토콜 차원의 방법 제공.
+  ru: Отключение BT-загрузок на VPS, чтобы избежать блокировок из-за жалоб на нарушение авторских прав; методы на уровне маршрутизации/протокола.
+  fa: غیرفعال کردن دانلودهای BT روی VPS برای جلوگیری از مسدود شدن به دلیل شکایت‌های کپی‌رایت، با روش‌های مسیریابی/پروتکل.
+  tk: AWtorlyk şikaýatlary sebäpli ýapylýanlygyň öňüni almak üçin VPS-de BT göçürip almagy öçürmek; marşrutlaşdyryş/protokol usullary.
+-->
 
 ---
 description: "国外版权意识更强，下载盗版影音会导致vps被封，所有可直接禁用BT下载"
@@ -921,6 +1097,22 @@ description: "国外版权意识更强，下载盗版影音会导致vps被封，
 [root@martlet121 ~]# <mark> systemctl restart v2ray </mark>                #重启服务生效
 
 # 2 安装V2Ray（Linux）
+<!-- i18n-meta
+title:
+  zh: 2 安装V2Ray（Linux） - V2Ray 帮助文档
+  en: 2 Install V2Ray (Linux) - V2Ray Help Docs
+  ko: 2 V2Ray 설치(Linux) - V2Ray 도움말 문서
+  ru: 2 Установка V2Ray (Linux) — Документация V2Ray
+  fa: ۲ نصب V2Ray (Linux) — مستندات V2Ray
+  tk: 2 V2Ray ornatmak (Linux) — V2Ray gollanmasy
+summary:
+  zh: Linux 平台安装 V2Ray：脚本安装、本地文件安装，关闭防火墙/SELinux，验证时间与运行状态。
+  en: Install V2Ray on Linux via script or local file; disable firewall/SELinux and verify time and status.
+  ko: Linux에 V2Ray 설치: 스크립트 또는 로컬 파일로 설치, 방화벽/SELinux 비활성화, 시간 및 상태 확인.
+  ru: Установка V2Ray в Linux через скрипт или локальный файл; отключение firewall/SELinux и проверка времени и статуса.
+  fa: نصب V2Ray در Linux از طریق اسکریپت یا فایل محلی؛ غیرفعال کردن فایروال/SELinux و بررسی زمان و وضعیت.
+  tk: Linux-da V2Ray ornatmak: skript ýa-da ýerli faýl bilen; firewall/SELinux öçürmek we wagty we ýagdaýy barlamak.
+-->
 
 ---
 description: "V2Ray的验证包含时间，服务端和客户端时间相差必须在90s内；时区会自动转换，时间必须一致"
@@ -1217,6 +1409,22 @@ Created symlink from /etc/systemd/system/multi-user.target.wants/v2ray.service t
 [root@martlet121 ~]#
 
 # 20 TLS
+<!-- i18n-meta
+title:
+  zh: 20 TLS - V2Ray 帮助文档
+  en: 20 TLS - V2Ray Help Docs
+  ko: 20 TLS - V2Ray 도움말 문서
+  ru: 20 TLS — Документация V2Ray
+  fa: ۲۰ TLS — مستندات V2Ray
+  tk: 20 TLS — V2Ray gollanmasy
+summary:
+  zh: V2Ray 传输层安全（TLS）配置：使用 Let's Encrypt / acme.sh 申请证书，配合 WebSocket、TCP 加密流量。
+  en: TLS in V2Ray: obtain certificates with Let's Encrypt/acme.sh and encrypt traffic over WebSocket/TCP.
+  ko: V2Ray의 TLS: Let's Encrypt/acme.sh로 인증서 발급하고 WebSocket/TCP 트래픽 암호화.
+  ru: TLS в V2Ray: получение сертификатов через Let's Encrypt/acme.sh и шифрование трафика по WebSocket/TCP.
+  fa: TLS در V2Ray: دریافت گواهی با Let's Encrypt/acme.sh و رمزنگاری ترافیک روی WebSocket/TCP.
+  tk: V2Ray-da TLS: Let's Encrypt/acme.sh bilen şahadatnama alyň we WebSocket/TCP üstünden akymy şifrleň.
+-->
 
 ---
 description: "v1.19版本开始支持TLS（传输层安全）"
@@ -1642,6 +1850,22 @@ root       65553    4838  0 11:26 pts/0    00:00:00 grep --color=auto v2ray
 
 
 # 21 TCP + TLS + Web
+<!-- i18n-meta
+title:
+  zh: 21 TCP + TLS + Web - V2Ray 帮助文档
+  en: 21 TCP + TLS + Web - V2Ray Help Docs
+  ko: 21 TCP + TLS + Web - V2Ray 도움말 문서
+  ru: 21 TCP + TLS + Web — Документация V2Ray
+  fa: ۲۱ TCP + TLS + Web — مستندات V2Ray
+  tk: 21 TCP + TLS + Web — V2Ray gollanmasy
+summary:
+  zh: V2Ray 通过 HaProxy + Web 服务器实现 TCP + TLS + Web：HTTPS 流量伪装为正常网站，非 HTTP 流量按 VMess 处理。
+  en: TCP + TLS + Web with HaProxy: HTTPS traffic looks like a normal site while non-HTTP goes to VMess.
+  ko: HaProxy 기반 TCP + TLS + Web: HTTPS 트래픽은 일반 사이트처럼 보이고, 비HTTP 트래픽은 VMess로 처리.
+  ru: TCP + TLS + Web с HaProxy: HTTPS-трафик выглядит как обычный сайт, а не-HTTP уходит в VMess.
+  fa: TCP + TLS + Web با HaProxy: ترافیک HTTPS شبیه یک سایت عادی به نظر می‌رسد و ترافیک غیرHTTP به VMess می‌رود.
+  tk: HaProxy bilen TCP + TLS + Web: HTTPS akymy adaty sahypa meňzeýär, HTTP-dan başga akym bolsa VMess-e iberilýär.
+-->
 
 ---
 description: "HaProxy监听443端口，处理TLS之后，将HTTP流量交由Web服务器处理，非HTTP流量交由V2Ray按Vmess处理"
@@ -1858,6 +2082,22 @@ tcp   LISTEN    0      4096                                            *:20001  
 
 
 # 22 TCP + TLS分流器（TCP）
+<!-- i18n-meta
+title:
+  zh: 22 TCP + TLS分流器（TCP） - V2Ray 帮助文档
+  en: 22 TCP + TLS Splitter (TCP) - V2Ray Help Docs
+  ko: 22 TCP + TLS 분류기(TCP) - V2Ray 도움말 문서
+  ru: 22 TCP + TLS-разделитель (TCP) — Документация V2Ray
+  fa: ۲۲ تقسیم‌کننده TCP + TLS (TCP) — مستندات V2Ray
+  tk: 22 TCP + TLS paýlaýjy (TCP) — V2Ray gollanmasy
+summary:
+  zh: 用 tls-shunt-proxy 简易实现 TCP + TLS + Web 分流，免去自签证书与单独 Web 服务器。
+  en: Simplify TCP + TLS + Web with tls-shunt-proxy, no self-signed cert or separate web server needed.
+  ko: tls-shunt-proxy로 TCP + TLS + Web 간소화: 자체 서명 인증서나 별도 웹 서버 불필요.
+  ru: Упростите TCP + TLS + Web с tls-shunt-proxy — самоподписанный сертификат и отдельный веб-сервер не нужны.
+  fa: ساده‌سازی TCP + TLS + Web با tls-shunt-proxy؛ بدون نیاز به گواهی خودامضا یا سرور وب جداگانه.
+  tk: tls-shunt-proxy bilen TCP + TLS + Web ýönekeýleşdiriň; özüne gol çekilen şahadatnama ýa-da aýratyn web serwer gerek däl.
+-->
 
 ---
 description: "TCP + TLS + Web的简易实现，不用关心HaProxy和OpenSSL的版本，不用自己申请证书，不用安装Web服务器"
@@ -2037,6 +2277,22 @@ tcp   LISTEN    0      4096                                            *:20001  
 
 
 # 23 TCP + TLS分流器（Socket）
+<!-- i18n-meta
+title:
+  zh: 23 TCP + TLS分流器（Socket） - V2Ray 帮助文档
+  en: 23 TCP + TLS Splitter (Socket) - V2Ray Help Docs
+  ko: 23 TCP + TLS 분류기(Socket) - V2Ray 도움말 문서
+  ru: 23 TCP + TLS-разделитель (Socket) — Документация V2Ray
+  fa: ۲۳ تقسیم‌کننده TCP + TLS (Socket) — مستندات V2Ray
+  tk: 23 TCP + TLS paýlaýjy (Socket) — V2Ray gollanmasy
+summary:
+  zh: 在 TCP + TLS 分流基础上使用 Domain Socket 连接分流器与服务端，性能优于 TCP。
+  en: Use Domain Socket between the splitter and server on top of TCP + TLS for better performance.
+  ko: TCP + TLS 분기 위에 분기기와 서버 간 Domain Socket 사용으로 더 나은 성능.
+  ru: Используйте Domain Socket между разветвителем и сервером поверх TCP + TLS для лучшей производительности.
+  fa: برای عملکرد بهتر، از Domain Socket میان شنت و سرور روی TCP + TLS استفاده کنید.
+  tk: Has oňumlylyk üçin TCP + TLS üstünde bölküji we serwer arasynda Domain Socket ulanyň.
+-->
 
 ---
 description: "相较于TCP方式，Domain Socket更高效，速度超过50M后会有比较明显的性能差距"
@@ -2227,6 +2483,22 @@ tcp   LISTEN    0      4096                                            *:20001  
 ​    未配置成功，访问失败
 
 # 25 WebSocket
+<!-- i18n-meta
+title:
+  zh: 25 WebSocket - V2Ray 帮助文档
+  en: 25 WebSocket - V2Ray Help Docs
+  ko: 25 WebSocket - V2Ray 도움말 문서
+  ru: 25 WebSocket — Документация V2Ray
+  fa: ۲۵ WebSocket — مستندات V2Ray
+  tk: 25 WebSocket — V2Ray gollanmasy
+summary:
+  zh: V2Ray 的 WebSocket 传输协议：与 TLS、Web 服务器（nginx）配合隐藏流量，适合 CDN/反向代理场景；单独使用性能较差。
+  en: WebSocket transport in V2Ray: pair with TLS and a web server (nginx) to hide traffic; weak when used alone.
+  ko: V2Ray의 WebSocket 전송: TLS 및 웹 서버(nginx)와 함께 트래픽을 숨기며, 단독 사용 시 취약.
+  ru: Транспорт WebSocket в V2Ray: в паре с TLS и веб-сервером (nginx) скрывает трафик; слаб при использовании в одиночку.
+  fa: انتقال WebSocket در V2Ray: با همراهی TLS و یک وب‌سرور (nginx) ترافیک را مخفی می‌کند؛ در استفاده‌ی تنها ضعیف است.
+  tk: V2Ray-da WebSocket geçirişi: TLS we web serweri (nginx) bilen bilelikde akymy gizleýär; ýekelikde ejiz.
+-->
 
 ---
 description: "不推荐，比tcp性能较差；和其他协议组合除外"
@@ -2331,6 +2603,22 @@ tcp   LISTEN 0      4096                                            *:20001     
 
 
 # 26 WebSocket + TLS + Web
+<!-- i18n-meta
+title:
+  zh: 26 WebSocket + TLS + Web - V2Ray 帮助文档
+  en: 26 WebSocket + TLS + Web - V2Ray Help Docs
+  ko: 26 WebSocket + TLS + Web - V2Ray 도움말 문서
+  ru: 26 WebSocket + TLS + Web — Документация V2Ray
+  fa: ۲۶ WebSocket + TLS + Web — مستندات V2Ray
+  tk: 26 WebSocket + TLS + Web — V2Ray gollanmasy
+summary:
+  zh: 通过nginx转发流量，由nginx作为前台隐藏v2ray；TLS可对流量进行加密；WebSocket连接nginx
+  en: WebSocket + TLS + Web: nginx fronts V2Ray, TLS encrypts, WebSocket connects to nginx for camouflage.
+  ko: WebSocket + TLS + Web: nginx가 V2Ray 전면, TLS 암호화, WebSocket이 nginx에 연결되어 위장.
+  ru: WebSocket + TLS + Web: nginx выступает перед V2Ray, TLS шифрует, WebSocket подключается к nginx для маскировки.
+  fa: WebSocket + TLS + Web: nginx جلوی V2Ray قرار می‌گیرد، TLS رمزنگاری می‌کند و WebSocket برای استتار به nginx متصل می‌شود.
+  tk: WebSocket + TLS + Web: nginx V2Ray-iň öňünde, TLS şifrleýär, WebSocket bolsa kamufliaž üçin nginx-e birikýär.
+-->
 
 ---
 description: "通过nginx转发流量，由nginx作为前台隐藏v2ray；TLS可对流量进行加密；WebSocket连接nginx"
@@ -2805,6 +3093,22 @@ tcp   LISTEN   0      4096                                    127.0.0.1:20001   
 
 
 # 27 WebSocket + BrowserForwarder
+<!-- i18n-meta
+title:
+  zh: 27 WebSocket + BrowserForwarder - V2Ray 帮助文档
+  en: 27 WebSocket + BrowserForwarder - V2Ray Help Docs
+  ko: 27 WebSocket + BrowserForwarder - V2Ray 도움말 문서
+  ru: 27 WebSocket + BrowserForwarder — Документация V2Ray
+  fa: ۲۷ WebSocket + BrowserForwarder — مستندات V2Ray
+  tk: 27 WebSocket + BrowserForwarder — V2Ray gollanmasy
+summary:
+  zh: 在 WebSocket + TLS + Web 基础上，用 BrowserForwarder 模块隐藏 V2Ray 客户端，Nginx 隐藏服务端，进一步提升流量伪装。
+  en: Add the BrowserForwarder module to hide the client while nginx hides the server for stronger camouflage.
+  ko: BrowserForwarder 모듈을 추가해 nginx가 서버를 숨기는 가운데 클라이언트도 숨겨 위장 강화.
+  ru: Добавьте модуль BrowserForwarder, чтобы скрыть клиент, пока nginx скрывает сервер, для более сильной маскировки.
+  fa: ماژول BrowserForwarder را اضافه کنید تا در حالی که nginx سرور را مخفی می‌کند، کلاینت نیز پنهان شود و استتار قوی‌تر شود.
+  tk: Has güýçli kamufliaž üçin nginx serweri gizleýän mahalda müşderini gizlemek üçin BrowserForwarder modulyny goşuň.
+-->
 
 ---
 description: "在WebSocket + TLS + Web的基础上，V2Ray 4.37.0加入浏览器转发（BrowserForwarder）模块，BrowserForwarder可隐藏客户端；Nginx时隐藏服务…"
@@ -3333,6 +3637,22 @@ tcp   LISTEN   0      4096                                    127.0.0.1:20001   
 实际访问没有成功，失败
 
 # 3 安装V2Ray（Windows）
+<!-- i18n-meta
+title:
+  zh: 3 安装V2Ray（Windows） - V2Ray 帮助文档
+  en: 3 Install V2Ray (Windows) - V2Ray Help Docs
+  ko: 3 V2Ray 설치(Windows) - V2Ray 도움말 문서
+  ru: 3 Установка V2Ray (Windows) — Документация V2Ray
+  fa: ۳ نصب V2Ray (Windows) — مستندات V2Ray
+  tk: 3 V2Ray ornatmak (Windows) — V2Ray gollanmasy
+summary:
+  zh: Windows 平台安装 V2Ray：解压 v2ray-windows-64.zip，编辑 config.json 后用 v2ray.exe / wv2ray.exe 运行，浏览器配置 SOCKS 代理。
+  en: Install V2Ray on Windows: extract v2ray-windows-64.zip, edit config.json, run v2ray.exe, set browser SOCKS proxy.
+  ko: Windows에 V2Ray 설치: v2ray-windows-64.zip 압축 해제, config.json 편집, v2ray.exe 실행, 브라우저 SOCKS 프록시 설정.
+  ru: Установка V2Ray в Windows: распакуйте v2ray-windows-64.zip, отредактируйте config.json, запустите v2ray.exe, настройте SOCKS-прокси браузера.
+  fa: نصب V2Ray در Windows: استخراج v2ray-windows-64.zip، ویرایش config.json، اجرای v2ray.exe و تنظیم پروکسی SOCKS مرورگر.
+  tk: Windows-da V2Ray ornatmak: v2ray-windows-64.zip açyň, config.json üýtgediň, v2ray.exe işlediň, brauzerde SOCKS proksisini sazlaň.
+-->
 
 ---
 description: "v2ray-windows-64.zip"
@@ -3389,6 +3709,22 @@ V2Ray v4.45.2，v5版本后会直接闪退
 
 
 # 30 Mux
+<!-- i18n-meta
+title:
+  zh: 30 Mux - V2Ray 帮助文档
+  en: 30 Mux - V2Ray Help Docs
+  ko: 30 Mux - V2Ray 도움말 문서
+  ru: 30 Mux — Документация V2Ray
+  fa: ۳۰ Mux — مستندات V2Ray
+  tk: 30 Mux — V2Ray gollanmasy
+summary:
+  zh: V2Ray Mux 多路复用：将多条 TCP 连接合并为一条，节省资源、提高并发，仅需客户端开启。
+  en: V2Ray Mux multiplexing merges multiple TCP connections into one, saving resources; client-side only.
+  ko: V2Ray Mux 다중화: 여러 TCP 연결을 하나로 합쳐 자원 절약, 클라이언트 측만 해당.
+  ru: Мультиплексирование V2Ray Mux объединяет несколько TCP-соединений в одно, экономя ресурсы; только на стороне клиента.
+  fa: چندپاری V2Ray Mux چندین اتصال TCP را در یکی ادغام می‌کند و منابع را صرفه‌جویی می‌کند؛ فقط در سمت کلاینت.
+  tk: V2Ray Mux köpajynlylygy birnäçe TCP birikmelerini birikip, çeşmeleri tygşytlaýar; diňe müşderi tarapynda.
+-->
 
 ---
 description: "多路复用（multiplexing），将多条TCP连接合并成一条，节省资源，提高并发能力"
@@ -3484,6 +3820,22 @@ description: "多路复用（multiplexing），将多条TCP连接合并成一条
 
 
 # 31 mKCP
+<!-- i18n-meta
+title:
+  zh: 31 mKCP - V2Ray 帮助文档
+  en: 31 mKCP - V2Ray Help Docs
+  ko: 31 mKCP - V2Ray 도움말 문서
+  ru: 31 mKCP — Документация V2Ray
+  fa: ۳۱ mKCP — مستندات V2Ray
+  tk: 31 mKCP — V2Ray gollanmasy
+summary:
+  zh: V2Ray mKCP 传输：基于 UDP 的 KCP 协议，适合高丢包网络，含数据包伪装类型配置。
+  en: mKCP transport in V2Ray: UDP-based KCP protocol for lossy networks, with packet camouflage types.
+  ko: V2Ray의 mKCP 전송: 손실이 많은 네트워크용 UDP 기반 KCP 프로토콜, 패킷 위장 유형 포함.
+  ru: Транспорт mKCP в V2Ray: основанный на UDP протокол KCP для сетей с потерями, с типами маскировки пакетов.
+  fa: انتقال mKCP در V2Ray: پروتکل KCP مبتنی بر UDP برای شبکه‌های پرافت، با انواع استتار بسته.
+  tk: V2Ray-da mKCP geçirişi: paketleri ýitýän torlar üçin UDP esasly KCP protokoly, paket kamufliaž görnüşleri bilen.
+-->
 
 ---
 description: "快速重传的机制在高丢包率的网络下会耗费更多流量，但能提高访问效率"
@@ -3621,6 +3973,22 @@ udp6       0      0 :::16823                :::*
 
 
 # 32 动态端口
+<!-- i18n-meta
+title:
+  zh: 32 动态端口 - V2Ray 帮助文档
+  en: 32 Dynamic Ports - V2Ray Help Docs
+  ko: 32 동적 포트 - V2Ray 도움말 문서
+  ru: 32 Динамический порт — Документация V2Ray
+  fa: ۳۲ پورت پویا — مستندات V2Ray
+  tk: 32 dinamik port — V2Ray gollanmasy
+summary:
+  zh: 动态变化通信端口，应对运营商对长时间大流量单端口的限速；仅 vmess 协议支持，主要在服务端设置。
+  en: Dynamic ports change the communication port to evade single-port throttling by ISPs; VMess only, server-side.
+  ko: 동적 포트: 통신 포트를 변경해 ISP의 단일 포트 제한 회피, VMess 전용, 서버 측.
+  ru: Динамические порты меняют порт связи, чтобы обойти ограничение одного порта провайдером; только VMess, на стороне сервера.
+  fa: پورت‌های پویا پورت ارتباطی را تغییر می‌دهند تا محدودیت تک‌پورت توسط ISP دور زده شود؛ فقط VMess، در سمت سرور.
+  tk: Dinamik portlar aragatnaşyk portuny üýtgedip ISP-iň bir portly çäklendirmegini aýlanyp geçýär; diňe VMess, serwer tarapynda.
+-->
 
 ---
 description: "动态变化通信端口，应对电信服务运营商可能会对长时间大流量的单个端口进行限速"
@@ -3739,6 +4107,22 @@ tcp6       0      0 :::10000                :::*                    LISTEN
 
 
 # 33 动态端口 + mKCP
+<!-- i18n-meta
+title:
+  zh: 33 动态端口 + mKCP - V2Ray 帮助文档
+  en: 33 Dynamic Ports + mKCP - V2Ray Help Docs
+  ko: 33 동적 포트 + mKCP - V2Ray 도움말 문서
+  ru: 33 Динамический порт + mKCP — Документация V2Ray
+  fa: ۳۳ پورت پویا + mKCP — مستندات V2Ray
+  tk: 33 dinamik port + mKCP — V2Ray gollanmasy
+summary:
+  zh: 在 inbounds/outbounds 加入 streamSettings 并将 network 设为 kcp，即可启用 mKCP 动态端口，应对单端口限速。
+  en: Enable mKCP dynamic ports by setting streamSettings network to kcp in inbounds/outbounds.
+  ko: inbounds/outbounds의 streamSettings network를 kcp로 설정해 mKCP 동적 포트 활성화.
+  ru: Включите динамические порты mKCP, установив streamSettings network в kcp в inbounds/outbounds.
+  fa: با تنظیم streamSettings network روی kcp در inbounds/outbounds، پورت‌های پویای mKCP فعال می‌شوند.
+  tk: inbounds/outbounds içindäki streamSettings network-i kcp-a goýup mKCP dinamik portlaryny açyň.
+-->
 
 ---
 description: "在对应的inbounds和outbounds加入streamSettings并将network设置为kcp即可"
@@ -3864,6 +4248,22 @@ udp6       0      0 :::10000                :::*
 
 
 # 34 QUIC
+<!-- i18n-meta
+title:
+  zh: 34 QUIC - V2Ray 帮助文档
+  en: 34 QUIC - V2Ray Help Docs
+  ko: 34 QUIC - V2Ray 도움말 문서
+  ru: 34 QUIC — Документация V2Ray
+  fa: ۳۴ QUIC — مستندات V2Ray
+  tk: 34 QUIC — V2Ray gollanmasy
+summary:
+  zh: V2Ray QUIC 传输：Google 提出的基于 UDP 多路并发协议，0-RTT/1-RTT 握手、连接迁移，适合弱网。
+  en: QUIC transport in V2Ray: Google's UDP multiplexing protocol with 0/1-RTT handshake and connection migration.
+  ko: V2Ray의 QUIC 전송: Google의 UDP 다중화 프로토콜, 0/1-RTT 핸드셰이크 및 연결 마이그레이션.
+  ru: Транспорт QUIC в V2Ray: UDP-мультиплексирующий протокол Google с рукопожатием 0/1-RTT и миграцией соединения.
+  fa: انتقال QUIC در V2Ray: پروتکل چندپاری UDP متعلق به Google با دست‌دهی ۰/۱-RTT و مهاجرت اتصال.
+  tk: V2Ray-da QUIC geçirişi: Google-iň 0/1-RTT el gowuşmasy we birikme göçürmesi bolan UDP köpajynly protokoly.
+-->
 
 ---
 description: "4.7版本开始支持QUIC（Quick UDP Internet Connection），Google提出的使用UDP进行多路并发传输的协议"
@@ -4007,6 +4407,22 @@ udp6       0      0 :::10000                :::*
 
 
 # 35 TOR
+<!-- i18n-meta
+title:
+  zh: 35 TOR - V2Ray 帮助文档
+  en: 35 TOR - V2Ray Help Docs
+  ko: 35 TOR - V2Ray 도움말 문서
+  ru: 35 TOR — Документация V2Ray
+  fa: ۳۵ TOR — مستندات V2Ray
+  tk: 35 TOR — V2Ray gollanmasy
+summary:
+  zh: 将 V2Ray 通过 Tor 匿名网络出口，隐藏真实 IP、规避网络监控与流量分析。
+  en: Route V2Ray through the Tor network to hide the real IP and avoid surveillance/traffic analysis.
+  ko: V2Ray를 Tor 네트워크를 통해 라우팅하여 실제 IP를 숨기고 감시/트래픽 분석 회피.
+  ru: Направьте V2Ray через сеть Tor, чтобы скрыть реальный IP и избежать слежки/анализа трафика.
+  fa: مسیریابی V2Ray از طریق شبکه‌ی Tor برای پنهان کردن IP واقعی و اجتناب از نظارت/تحلیل ترافیک.
+  tk: Hakyky IP-i gizlemek we gözegçilik/akym analizinden saklanmak üçin V2Ray-i Tor torundan geçiriň.
+-->
 
 ---
 description: "匿名通信的自由软件，洋葱路由器（The Onion Router，TOR）"
@@ -4163,6 +4579,22 @@ udp6       0      0 :::10000                :::*
 
 
 # 36 流量统计
+<!-- i18n-meta
+title:
+  zh: 36 流量统计 - V2Ray 帮助文档
+  en: 36 Traffic Statistics - V2Ray Help Docs
+  ko: 36 트래픽 통계 - V2Ray 도움말 문서
+  ru: 36 Статистика трафика — Документация V2Ray
+  fa: ۳۶ آمار ترافیک — مستندات V2Ray
+  tk: 36 akym statistikasy — V2Ray gollanmasy
+summary:
+  zh: V2Ray 流量统计：通过 stats/api/policy/routing 统计 inbound、user、outbound 流量，监控用量。
+  en: V2Ray traffic statistics via stats/api/policy/routing for inbound, user, and outbound monitoring.
+  ko: V2Ray 트래픽 통계: stats/api/policy/routing로 inbound·사용자·outbound 모니터링.
+  ru: Статистика трафика V2Ray через stats/api/policy/routing для мониторинга inbound, пользователя и outbound.
+  fa: آمار ترافیک V2Ray از طریق stats/api/policy/routing برای نظارت بر inbound، کاربر و outbound.
+  tk: V2Ray akym statistikasy stats/api/policy/routing bilen inbound, ulanyjy we outbound gözegçiligi üçin.
+-->
 
 ---
 description: "只能统计当前进程实例的数据，在服务器上统计就只统计服务器v2ray进程记录的数据，不涉及客户端；客户端上统计也识别不了服务器侧的设置"
@@ -4580,6 +5012,22 @@ SUM->TOTAL:       380KB
 
 
 # 4 安装V2Ray（安卓）
+<!-- i18n-meta
+title:
+  zh: 4 安装V2Ray（安卓） - V2Ray 帮助文档
+  en: 4 Install V2Ray (Android) - V2Ray Help Docs
+  ko: 4 V2Ray 설치(안드로이드) - V2Ray 도움말 문서
+  ru: 4 Установка V2Ray (Android) — Документация V2Ray
+  fa: ۴ نصب V2Ray (Android) — مستندات V2Ray
+  tk: 4 V2Ray ornatmak (Android) — V2Ray gollanmasy
+summary:
+  zh: 安卓平台安装与配置 V2Ray 客户端（参考 VMess / Shadowsocks 配置），实现手机全局代理上网。
+  en: Install and configure the V2Ray client on Android (VMess/Shadowsocks) for global proxy.
+  ko: Android에 V2Ray 클라이언트 설치/구성(VMess/Shadowsocks)으로 전역 프록시.
+  ru: Установите и настройте клиент V2Ray на Android (VMess/Shadowsocks) для глобального прокси.
+  fa: نصب و پیکربندی کلاینت V2Ray در Android (VMess/Shadowsocks) برای پروکسی سراسری.
+  tk: Android-da V2Ray müşderisini (VMess/Shadowsocks) global proksi üçin ornaň we sazlaň.
+-->
 
 ---
 description: "vmess、mkcp协议在这个客户端没尝试成功"
@@ -4620,6 +5068,22 @@ bfv://45.76.177.113:20002/shadowsocks/1?rtype=lanchina&dns=8.8.8.8&method=aes-12
 
 
 # 40 HTTP2
+<!-- i18n-meta
+title:
+  zh: 40 HTTP2 - V2Ray 帮助文档
+  en: 40 HTTP2 - V2Ray Help Docs
+  ko: 40 HTTP2 - V2Ray 도움말 문서
+  ru: 40 HTTP2 — Документация V2Ray
+  fa: ۴۰ HTTP2 — مستندات V2Ray
+  tk: 40 HTTP2 — V2Ray gollanmasy
+summary:
+  zh: HTTP/2（h2）是 HTTP/1.1 的升级版，使用 V2Ray HTTP/2 需开启 TLS，提升传输效率。
+  en: HTTP/2 (h2) in V2Ray: upgrade of HTTP/1.1 that requires TLS for better transport efficiency.
+  ko: V2Ray의 HTTP/2(h2): HTTP/1.1 개선판으로, 더 나은 전송 효율을 위해 TLS 필요.
+  ru: HTTP/2 (h2) в V2Ray: улучшение HTTP/1.1, требующее TLS для большей эффективности передачи.
+  fa: HTTP/2 (h2) در V2Ray: ارتقای HTTP/1.1 که برای کارایی انتقال بهتر نیازمند TLS است.
+  tk: V2Ray-da HTTP/2 (h2): has gowy geçiriş netijeliligi üçin TLS talap edýän HTTP/1.1-iň ýokary görnüşi.
+-->
 
 ---
 description: "目前大多数网页是HTTP/1.1，HTTP/2是HTTP/1.1的升级版，简称h2"
@@ -4775,6 +5239,22 @@ LISTEN 0      4096               *:443               **:**     users:(("v2ray",p
 
 
 # 41 前置代理
+<!-- i18n-meta
+title:
+  zh: 41 前置代理 - V2Ray 帮助文档
+  en: 41 Front Proxy - V2Ray Help Docs
+  ko: 41 사전 프록시 - V2Ray 도움말 문서
+  ru: 41 Предшествующий прокси — Документация V2Ray
+  fa: ۴۱ پروکسی پیشین — مستندات V2Ray
+  tk: 41 öň proksi — V2Ray gollanmasy
+summary:
+  zh: 在仅能经 HTTP 代理联网的局域网中，用 V2Ray 前置代理先连 HTTP 代理再访问外网。
+  en: Front proxy: when the LAN only reaches the internet via an HTTP proxy, V2Ray connects through it first.
+  ko: 전위 프록시: LAN이 HTTP 프록시를 통해서만 인터넷에 도달할 때, V2Ray가 먼저 그 프록시를 경유.
+  ru: Предшествующий прокси: когда LAN выходит в интернет только через HTTP-прокси, V2Ray сначала подключается через него.
+  fa: پروکسی پیشین: وقتی LAN فقط از طریق پروکسی HTTP به اینترنت می‌رسد، V2Ray نخست از طریق آن متصل می‌شود.
+  tk: Öň proksi: LAN diňe HTTP proksi arkaly internete çykýan bolsa, V2Ray ilkinji onuň arkaly birikýär.
+-->
 
 ---
 description: "若局域网内设备要通过http代理才能联网，可使用前置代理来先连接http代理联网后，再通过V2Ray访问外网"
@@ -4967,6 +5447,22 @@ LISTEN 0      4096               *:20000              **:**     users:(("v2ray",
 
 
 # 5 安装V2Ray（Docker）
+<!-- i18n-meta
+title:
+  zh: 5 安装V2Ray（Docker） - V2Ray 帮助文档
+  en: 5 Install V2Ray (Docker) - V2Ray Help Docs
+  ko: 5 V2Ray 설치(Docker) - V2Ray 도움말 문서
+  ru: 5 Установка V2Ray (Docker) — Документация V2Ray
+  fa: ۵ نصب V2Ray (Docker) — مستندات V2Ray
+  tk: 5 V2Ray ornatmak (Docker) — V2Ray gollanmasy
+summary:
+  zh: 用 Docker 部署 V2Ray（v2fly-core 镜像）：创建配置目录、映射端口、启停与查看容器日志。
+  en: Deploy V2Ray with Docker (v2fly-core image): config dir, port mapping, container start/stop/logs.
+  ko: Docker(v2fly-core 이미지)로 V2Ray 배포: 구성 디렉터리, 포트 매핑, 컨테이너 시작/정지/로그.
+  ru: Разверните V2Ray с Docker (образ v2fly-core): каталог конфигурации, проброс портов, запуск/остановка/логи контейнера.
+  fa: استقرار V2Ray با Docker (ایمیج v2fly-core): دایرکتوری پیکربندی، نگاشت پورت، شروع/توقف/لاگ کانتینر.
+  tk: Docker (v2fly-core suraty) bilen V2Ray ýaýraň: sazlama katalogy, port hyzmaty, konteýneri başlatmak/duruzmak/loglar.
+-->
 
 ---
 description: "Docker只能部署在KVM或XEN架构的云服务器中"
@@ -5096,6 +5592,22 @@ A unified platform for anti-censorship.
 [root@martlet121 ~]#
 
 # 50 透明代理（REDIRECT）
+<!-- i18n-meta
+title:
+  zh: 50 透明代理（REDIRECT） - V2Ray 帮助文档
+  en: 50 Transparent Proxy (REDIRECT) - V2Ray Help Docs
+  ko: 50 투명 프록시(REDIRECT) - V2Ray 도움말 문서
+  ru: 50 Прозрачное прокси (REDIRECT) — Документация V2Ray
+  fa: ۵۰ پروکسی شفاف (REDIRECT) — مستندات V2Ray
+  tk: 50 açyk proksi (REDIRECT) — V2Ray gollanmasy
+summary:
+  zh: 在 Linux 网关用 iptables REDIRECT 实现 V2Ray 透明代理，使局域网设备无需客户端即可科学上网，支持 IPv4。
+  en: Transparent proxy with iptables REDIRECT on a Linux gateway for LAN devices, IPv4.
+  ko: Linux 게이트웨이에서 iptables REDIRECT로 투명 프록시: LAN 기기 대상, IPv4.
+  ru: Прозрачное прокси с iptables REDIRECT на Linux-шлюзе для устройств LAN, IPv4.
+  fa: پروکسی شفاف با iptables REDIRECT روی دروازه‌ی Linux برای دستگاه‌های LAN، IPv4.
+  tk: Linux brama üstünde iptables REDIRECT bilen açyk proksi: LAN enjamlary üçin, IPv4.
+-->
 
 ---
 description: "当前配置DNS查询是使用的系统dns，国内dns可能解析不到部分域名"
@@ -5334,6 +5846,22 @@ iptables -t mangle -A PREROUTING -p udp -j V2RAY_MASK
 
 
 # 51 透明代理（TPROXY）
+<!-- i18n-meta
+title:
+  zh: 51 透明代理（TPROXY） - V2Ray 帮助文档
+  en: 51 Transparent Proxy (TPROXY) - V2Ray Help Docs
+  ko: 51 투명 프록시(TPROXY) - V2Ray 도움말 문서
+  ru: 51 Прозрачное прокси (TPROXY) — Документация V2Ray
+  fa: ۵۱ پروکسی شفاف (TPROXY) — مستندات V2Ray
+  tk: 51 açyk proksi (TPROXY) — V2Ray gollanmasy
+summary:
+  zh: 用 TPROXY 实现 V2Ray 透明代理，支持 IPv6 与 UDP（含 DNS），适合作为软路由网关。
+  en: Transparent proxy with TPROXY supporting IPv6 and UDP (incl. DNS) as a soft-router gateway.
+  ko: TPROXY 기반 투명 프록시: IPv6 및 UDP(ДNS 포함) 지원, 소프트 라우터 게이트웨이.
+  ru: Прозрачное прокси с TPROXY с поддержкой IPv6 и UDP (вкл. DNS) как программный маршрутизатор-шлюз.
+  fa: پروکسی شفاف با TPROXY با پشتیبانی IPv6 و UDP (شامل DNS) به عنوان دروازه‌ی روتر نرم‌افزاری.
+  tk: TPROXY bilen açyk proksi: IPv6 we UDP (DNS dahyl) goldaýan, ýumşak router brama hökmünde.
+-->
 
 ---
 description: "TPROXY可以透明代理IPV6"
@@ -5954,6 +6482,22 @@ ip6-privacy=0
 
 
 # 52 反向代理（端口映射）
+<!-- i18n-meta
+title:
+  zh: 52 反向代理（端口映射） - V2Ray 帮助文档
+  en: 52 Reverse Proxy (Port Mapping) - V2Ray Help Docs
+  ko: 52 역방향 프록시(포트 매핑) - V2Ray 도움말 문서
+  ru: 52 Обратное прокси (проброс портов) — Документация V2Ray
+  fa: ۵۲ پروکسی معکوس (نگاشت پورت) — مستندات V2Ray
+  tk: 52 ters proksi (port hyzmaty) — V2Ray gollanmasy
+summary:
+  zh: 利用 V2Ray 反向代理（端口映射）配合 VPS，从公网访问无公网 IP 的内网服务器。
+  en: Reverse proxy port mapping to reach a LAN server without public IP via a VPS.
+  ko: 역방향 프록시 포트 매핑: 공인 IP 없는 LAN 서버에 VPS를 통해 접근.
+  ru: Проброс портов обратного прокси для доступа к LAN-серверу без публичного IP через VPS.
+  fa: نگاشت پورت پروکسی معکوس برای دسترسی به سرور LAN بدون IP عمومی از طریق VPS.
+  tk: Ters proksiniň port hyzmaty bilen açyk IP-siz LAN serwerine VPS arkaly eltmäge.
+-->
 
 ---
 description: "可用于内网穿透，达到在外网利用VPS访问不具有公网IP的内网服务器"
@@ -6147,6 +6691,22 @@ LISTEN     0          4096                       *:15000                       *
 
 
 # 53 反向代理（ip穿透）
+<!-- i18n-meta
+title:
+  zh: 53 反向代理（ip穿透） - V2Ray 帮助文档
+  en: 53 Reverse Proxy (IP Penetration) - V2Ray Help Docs
+  ko: 53 역방향 프록시(IP 관통) - V2Ray 도움말 문서
+  ru: 53 Обратное прокси (IP-проброс) — Документация V2Ray
+  fa: ۵۳ پروکسی معکوس (نفوذ IP) — مستندات V2Ray
+  tk: 53 ters proksi (IP deşmek) — V2Ray gollanmasy
+summary:
+  zh: V2Ray 反向代理 IP 穿透：通过 VPS 访问内网中所有地址与端口，支持需要认证的客户端。
+  en: Reverse proxy IP penetration to reach all intranet addresses/ports via a VPS, with auth.
+  ko: 역방향 프록시 IP 관통: VPS를 통해 내부망의 모든 주소/포트 접근, 인증 지원.
+  ru: IP-проброс обратного прокси для доступа ко всем адресам/портам интрасети через VPS, с аутентификацией.
+  fa: نفوذ IP پروکسی معکوس برای دسترسی به تمام آدرس‌ها/پورت‌های اینترانت از طریق VPS، با احراز هویت.
+  tk: Ters proksiniň IP deşmegi bilen VPS arkaly intranetiň hemme salgysyna/portyna eltmäge, tassyklama bilen.
+-->
 
 ---
 description: "内网穿透，达到在外网利用VPS访问内网中所有地址"
@@ -6394,6 +6954,22 @@ tcp6       0      0 :::15001                :::*                    LISTEN      
 ![文章配图](<./files/53 反向代理（ip穿透）/3.png>)
 
 # 54 运行多个服务端进程
+<!-- i18n-meta
+title:
+  zh: 54 运行多个服务端进程 - V2Ray 帮助文档
+  en: 54 Running Multiple Server Processes - V2Ray Help Docs
+  ko: 54 여러 서버 프로세스 실행 - V2Ray 도움말 문서
+  ru: 54 Запуск нескольких серверных процессов — Документация V2Ray
+  fa: ۵۴ اجرای چندین فرایند سرور — مستندات V2Ray
+  tk: 54 birnäçe serwer prosesini işletmek — V2Ray gollanmasy
+summary:
+  zh: 在同一台服务器运行多个 V2Ray 进程，提供不同协议（VMess/Shadowsocks）的客户端入口。
+  en: Run multiple V2Ray processes on one server for different protocol (VMess/Shadowsocks) entries.
+  ko: 한 서버에서 여러 V2Ray 프로세스 실행해 다른 프로토콜(VMess/Shadowsocks) 진입점 제공.
+  ru: Запуск нескольких процессов V2Ray на одном сервере для разных точек входа протоколов (VMess/Shadowsocks).
+  fa: اجرای چندین فرایند V2Ray روی یک سرور برای نقاط ورود پروتکل‌های مختلف (VMess/Shadowsocks).
+  tk: Bir serwerde dürli protokol (VMess/Shadowsocks) girişleri üçin birnäçe V2Ray prosesini işletmek.
+-->
 
 ---
 description: "启用多个v2ray进程，提供不同协议的客户端入口"
@@ -6601,6 +7177,22 @@ tcp6       0      0 :::20002                :::*                    LISTEN      
 
 
 # 55 负载均衡（balancers）
+<!-- i18n-meta
+title:
+  zh: 55 负载均衡（balancers） - V2Ray 帮助文档
+  en: 55 Load Balancing (balancers) - V2Ray Help Docs
+  ko: 55 부하 분산(balancers) - V2Ray 도움말 문서
+  ru: 55 Балансировка нагрузки (balancers) — Документация V2Ray
+  fa: ۵۵ تعادل بار (balancers) — مستندات V2Ray
+  tk: 55 ýük deňagramlylygy (balancers) — V2Ray gollanmasy
+summary:
+  zh: 用 balancers 配置 V2Ray 负载均衡，客户端随机选择不同服务端，提升可用性与带宽。
+  en: Load balancing with balancers: client picks a random server for availability and bandwidth.
+  ko: balancers로 부하 분산: 클라이언트가 가용성과 대역폭을 위해 무작위 서버 선택.
+  ru: Балансировка нагрузки с balancers: клиент выбирает случайный сервер для доступности и пропускной способности.
+  fa: تعادل بار با balancers: کلاینت برای دسترس‌پذیری و پهنای باند یک سرور تصادفی انتخاب می‌کند.
+  tk: balancers bilen ýük deňagramlylygy: müşderi elýeterlilik we zolak üçin gönişmeli serwer saýlaýar.
+-->
 
 ---
 description: "v4.3版本开始支持均衡负载，客户端进行随机选择不同服务端"
@@ -6830,6 +7422,22 @@ tcp6       0      0 :::20002                :::*                    LISTEN      
 [root@martlet121 ~]# 
 
 # 56 负载均衡（vnext）
+<!-- i18n-meta
+title:
+  zh: 56 负载均衡（vnext） - V2Ray 帮助文档
+  en: 56 Load Balancing (vnext) - V2Ray Help Docs
+  ko: 56 부하 분산(vnext) - V2Ray 도움말 문서
+  ru: 56 Балансировка нагрузки (vnext) — Документация V2Ray
+  fa: ۵۶ تعادل بار (vnext) — مستندات V2Ray
+  tk: 56 ýük deňagramlylygy (vnext) — V2Ray gollanmasy
+summary:
+  zh: 在单个 vnext 下配置多个出站服务器地址实现轮询负载均衡，无需单独定义负载均衡组。
+  en: Round-robin load balancing with multiple outbound addresses under one vnext, no group needed.
+  ko: 하나의 vnext 아래 여러 outbound 주소로 라운드 로빈 부하 분산, 그룹 불필요.
+  ru: Циклическая балансировка нагрузки с несколькими адресами outbound под одним vnext, группа не нужна.
+  fa: تعادل بار رند-روبین با چندین آدرس outbound زیر یک vnext، بدون نیاز به گروه.
+  tk: Bir vnext aşasyndaky birnäçe outbound salgysy bilen töwerek ýük deňagramlylygy, topar zerur däl.
+-->
 
 ---
 description: "可在一个vnext下写2个出口服务器地址，这种方式默认轮询；也不用定义负载均衡组"
@@ -7011,6 +7619,22 @@ tcp6       0      0 :::20002                :::*                    LISTEN      
 
 
 # 6 v2ray命令
+<!-- i18n-meta
+title:
+  zh: 6 v2ray命令 - V2Ray 帮助文档
+  en: 6 v2ray Command - V2Ray Help Docs
+  ko: 6 v2ray 명령 - V2Ray 도움말 문서
+  ru: 6 Команда v2ray — Документация V2Ray
+  fa: ۶ دستور v2ray — مستندات V2Ray
+  tk: 6 v2ray buýrugy — V2Ray gollanmasy
+summary:
+  zh: V2Ray 主程序 v2ray 命令：版本查看、配置测试、指定配置文件/格式启动等参数用法。
+  en: The v2ray main command: version, config test, custom config file/format startup options.
+  ko: v2ray 메인 명령어: 버전, 구성 테스트, 사용자 정의 구성 파일/형식 시작 옵션.
+  ru: Основная команда v2ray: версия, проверка конфигурации, параметры запуска с указанием файла/формата.
+  fa: دستور اصلی v2ray: نسخه، تست پیکربندی، گزینه‌های راه‌اندازی فایل/فرمت سفارشی.
+  tk: Esasy v2ray buýrugy: wersiýa, sazlama synagy, adatça sazlama faýly/formasy başlatma opsiýalary.
+-->
 
 ---
 description: "主程序命令；语法格式： v2ray [参数]"
@@ -7044,6 +7668,22 @@ Configuration OK.
 [root@martlet121 ~]#
 
 # 7 v2ctl命令
+<!-- i18n-meta
+title:
+  zh: 7 v2ctl命令 - V2Ray 帮助文档
+  en: 7 v2ctl Command - V2Ray Help Docs
+  ko: 7 v2ctl 명령 - V2Ray 도움말 문서
+  ru: 7 Команда v2ctl — Документация V2Ray
+  fa: ۷ دستور v2ctl — مستندات V2Ray
+  tk: 7 v2ctl buýrugy — V2Ray gollanmasy
+summary:
+  zh: V2Ray 命令行工具 v2ctl：api/config/cert/fetch/tlsping/verify/uuid 等子命令用法。
+  en: The v2ctl tool: api/config/cert/fetch/tlsping/verify/uuid subcommands.
+  ko: v2ctl 도구: api/config/cert/fetch/tlsping/verify/uuid 하위 명령어.
+  ru: Утилита v2ctl: подкоманды api/config/cert/fetch/tlsping/verify/uuid.
+  fa: ابزار v2ctl: زیر‌دستورهای api/config/cert/fetch/tlsping/verify/uuid.
+  tk: v2ctl guraly: api/config/cert/fetch/tlsping/verify/uuid kiçi buýruklary.
+-->
 
 ---
 description: "命令工具集合；语法格式： v2ctl [子命令] [参数]"
